@@ -856,7 +856,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
 <script>
 firebase.initializeApp({apiKey:"AIzaSyAQ_LtV3zavew1XP1x4yrsjkusSGBUitys",authDomain:"items-study-drc.firebaseapp.com",projectId:"items-study-drc",storageBucket:"items-study-drc.firebasestorage.app",messagingSenderId:"523693099745",appId:"1:523693099745:web:9e29345090a5649d34c5a0"});
 var auth=firebase.auth(),db=firebase.firestore();
-db.enablePersistence({synchronizeTabs:true}).catch(function(){});
 var IMGBB_KEY='1904af55604975b9c127bf6dde007f5f';
 
 var T={
@@ -1641,16 +1640,17 @@ document.addEventListener('DOMContentLoaded',function(){
   });
 // OFFLINE DETECTION
 var wasOffline=false;
+var offlineCheckStarted=false;
 function checkOnline(){
   var off=!navigator.onLine;
   var scr=document.getElementById('offlineScreen');
   if(off&&!wasOffline){
     wasOffline=true;scr.classList.add('show');
-    document.getElementById('app').style.pointerEvents='none';
-    document.getElementById('modal').classList.remove('active');
+    var app=document.getElementById('app');if(app)app.style.pointerEvents='none';
+    var modal=document.getElementById('modal');if(modal)modal.classList.remove('active');
   }else if(!off&&wasOffline){
     wasOffline=false;scr.classList.remove('show');
-    document.getElementById('app').style.pointerEvents='';
+    var app2=document.getElementById('app');if(app2)app2.style.pointerEvents='';
     showToast('Connexion rétablie ! 🌐','wifi');
   }
 }
@@ -1658,19 +1658,22 @@ function retryConnection(){
   if(navigator.onLine){
     wasOffline=false;
     document.getElementById('offlineScreen').classList.remove('show');
-    document.getElementById('app').style.pointerEvents='';
+    var app=document.getElementById('app');if(app)app.style.pointerEvents='';
     showToast('Connexion rétablie ! 🌐','wifi');
     location.reload();
   }else{
     var btn=document.querySelector('.offline-btn');
-    btn.textContent='';var ico=document.createElement('span');ico.className='material-icons-round mi';ico.textContent='signal_wifi_off';
-    var txt=document.createTextNode(' Toujours hors ligne...');btn.appendChild(ico);btn.appendChild(txt);
-    setTimeout(function(){btn.innerHTML='<span class="material-icons-round mi">refresh</span>Réessayer';},2000);
+    if(btn){btn.innerHTML='<span class="material-icons-round mi">signal_wifi_off</span> Toujours hors ligne...';
+    setTimeout(function(){btn.innerHTML='<span class="material-icons-round mi">refresh</span>Réessayer';},2000);}
   }
 }
 window.addEventListener('online',checkOnline);
 window.addEventListener('offline',checkOnline);
-setInterval(checkOnline,5000);
+// Démarrer la vérification seulement après 6s pour ne pas interférer avec le chargement
+setTimeout(function(){
+  offlineCheckStarted=true;
+  setInterval(checkOnline,5000);
+},6000);
 </script>
 </body>
 </html>
