@@ -456,6 +456,24 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
 
 @media(min-width:600px){html{background:linear-gradient(135deg,#f0f4f0 0%,#e8f7e0 50%,#f0f4f0 100%)}[data-theme=dark] html{background:linear-gradient(135deg,#050a05,#0a120a,#050a05)}body{border-radius:20px;overflow:hidden;box-shadow:0 0 60px rgba(0,0,0,.15);margin-top:0;border:1px solid var(--bl)}#app,.nav{border-left:1px solid var(--bl);border-right:1px solid var(--bl)}}
 @media(min-width:900px){body{margin-top:20px;height:calc(100vh - 40px);border-radius:24px}}
+
+/* OFFLINE SCREEN */
+#offlineScreen{position:fixed;inset:0;z-index:99990;background:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center}
+[data-theme=dark] #offlineScreen{background:#0a120a}
+#offlineScreen.show{display:flex;animation:fu .5s ease}
+.offline-img{width:230px;max-width:72vw;animation:float 3s ease-in-out infinite;filter:drop-shadow(0 16px 40px rgba(26,92,42,.18));margin-bottom:24px}
+.offline-title{font-family:'Poppins',sans-serif;font-size:1.3rem;font-weight:900;color:var(--gd);margin-bottom:10px;line-height:1.3}
+.offline-sub{font-size:.8rem;color:var(--gr);line-height:1.75;font-weight:600;max-width:280px;margin-bottom:20px}
+.offline-badge{display:inline-flex;align-items:center;gap:6px;background:var(--gl);border:1.5px solid var(--g);color:var(--gd);padding:6px 18px;border-radius:22px;font-size:.65rem;font-weight:800;margin-bottom:24px}
+.offline-badge .mi{font-size:.85rem}
+.offline-dots{display:flex;gap:8px;justify-content:center;margin-bottom:28px}
+.offline-dot{width:10px;height:10px;border-radius:50%}
+.offline-dot:nth-child(1){background:var(--g);animation:blink 1.2s ease 0s infinite}
+.offline-dot:nth-child(2){background:var(--gm);animation:blink 1.2s ease .25s infinite}
+.offline-dot:nth-child(3){background:var(--gl);animation:blink 1.2s ease .5s infinite}
+.offline-btn{background:linear-gradient(135deg,var(--gd),var(--gm));color:#fff;border:none;border-radius:18px;padding:14px 36px;font-size:.88rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 6px 20px rgba(26,92,42,.3);display:flex;align-items:center;gap:8px;transition:all .3s;position:relative;overflow:hidden}
+.offline-btn:active{transform:scale(.96)}
+.offline-btn .mi{font-size:1.1rem}
 </style>
 </head>
 <body>
@@ -823,6 +841,14 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
       <div id="reportsList"></div>
     </div>
   </div>
+</div>
+<div id="offlineScreen">
+  <img class="offline-img" src="https://i.ibb.co/99B49j6J/1774105390897-019d10eb-7b45-743d-8521-c3dc348c39a9.png" alt="Pas de connexion"/>
+  <div class="offline-title">Oups, pas de connexion ! 📡</div>
+  <div class="offline-sub">Vérifiez votre connexion Internet et réessayez.<br/>Vos favoris restent accessibles hors ligne.</div>
+  <div class="offline-badge"><span class="material-icons-round mi">wifi_off</span>Hors ligne · Offline</div>
+  <div class="offline-dots"><div class="offline-dot"></div><div class="offline-dot"></div><div class="offline-dot"></div></div>
+  <button class="offline-btn" onclick="retryConnection()"><span class="material-icons-round mi">refresh</span>Réessayer</button>
 </div>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -1613,7 +1639,38 @@ document.addEventListener('DOMContentLoaded',function(){
     var b=e.target.closest('.hbtn,.hico,.nitem,.qbtn,.btnp,.auth-btn,.pbk,.aact,.ob-role-btn,.drawer-item');
     if(b){var r=document.createElement('span');r.className='ripple-effect';var rc=b.getBoundingClientRect();var sz=Math.max(rc.width,rc.height);r.style.width=r.style.height=sz+'px';r.style.left=(e.clientX-rc.left-sz/2)+'px';r.style.top=(e.clientY-rc.top-sz/2)+'px';b.appendChild(r);setTimeout(function(){r.remove();},600);}
   });
-});
+// OFFLINE DETECTION
+var wasOffline=false;
+function checkOnline(){
+  var off=!navigator.onLine;
+  var scr=document.getElementById('offlineScreen');
+  if(off&&!wasOffline){
+    wasOffline=true;scr.classList.add('show');
+    document.getElementById('app').style.pointerEvents='none';
+    document.getElementById('modal').classList.remove('active');
+  }else if(!off&&wasOffline){
+    wasOffline=false;scr.classList.remove('show');
+    document.getElementById('app').style.pointerEvents='';
+    showToast('Connexion rétablie ! 🌐','wifi');
+  }
+}
+function retryConnection(){
+  if(navigator.onLine){
+    wasOffline=false;
+    document.getElementById('offlineScreen').classList.remove('show');
+    document.getElementById('app').style.pointerEvents='';
+    showToast('Connexion rétablie ! 🌐','wifi');
+    location.reload();
+  }else{
+    var btn=document.querySelector('.offline-btn');
+    btn.textContent='';var ico=document.createElement('span');ico.className='material-icons-round mi';ico.textContent='signal_wifi_off';
+    var txt=document.createTextNode(' Toujours hors ligne...');btn.appendChild(ico);btn.appendChild(txt);
+    setTimeout(function(){btn.innerHTML='<span class="material-icons-round mi">refresh</span>Réessayer';},2000);
+  }
+}
+window.addEventListener('online',checkOnline);
+window.addEventListener('offline',checkOnline);
+setInterval(checkOnline,5000);
 </script>
 </body>
 </html>
