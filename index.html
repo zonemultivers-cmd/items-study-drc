@@ -41,13 +41,11 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
 @keyframes slideDown{from{transform:translateY(0)}to{transform:translateY(110%)}}
 @keyframes drawerOut{from{transform:translateX(0)}to{transform:translateX(-110%)}}
 @keyframes fadeOutBg{from{opacity:1}to{opacity:0}}
-@keyframes barGrow{from{width:0%}to{width:var(--bar-target)}}
 .asheet.closing{animation:slideDown .32s cubic-bezier(.4,0,.2,1) forwards}
 .report-sheet.closing{animation:slideDown .28s cubic-bezier(.4,0,.2,1) forwards}
 .aovl.closing,.report-ovl.closing{animation:fadeOutBg .28s ease forwards;pointer-events:none}
 .drawer.closing{animation:drawerOut .28s cubic-bezier(.4,0,.2,1) forwards}
 .drawer-bg.closing{animation:fadeOutBg .25s ease forwards}
-.stbar-f{animation:barGrow .9s cubic-bezier(.4,0,.2,1) forwards!important;width:0%!important}
 .pdf-name-info{display:flex;align-items:center;gap:8px;padding:10px;background:var(--gp);border-radius:10px;margin-top:8px;display:none}
 .pdf-name-info .mi{color:var(--gd);font-size:1.2rem;flex-shrink:0}
 .pdf-name-txt{font-size:.75rem;color:var(--gd);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
@@ -323,7 +321,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
 .stbar-n{font-size:.72rem;font-weight:700;color:var(--tx)}
 .stbar-v{font-size:.68rem;font-weight:800;color:var(--gm)}
 .stbar{height:8px;background:var(--bg);border-radius:4px;overflow:hidden}
-.stbar-f{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--g),var(--gd))}
+.stbar-f{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--g),var(--gd));width:0%;transition:width .8s cubic-bezier(.4,0,.2,1)}
 .stchart{display:flex;align-items:flex-end;gap:6px;height:100px;padding:10px 0}
 .stchart-bar{flex:1;background:linear-gradient(0deg,var(--g),var(--gd));border-radius:6px 6px 0 0;transition:height .5s;position:relative;min-height:4px}
 .stchart-bar span{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:.5rem;color:var(--gr);font-weight:700}
@@ -1320,11 +1318,17 @@ function renderStats(){
   var h='<div class="stcard"><div class="stcard-t"><span class="material-icons-round mi">analytics</span>'+t('overview')+'</div><div class="strow"><div class="stitem"><div class="stnum">'+total+'</div><div class="stlbl">Items</div></div><div class="stitem"><div class="stnum">'+tf+'</div><div class="stlbl">'+t('favorites')+'</div></div><div class="stitem"><div class="stnum">'+totalViews+'</div><div class="stlbl">Vues</div></div><div class="stitem"><div class="stnum">'+userCount+'</div><div class="stlbl">Users</div></div></div></div>';
   var mx=Math.max(gi,ti,1);
   function barPct(v,m){if(v<=0)return 0;return Math.max(8,Math.min(Math.round(v/m*100)*0.82,82));}
-  h+='<div class="stcard"><div class="stcard-t"><span class="material-icons-round mi">donut_large</span>Par section</div><div class="stbar-w"><div class="stbar-l"><span class="stbar-n">📚 Générale</span><span class="stbar-v">'+gi+'</span></div><div class="stbar"><div class="stbar-f" style="--bar-target:'+barPct(gi,mx)+'%;animation-delay:.1s"></div></div></div><div class="stbar-w"><div class="stbar-l"><span class="stbar-n">⚙️ Technique</span><span class="stbar-v">'+ti+'</span></div><div class="stbar"><div class="stbar-f" style="--bar-target:'+barPct(ti,mx)+'%;animation-delay:.25s"></div></div></div></div>';
-  if(oc.length){var mo=oc[0].c;h+='<div class="stcard"><div class="stcard-t"><span class="material-icons-round mi">school</span>Par option</div>';oc.forEach(function(x,xi){h+='<div class="stbar-w"><div class="stbar-l"><span class="stbar-n">'+x.n+'</span><span class="stbar-v">'+x.c+'</span></div><div class="stbar"><div class="stbar-f" style="--bar-target:'+barPct(x.c,mo)+'%;animation-delay:'+(0.1+xi*0.12)+'s"></div></div></div>';});h+='</div>';}
+  h+='<div class="stcard"><div class="stcard-t"><span class="material-icons-round mi">donut_large</span>Par section</div><div class="stbar-w"><div class="stbar-l"><span class="stbar-n">📚 Générale</span><span class="stbar-v">'+gi+'</span></div><div class="stbar"><div class="stbar-f" data-w="'+barPct(gi,mx)+'"></div></div></div><div class="stbar-w"><div class="stbar-l"><span class="stbar-n">⚙️ Technique</span><span class="stbar-v">'+ti+'</span></div><div class="stbar"><div class="stbar-f" data-w="'+barPct(ti,mx)+'"></div></div></div></div>';
+  if(oc.length){var mo=oc[0].c;h+='<div class="stcard"><div class="stcard-t"><span class="material-icons-round mi">school</span>Par option</div>';oc.forEach(function(x,xi){h+='<div class="stbar-w"><div class="stbar-l"><span class="stbar-n">'+x.n+'</span><span class="stbar-v">'+x.c+'</span></div><div class="stbar"><div class="stbar-f" data-w="'+barPct(x.c,mo)+'"></div></div></div>';});h+='</div>';}
   if(yrs.length){var my=Math.max.apply(null,yrs.map(function(y){return yc[y];}));h+='<div class="stcard"><div class="stcard-t"><span class="material-icons-round mi">timeline</span>Par année</div><div class="stchart">';yrs.forEach(function(y){h+='<div class="stchart-bar" style="height:'+Math.max(Math.round(yc[y]/my*100),5)+'%"><div class="stcv">'+yc[y]+'</div><span>'+String(y).slice(-2)+'</span></div>';});h+='</div></div>';}
   if(!total)h='<div class="empty"><span class="material-icons-round mi">bar_chart</span><div class="empty-txt">'+t('noStats')+'</div></div>';
   sb.innerHTML=h;
+  setTimeout(function(){
+    document.querySelectorAll('#statsBody .stbar-f[data-w]').forEach(function(el,i){
+      var w=el.getAttribute('data-w');
+      setTimeout(function(){el.style.width=w+'%';},i*120+80);
+    });
+  },50);
 }
 
 function renderProfile(){
@@ -1811,4 +1815,4 @@ function checkMyNotifs(){
 }
 </script>
 </body>
-          </html>
+        </html>
