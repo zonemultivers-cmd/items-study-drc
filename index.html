@@ -929,6 +929,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
         <div class="aact" onclick="showMyDash()"><div class="aact-ico" style="background:#e8f0ff"><span class="material-icons-round mi" style="color:#3a5a9a">dashboard</span></div><div class="aact-inf"><div class="aact-n">Mon tableau de bord</div><div class="aact-d">Mes items &amp; signalements</div></div><span class="bdg" id="mydashBadge" style="position:static;min-width:18px;height:18px;border-radius:9px;padding:0 5px;font-size:.55rem;font-weight:800;color:#fff;background:var(--danger);display:none;align-items:center;justify-content:center">0</span><span class="material-icons-round mi" style="color:var(--g)">chevron_right</span></div>
         <div class="aact" onclick="showReports()"><div class="aact-ico" style="background:#fff0f0"><span class="material-icons-round mi" style="color:var(--danger)">flag</span></div><div class="aact-inf"><div class="aact-n">Signalements</div><div class="aact-d">Voir les items signalés</div></div><span class="material-icons-round mi" style="color:var(--g)">chevron_right</span></div>
       </div>
+      <div class="aact" onclick="closeSettings();setTimeout(function(){showView('profile');},300)"><div class="aact-ico" style="background:#e8f0ff"><span class="material-icons-round mi" style="color:#3a5a9a">forum</span></div><div class="aact-inf"><div class="aact-n">Messages</div><div class="aact-d">Voir les réponses aux signalements</div></div><span class="bdg" id="settingsMsgBadge" style="position:static;min-width:18px;height:18px;border-radius:9px;padding:0 5px;font-size:.55rem;font-weight:800;color:#fff;background:var(--danger);display:none;align-items:center;justify-content:center">0</span><span class="material-icons-round mi" style="color:var(--g)">chevron_right</span></div>
       <div class="aact" onclick="doSignOut()" style="margin-top:12px"><div class="aact-ico" style="background:#fff0f0"><span class="material-icons-round mi" style="color:#c00">logout</span></div><div class="aact-inf"><div class="aact-n" data-t="signOut">Se déconnecter</div><div class="aact-d" data-t="signOutSub">Quitter votre session</div></div></div>
     </div>
     <div id="aadd" style="display:none">
@@ -2409,94 +2410,13 @@ function showMessages(){
   showV('messages');scrollT();
   loadUserMessages();
 }
-function loadUserMessages(){
-  if(!currentUser)return;
-  var me=currentUser.email;
-  var lEl=document.getElementById('msgList');
-  var subEl=document.getElementById('msgViewSub');
-  lEl.innerHTML='<div style="text-align:center;padding:20px"><div class="auth-spin" style="display:inline-block"></div></div>';
-  db.collection('reports').where('reportedBy','==',me).get().then(function(snap){
-    if(!snap.size){
-      lEl.innerHTML='<div class="empty"><span class="material-icons-round mi">forum</span><div class="empty-txt">Aucun message.<br/>Signalez un item pour contacter un admin.</div></div>';
-      subEl.textContent='Aucun message';
-      return;
-    }
-    var docs=[];
-    snap.forEach(function(doc){docs.push({id:doc.id,d:doc.data()});});
-    docs.sort(function(a,b){var da=a.d.createdAt&&a.d.createdAt.toDate?a.d.createdAt.toDate():new Date(0);var db2=b.d.createdAt&&b.d.createdAt.toDate?b.d.createdAt.toDate():new Date(0);return db2-da;});
-    var unread=docs.filter(function(x){return x.d.adminReply&&!x.d.replyRead;}).length;
-    subEl.textContent=docs.length+' conversation(s)'+(unread?' · '+unread+' réponse(s) non lue(s)':'');
-    var h='';
-    docs.forEach(function(item){
-      var d=item.d;var hasReply=!!d.adminReply;var isUnread=hasReply&&!d.replyRead;
-      var ts='';try{if(d.createdAt&&d.createdAt.toDate)ts=d.createdAt.toDate().toLocaleDateString('fr-FR');}catch(e){}
-      var preview=d.adminReply?'👨‍💼 Admin : '+d.adminReply.substring(0,50)+(d.adminReply.length>50?'...':'')
-        :(d.userMessage?'Vous : '+d.userMessage.substring(0,50):'Signalement envoyé');
-      h+='<div class="msg-conv-card'+(isUnread?' unread':'')+'" onclick="openUserConv(\''+item.id+'\')">'
-        +'<div class="msg-conv-top">'
-        +(d.itemImg?'<div class="msg-conv-thumb"><img src="'+d.itemImg+'" loading="lazy"/></div>':'')
-        +'<div class="msg-conv-info">'
-        +'<div class="msg-conv-title">'+d.itemMat+' '+d.itemYr+(d.itemTitle?' · '+d.itemTitle:'')+'</div>'
-        +'<div class="msg-conv-preview">'+preview+'</div>'
-        +(hasReply?'<div style="font-size:.6rem;color:var(--gm);font-weight:700;margin-top:3px">✅ L\'admin a répondu</div>':'<div style="font-size:.6rem;color:var(--gr);margin-top:3px">⏳ En attente de réponse</div>')
-        +'</div>'
-        +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">'
-        +'<div class="msg-conv-time">'+ts+'</div>'
-        +(isUnread?'<div class="msg-unread-dot"></div>':'')
-        +'</div></div></div>';
-    });
-    lEl.innerHTML=h;
-    // Badge drawer
-    var bdg=document.getElementById('msgBadge');
-    if(bdg){bdg.textContent=unread;bdg.style.display=unread>0?'flex':'none';}
-  }).catch(function(){lEl.innerHTML='<div class="empty"><span class="material-icons-round mi">error</span><div class="empty-txt">Erreur chargement</div></div>';});
-}
+
 
 /* ── Ouvrir conversation côté élève ── */
-function openUserConv(reportId){
-  db.collection('reports').doc(reportId).get().then(function(doc){
-    if(!doc.exists)return;
-    var d=doc.data();
-    // Marquer réponse comme lue
-    if(d.adminReply&&!d.replyRead){
-      db.collection('reports').doc(reportId).update({replyRead:true}).catch(function(){});
-    }
-    currentReportId=reportId;
-    var ts='';try{if(d.createdAt&&d.createdAt.toDate)ts=d.createdAt.toDate().toLocaleString('fr-FR');}catch(e){}
-    document.getElementById('msgDetailTitle').textContent='💬 Conversation';
-    document.getElementById('msgDetailTime').textContent=d.itemMat+' '+d.itemYr+(d.itemTitle?' · '+d.itemTitle:'');
-    // Item row
-    document.getElementById('msgDetailItemRow').innerHTML='<div class="msg-item-row">'
-      +(d.itemImg?'<div class="msg-item-thumb"><img src="'+d.itemImg+'" loading="lazy"/></div>':'')
-      +'<div class="msg-item-info"><div class="msg-item-title">'+d.itemMat+' '+d.itemYr+'</div>'
-      +'<div class="msg-item-meta">'+(d.reasons?d.reasons.join(', '):(d.reason||''))+'</div></div></div>';
-    // Conversation
-    var convHtml='';
-    if(d.userMessage){
-      convHtml+='<div class="msg-bubble-wrap"><div style="font-size:.6rem;font-weight:700;color:var(--gr);margin-bottom:3px">Vous</div>'
-        +'<div class="msg-bubble user">'+d.userMessage+'</div></div>';
-    }
-    if(d.adminReply){
-      convHtml+='<div class="msg-bubble-wrap" style="display:flex;flex-direction:column;align-items:flex-end">'
-        +'<div style="font-size:.6rem;font-weight:700;color:var(--gm);margin-bottom:3px">'+(d.adminName||'Admin')+'</div>'
-        +'<div class="msg-bubble admin">'+d.adminReply+'</div></div>';
-    }
-    document.getElementById('msgDetailConv').innerHTML=convHtml;
-    // Cacher le champ réponse pour l'élève
-    document.getElementById('msgDetailReplyWrap').style.display='none';
-    document.getElementById('msgDetailOvl').classList.add('active');
-    loadUserMessages();
-  }).catch(function(){});
-}
+
 
 /* ── Badge messages au démarrage ── */
-function checkMsgBadge(){
-  if(!currentUser)return;
-  db.collection('reports').where('reportedBy','==',currentUser.email).where('replyRead','==',false).get().then(function(snap){
-    var bdg=document.getElementById('msgBadge');
-    if(bdg){bdg.textContent=snap.size;bdg.style.display=snap.size>0?'flex':'none';}
-  }).catch(function(){});
-}
+
 
 /* ── Variables réponses rapides ── */
 var QUICK_REPLIES_POS=['Item corrigé, merci pour le signalement ! ✅','Problème résolu, l\'item a été mis à jour. ✅','Merci pour votre vigilance, nous avons pris note. ✅','Item vérifié et validé, qualité conforme. ✅'];
@@ -2521,30 +2441,57 @@ function deleteReport(id){
 /* ── Messages dans onglet Profil (élève) ── */
 function loadProfileMessages(){
   if(!currentUser)return;
-  var lEl=document.getElementById('profileMsgList');if(!lEl)return;
+  var lEl=document.getElementById('profileMsgList');
+  if(!lEl)return;
+  lEl.innerHTML='<div style="text-align:center;padding:12px"><div class="auth-spin" style="display:inline-block"></div></div>';
   db.collection('reports').where('reportedBy','==',currentUser.email).get().then(function(snap){
-    if(!snap.size){lEl.innerHTML='<div style="font-size:.75rem;color:var(--gr);text-align:center;padding:12px">Aucun message.</div>';return;}
-    var docs=[];snap.forEach(function(doc){docs.push({id:doc.id,d:doc.data()});});
-    docs.sort(function(a,b){var da=a.d.createdAt&&a.d.createdAt.toDate?a.d.createdAt.toDate():new Date(0);var db2=b.d.createdAt&&b.d.createdAt.toDate?b.d.createdAt.toDate():new Date(0);return db2-da;});
+    if(!snap.size){
+      lEl.innerHTML='<div style="font-size:.75rem;color:var(--gr);text-align:center;padding:16px">'+(currentLang==='en'?'No messages yet.':'Aucun message pour l\'instant.')+'</div>';
+      return;
+    }
+    var docs=[];
+    snap.forEach(function(doc){docs.push({id:doc.id,d:doc.data()});});
+    docs.sort(function(a,b){
+      var da=a.d.createdAt&&a.d.createdAt.toDate?a.d.createdAt.toDate():new Date(0);
+      var db2=b.d.createdAt&&b.d.createdAt.toDate?b.d.createdAt.toDate():new Date(0);
+      return db2-da;
+    });
     var unread=docs.filter(function(x){return x.d.adminReply&&!x.d.replyRead;}).length;
-    var bdg=document.getElementById('msgBadge');if(bdg){bdg.textContent=unread;bdg.style.display=unread>0?'flex':'none';}
-    var pbdg=document.getElementById('profileMsgBadge');if(pbdg){pbdg.textContent=unread;pbdg.style.display=unread>0?'inline':'none';}
+    var bdg=document.getElementById('msgBadge');
+    if(bdg){bdg.textContent=unread;bdg.style.display=unread>0?'flex':'none';}
+    var pbdg=document.getElementById('profileMsgBadge');
+    if(pbdg){pbdg.textContent=unread;pbdg.style.display=unread>0?'inline':'none';}
     var h='';
     docs.forEach(function(item){
-      var d=item.d;var hasReply=!!d.adminReply;var isUnread=hasReply&&!d.replyRead;
+      var d=item.d;
+      var hasReply=!!d.adminReply;
+      var isUnread=hasReply&&!d.replyRead;
       var ts='';try{if(d.createdAt&&d.createdAt.toDate)ts=d.createdAt.toDate().toLocaleDateString('fr-FR');}catch(e){}
-      h+='<div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:8px;border:1.5px solid '+(isUnread?'var(--g)':'var(--bl)')+(isUnread?';background:var(--gp)':'')+';cursor:'+(hasReply?'pointer':'default')+'"'+(hasReply?' onclick="openUserMsg(\''+item.id+'\')"':'')+'>'
+      h+='<div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:8px;'
+        +'border:1.5px solid '+(isUnread?'var(--g)':'var(--bl)')+(isUnread?';background:var(--gp)':'')
+        +';cursor:'+(hasReply?'pointer':'default')+'"'
+        +(hasReply?' onclick="openUserMsg(\''+item.id+'\')"':'')+'>'
         +'<div style="display:flex;align-items:center;gap:10px">'
         +(d.itemImg?'<img src="'+d.itemImg+'" style="width:36px;height:46px;object-fit:cover;border-radius:7px;flex-shrink:0"/>':'')
-        +'<div style="flex:1"><div style="font-size:.78rem;font-weight:800;color:var(--tx)">'+d.itemMat+' · '+d.itemYr+(d.itemTitle?' · '+d.itemTitle:'')+'</div>'
+        +'<div style="flex:1">'
+        +'<div style="font-size:.78rem;font-weight:800;color:var(--tx)">'+d.itemMat+' · '+d.itemYr+(d.itemTitle?' · '+d.itemTitle:'')+'</div>'
         +'<div style="font-size:.62rem;color:var(--gr);margin-top:2px">'+(d.reasons?d.reasons.join(', '):(d.reason||''))+'</div>'
-        +(hasReply?'<div style="font-size:.65rem;color:var(--gd);font-weight:700;margin-top:4px">'+(isUnread?'🔔 ':'✅ ')+d.adminReply.substring(0,60)+(d.adminReply.length>60?'...':'')+'</div>'
-          :'<div style="font-size:.62rem;color:var(--gr);margin-top:4px">⏳ En attente de réponse...</div>')
-        +'</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div style="font-size:.55rem;color:var(--gr)">'+ts+'</div>'
-        +(isUnread?'<div style="width:8px;height:8px;background:var(--g);border-radius:50%"></div>':'')+'</div></div></div>';
+        +(hasReply
+          ?'<div style="font-size:.65rem;color:var(--gd);font-weight:700;margin-top:4px">'
+            +(isUnread?'🔔 ':'✅ ')
+            +d.adminReply.substring(0,55)+(d.adminReply.length>55?'...':'')+'</div>'
+          :'<div style="font-size:.62rem;color:var(--gr);margin-top:4px">⏳ '+(currentLang==='en'?'Awaiting response...':'En attente de réponse...')+'</div>')
+        +'</div>'
+        +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">'
+        +'<div style="font-size:.55rem;color:var(--gr)">'+ts+'</div>'
+        +(isUnread?'<div style="width:8px;height:8px;background:var(--g);border-radius:50%"></div>':'')
+        +'</div></div></div>';
     });
     lEl.innerHTML=h;
-  }).catch(function(){});
+  }).catch(function(){
+    var lEl2=document.getElementById('profileMsgList');
+    if(lEl2)lEl2.innerHTML='<div style="font-size:.75rem;color:var(--danger);text-align:center;padding:12px">Erreur chargement</div>';
+  });
 }
 
 /* ── Voir réponse complète (élève) ── */
@@ -2552,30 +2499,38 @@ function openUserMsg(reportId){
   db.collection('reports').doc(reportId).get().then(function(doc){
     if(!doc.exists)return;
     var d=doc.data();
-    if(d.adminReply&&!d.replyRead){db.collection('reports').doc(reportId).update({replyRead:true}).then(function(){loadProfileMessages();}).catch(function(){});}
+    if(d.adminReply&&!d.replyRead){
+      db.collection('reports').doc(reportId).update({replyRead:true})
+        .then(function(){loadProfileMessages();}).catch(function(){});
+    }
     currentReportId=reportId;
     var ts='';try{if(d.adminReplyAt&&d.adminReplyAt.toDate)ts=d.adminReplyAt.toDate().toLocaleString('fr-FR');}catch(e){}
-    document.getElementById('msgDetailTitle').textContent='💬 Réponse de l\'admin';
-    document.getElementById('msgDetailTime').textContent=ts;
+    document.getElementById('msgDetailTitle').textContent=currentLang==='en'?'💬 Admin Reply':'💬 Réponse de l\'admin';
+    document.getElementById('msgDetailTime').textContent=d.itemMat+' · '+d.itemYr+(d.itemTitle?' · '+d.itemTitle:'');
     document.getElementById('msgDetailItemRow').innerHTML='<div class="msg-item-row">'
       +(d.itemImg?'<div class="msg-item-thumb"><img src="'+d.itemImg+'" loading="lazy"/></div>':'')
-      +'<div class="msg-item-info"><div class="msg-item-title">'+d.itemMat+' · '+d.itemYr+'</div>'
+      +'<div class="msg-item-info">'
+      +'<div class="msg-item-title">'+d.itemMat+' · '+d.itemYr+'</div>'
       +'<div class="msg-item-meta">'+(d.reasons?d.reasons.join(', '):(d.reason||''))+'</div>'
-      +(d.userMessage?'<div style="font-size:.7rem;color:var(--tx);margin-top:6px;padding:8px;background:var(--bg);border-radius:8px;border-left:3px solid var(--gr)">Votre message : '+d.userMessage+'</div>':'')
+      +(d.userMessage?'<div style="font-size:.7rem;color:var(--tx);margin-top:6px;padding:8px;background:var(--bg);border-radius:8px;border-left:3px solid var(--gr)">'
+        +(currentLang==='en'?'Your message: ':'Votre message : ')+d.userMessage+'</div>':'')
       +'</div></div>';
-    document.getElementById('msgDetailConv').innerHTML='<div style="background:linear-gradient(135deg,var(--gd),var(--gm));border-radius:16px;padding:14px;margin:8px 0">'
-      +'<div style="font-size:.6rem;color:rgba(255,255,255,.7);margin-bottom:4px">'+(d.adminName||'Admin')+' · '+ts+'</div>'
-      +'<div style="font-size:.82rem;color:#fff;line-height:1.5">'+d.adminReply+'</div></div>';
+    document.getElementById('msgDetailConv').innerHTML=
+      '<div style="background:linear-gradient(135deg,var(--gd),var(--gm));border-radius:16px;padding:14px;margin:8px 0">'
+      +'<div style="font-size:.6rem;color:rgba(255,255,255,.7);margin-bottom:5px">'+(d.adminName||'Admin')+' · '+ts+'</div>'
+      +'<div style="font-size:.82rem;color:#fff;line-height:1.55;font-weight:500">'+d.adminReply+'</div></div>';
     document.getElementById('msgDetailReplyWrap').innerHTML='';
     document.getElementById('msgDetailOvl').classList.add('active');
-  }).catch(function(){});
+  }).catch(function(){showToast(currentLang==='en'?'Error':'Erreur','error');});
 }
 
 /* ── Badge messages au démarrage ── */
 function checkMsgBadge(){
   if(!currentUser)return;
   db.collection('reports').where('reportedBy','==',currentUser.email).where('replyRead','==',false).get().then(function(snap){
-    var bdg=document.getElementById('msgBadge');if(bdg){bdg.textContent=snap.size;bdg.style.display=snap.size>0?'flex':'none';}
+    var n=snap.size;
+    var b1=document.getElementById('msgBadge');if(b1){b1.textContent=n;b1.style.display=n>0?'flex':'none';}
+    var b2=document.getElementById('settingsMsgBadge');if(b2){b2.textContent=n;b2.style.display=n>0?'flex':'none';}
   }).catch(function(){});
 }
 function showMessages(){showView('profile');}
