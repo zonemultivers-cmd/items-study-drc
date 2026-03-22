@@ -564,6 +564,20 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
 .adm-nitem .mi{font-size:1.2rem;color:var(--gr);transition:color .2s}
 .adm-nitem-lbl{font-size:.54rem;font-weight:700;color:var(--gr)}
 .adm-nitem.active .mi,.adm-nitem.active .adm-nitem-lbl{color:var(--gd)}
+.adm-slide-panel{position:fixed;inset:0;z-index:950;display:none;flex-direction:column;background:var(--bg);transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1)}
+.adm-slide-panel.active{display:flex;transform:translateX(0)}
+.adm-slide-panel.closing{transform:translateX(100%)}
+.adm-slide-hdr{background:var(--hbg);padding:0 16px;height:56px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.adm-slide-back{background:rgba(255,255,255,.12);border:none;color:#fff;width:36px;height:36px;border-radius:11px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.adm-slide-title{font-family:'Poppins',sans-serif;font-size:.9rem;font-weight:800;color:#fff;flex:1}
+.adm-slide-body{flex:1;overflow-y:auto;padding:16px 14px 100px;-webkit-overflow-scrolling:touch}
+.qr-section{margin-bottom:10px}
+.qr-section-lbl{font-size:.65rem;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.qr-chip{padding:8px 12px;border-radius:10px;font-size:.7rem;font-weight:700;cursor:pointer;margin-bottom:5px;display:block;transition:all .15s}
+.qr-chip:active{transform:scale(.97)}
+.qr-chip.pos{background:var(--gp);border:1.5px solid var(--gl);color:var(--gd)}
+.qr-chip.neg{background:#fff0f0;border:1.5px solid #ffcccc;color:var(--danger)}
+.qr-chip.selected{outline:2.5px solid var(--gd);font-weight:900}
 .adm-panel{display:none}
 .adm-panel.active{display:block}
 
@@ -929,7 +943,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
         <div class="aact" onclick="showMyDash()"><div class="aact-ico" style="background:#e8f0ff"><span class="material-icons-round mi" style="color:#3a5a9a">dashboard</span></div><div class="aact-inf"><div class="aact-n">Mon tableau de bord</div><div class="aact-d">Mes items &amp; signalements</div></div><span class="bdg" id="mydashBadge" style="position:static;min-width:18px;height:18px;border-radius:9px;padding:0 5px;font-size:.55rem;font-weight:800;color:#fff;background:var(--danger);display:none;align-items:center;justify-content:center">0</span><span class="material-icons-round mi" style="color:var(--g)">chevron_right</span></div>
         <div class="aact" onclick="showReports()"><div class="aact-ico" style="background:#fff0f0"><span class="material-icons-round mi" style="color:var(--danger)">flag</span></div><div class="aact-inf"><div class="aact-n">Signalements</div><div class="aact-d">Voir les items signalés</div></div><span class="material-icons-round mi" style="color:var(--g)">chevron_right</span></div>
       </div>
-      <div class="aact" onclick="closeSettings();setTimeout(function(){showView('profile');},300)"><div class="aact-ico" style="background:#e8f0ff"><span class="material-icons-round mi" style="color:#3a5a9a">forum</span></div><div class="aact-inf"><div class="aact-n">Messages</div><div class="aact-d">Voir les réponses aux signalements</div></div><span class="bdg" id="settingsMsgBadge" style="position:static;min-width:18px;height:18px;border-radius:9px;padding:0 5px;font-size:.55rem;font-weight:800;color:#fff;background:var(--danger);display:none;align-items:center;justify-content:center">0</span><span class="material-icons-round mi" style="color:var(--g)">chevron_right</span></div>
+
       <div class="aact" onclick="doSignOut()" style="margin-top:12px"><div class="aact-ico" style="background:#fff0f0"><span class="material-icons-round mi" style="color:#c00">logout</span></div><div class="aact-inf"><div class="aact-n" data-t="signOut">Se déconnecter</div><div class="aact-d" data-t="signOutSub">Quitter votre session</div></div></div>
     </div>
     <div id="aadd" style="display:none">
@@ -1114,7 +1128,7 @@ function showApp(){
     document.getElementById('app').style.display='flex';
     applyTheme();applyLang();generateNotifs();updateWelcome();renderRecommended();
     document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.dataset.lang===currentLang);});
-    if(!userProfile||!userProfile.guided)setTimeout(startGuide,800);setTimeout(checkMyNotifs,3500);setTimeout(checkMsgBadge,4000);
+    if(!userProfile||!userProfile.guided)setTimeout(startGuide,800);setTimeout(checkMyNotifs,3500);setTimeout(checkUserNotifs,4000);
   },3300);
 }
 
@@ -1499,9 +1513,7 @@ function renderProfile(){
   var myItems=userProfile?items.filter(function(it){return it.oid===userProfile.option;}).length:0;
   h+='<div class="profile-card"><div class="profile-card-t"><span class="material-icons-round mi">bar_chart</span>'+t('personalStats')+'</div><div class="strow"><div class="stitem"><div class="stnum">'+myItems+'</div><div class="stlbl">Items</div></div><div class="stitem"><div class="stnum">'+favs.length+'</div><div class="stlbl">'+t('favorites')+'</div></div></div></div>';
   if(isAdmin)h+='<div class="profile-card"><div class="profile-card-t"><span class="material-icons-round mi">admin_panel_settings</span>Admin</div><div class="profile-row"><span class="profile-row-label">Status</span><span class="profile-row-value" style="color:var(--gm)">👑 Admin</span></div></div>';
-  h+='<div class="profile-card" id="profileMsgCard"><div class="profile-card-t"><span class="material-icons-round mi">forum</span>Messages <span id="profileMsgBadge" style="display:none;background:var(--danger);color:#fff;font-size:.55rem;font-weight:800;padding:2px 7px;border-radius:8px;margin-left:6px">0</span></div><div id="profileMsgList"><div style="text-align:center;padding:12px"><div class="auth-spin" style="display:inline-block"></div></div></div></div>';
   pb.innerHTML=h;
-  loadProfileMessages();
 }
 
 function showAbout(){
@@ -2168,9 +2180,7 @@ function admStatCard(ico,color,val,lbl){
     +'<div class="adm-stat-val">'+val+'</div>'
     +'<div class="adm-stat-lbl">'+lbl+'</div></div>';
 }
-function admMarkRep(id){
-  db.collection('reports').doc(id).update({read:true}).then(function(){admLoadDash();admLoadReports();checkMyNotifs();}).catch(function(){});
-}
+
 
 /* ── MES ITEMS ── */
 function admSort(type,el){
@@ -2388,12 +2398,7 @@ function admResetBtn(){
 var currentReportId=null;
 
 /* ── Fermeture modal détail ── */
-function closeMsgDetail(){
-  var o=document.getElementById('msgDetailOvl');
-  var s=document.getElementById('msgDetailSheet');
-  s.classList.add('closing');
-  setTimeout(function(){o.classList.remove('active');s.classList.remove('closing');currentReportId=null;},280);
-}
+
 
 /* ── Ouvrir détail signalement (admin) ── */
 function openReportDetail(reportId){
@@ -2403,61 +2408,91 @@ function openReportDetail(reportId){
     var d=doc.data();
     if(!d.read)db.collection('reports').doc(reportId).update({read:true}).then(function(){admLoadDash();checkMyNotifs();}).catch(function(){});
     var ts='';try{if(d.createdAt&&d.createdAt.toDate)ts=d.createdAt.toDate().toLocaleString('fr-FR');}catch(e){}
-    document.getElementById('msgDetailTitle').textContent='📋 '+(d.reporterName||d.reportedBy);
-    document.getElementById('msgDetailTime').textContent=ts+(d.reporterSchool?' · '+d.reporterSchool:'')+(d.reporterProvince?' · '+d.reporterProvince:'');
-    document.getElementById('msgDetailItemRow').innerHTML='<div class="msg-item-row">'
+    document.getElementById('admSlideTitle').textContent=(d.reporterName||d.reportedBy)+' · '+(d.read?'✓':'🔴 Nouveau');
+    var bodyHtml='';
+    /* Item */
+    bodyHtml+='<div class="msg-item-row" style="margin-bottom:14px">'
       +(d.itemImg?'<div class="msg-item-thumb"><img src="'+d.itemImg+'" loading="lazy"/></div>':'')
-      +'<div class="msg-item-info"><div class="msg-item-title">'+d.itemMat+' · '+d.itemYr+(d.itemTitle?' · '+d.itemTitle:'')+'</div>'
+      +'<div class="msg-item-info">'
+      +'<div class="msg-item-title">'+d.itemMat+' · '+d.itemYr+(d.itemTitle?' · '+d.itemTitle:'')+'</div>'
       +'<div class="msg-item-meta">'+(d.reasons?d.reasons.join(' · '):(d.reason||''))+'</div>'
-      +(d.userMessage?'<div style="font-size:.7rem;color:var(--tx);margin-top:6px;padding:8px;background:var(--bg);border-radius:8px;border-left:3px solid var(--g)">💬 '+d.userMessage+'</div>':'')
+      +'<div style="font-size:.58rem;color:var(--gr);margin-top:2px">'+ts+'</div>'
       +'</div></div>';
-    var replyWrap=document.getElementById('msgDetailReplyWrap');
-    var convEl=document.getElementById('msgDetailConv');
-    if(d.adminReply){
-      convEl.innerHTML='<div style="background:var(--gp);border:1.5px solid var(--gl);border-radius:12px;padding:12px;margin-bottom:8px">'
-        +'<div style="font-size:.6rem;font-weight:800;color:var(--gd);margin-bottom:4px">✅ Votre réponse envoyée</div>'
-        +'<div style="font-size:.78rem;color:var(--tx)">'+d.adminReply+'</div></div>';
-      replyWrap.innerHTML='<button class="btng" onclick="deleteReport(\''+reportId+'\')" style="color:var(--danger);border-color:var(--danger)"><span class="material-icons-round mi" style="font-size:.9rem;vertical-align:middle">delete</span> Supprimer ce signalement</button>';
-    }else{
-      convEl.innerHTML='';
-      var qrHtml='<div style="font-size:.65rem;font-weight:800;color:var(--gd);margin-bottom:8px">⚡ Réponses rapides positives</div>'
-        +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">'
-        +QUICK_REPLIES_POS.map(function(r){return'<div class="qr-chip pos" onclick="admSelectQuick(this)" style="padding:7px 12px;background:var(--gp);border:1.5px solid var(--gl);border-radius:10px;font-size:.68rem;font-weight:700;color:var(--gd);cursor:pointer">'+r+'</div>';}).join('')+'</div>'
-        +'<div style="font-size:.65rem;font-weight:800;color:var(--danger);margin-bottom:8px">⚡ Réponses rapides négatives</div>'
-        +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">'
-        +QUICK_REPLIES_NEG.map(function(r){return'<div class="qr-chip neg" onclick="admSelectQuick(this)" style="padding:7px 12px;background:#fff0f0;border:1.5px solid #ffcccc;border-radius:10px;font-size:.68rem;font-weight:700;color:var(--danger);cursor:pointer">'+r+'</div>';}).join('')+'</div>'
-        +'<div style="font-size:.65rem;font-weight:800;color:var(--gr);margin-bottom:6px">✏️ Ou répondez personnellement</div>'
-        +'<div class="msg-input-wrap"><textarea class="msg-input" id="msgReplyInput" placeholder="Écrivez votre réponse..." rows="2"></textarea>'
-        +'<button class="msg-send-btn" onclick="sendAdminReply()"><span class="material-icons-round mi">send</span></button></div>';
-      replyWrap.innerHTML=qrHtml;
+    /* Infos signaleur */
+    bodyHtml+='<div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:14px;border:1.5px solid var(--bl)">'
+      +'<div style="font-size:.65rem;font-weight:800;color:var(--tx);margin-bottom:6px">👤 Signaleur</div>'
+      +'<div style="font-size:.72rem;color:var(--tx);font-weight:700">'+(d.reporterName||d.reportedBy)+'</div>'
+      +(d.reporterSchool?'<div style="font-size:.62rem;color:var(--gr)">'+d.reporterSchool+' · '+d.reporterProvince+'</div>':'')
+      +'</div>';
+    /* Message de l'élève */
+    if(d.userMessage){
+      bodyHtml+='<div style="background:var(--gp);border-left:3px solid var(--g);border-radius:10px;padding:12px;margin-bottom:14px">'
+        +'<div style="font-size:.6rem;font-weight:800;color:var(--gd);margin-bottom:4px">💬 Message de l\'élève</div>'
+        +'<div style="font-size:.78rem;color:var(--tx);line-height:1.5">'+d.userMessage+'</div></div>';
     }
-    document.getElementById('msgDetailOvl').classList.add('active');
+    /* Réponse déjà envoyée */
+    if(d.adminReply){
+      bodyHtml+='<div style="background:linear-gradient(135deg,var(--gd),var(--gm));border-radius:14px;padding:14px;margin-bottom:14px">'
+        +'<div style="font-size:.6rem;color:rgba(255,255,255,.7);margin-bottom:4px">✅ Votre réponse</div>'
+        +'<div style="font-size:.82rem;color:#fff;line-height:1.5">'+d.adminReply+'</div></div>';
+      bodyHtml+='<button class="btng" onclick="admDeleteReport(\''+reportId+'\')" style="color:var(--danger);border-color:var(--danger);width:100%"><span class="material-icons-round mi" style="font-size:.9rem;vertical-align:middle">delete</span> Supprimer ce signalement</button>';
+    }else{
+      /* Réponses rapides */
+      bodyHtml+='<div class="qr-section">'
+        +'<div class="qr-section-lbl" style="color:var(--gd)">✅ Réponses positives</div>'
+        +QUICK_REPLIES_POS.map(function(r){return'<div class="qr-chip pos" onclick="admSelectQR(this,\''+reportId+'\')" data-reply="'+r+'">'+r+'</div>';}).join('')
+        +'</div>'
+        +'<div class="qr-section">'
+        +'<div class="qr-section-lbl" style="color:var(--danger)">❌ Réponses négatives</div>'
+        +QUICK_REPLIES_NEG.map(function(r){return'<div class="qr-chip neg" onclick="admSelectQR(this,\''+reportId+'\')" data-reply="'+r+'">'+r+'</div>';}).join('')
+        +'</div>'
+        +'<div style="font-size:.65rem;font-weight:800;color:var(--gr);margin:10px 0 6px">✏️ Ou répondez personnellement</div>'
+        +'<textarea class="msg-input fin" id="admReplyTxt_'+reportId+'" placeholder="Votre réponse..." rows="3" style="width:100%;resize:none;margin-bottom:10px"></textarea>'
+        +'<button class="btnp" id="admReplyBtn_'+reportId+'" onclick="sendAdminReply(\''+reportId+'\')" style="width:100%"><span class="material-icons-round mi" style="font-size:.9rem">send</span> Envoyer la réponse</button>';
+    }
+    document.getElementById('admSlideBody').innerHTML=bodyHtml;
+    openAdmSlide('Signalement');
   }).catch(function(){showToast('Erreur','error');});
 }
 
 /* ── Envoyer réponse admin ── */
-function sendAdminReply(){
-  var inp=document.getElementById('msgReplyInput');
-  if(!inp||!inp.value.trim()||!currentReportId)return;
+function sendAdminReply(reportId){
+  var inp=document.getElementById('admReplyTxt_'+reportId);
+  if(!inp||!inp.value.trim())return;
   var txt=inp.value.trim();
-  var btn=document.querySelector('#msgDetailReplyWrap .msg-send-btn');
+  var btn=document.getElementById('admReplyBtn_'+reportId);
   if(btn)btn.disabled=true;
-  db.collection('reports').doc(currentReportId).update({
-    adminReply:txt,
-    adminReplyAt:firebase.firestore.FieldValue.serverTimestamp(),
-    adminName:currentUser?(currentUser.displayName||currentUser.email):'Admin',
-    replyRead:false
-  }).then(function(){
-    showToast('Réponse envoyée ✓','send');
-    closeMsgDetail();admLoadReports();admLoadDash();checkMyNotifs();
+  db.collection('reports').doc(reportId).get().then(function(doc){
+    var d=doc.data();
+    return db.collection('reports').doc(reportId).update({
+      adminReply:txt,
+      adminReplyAt:firebase.firestore.FieldValue.serverTimestamp(),
+      adminName:currentUser?(currentUser.displayName||currentUser.email):'Admin',
+      replyRead:false
+    }).then(function(){
+      /* Envoyer notification à l'élève */
+      if(d.reportedBy&&d.reportedBy!=='anonymous'){
+        db.collection('userNotifs').add({
+          toEmail:d.reportedBy,
+          title:'Réponse à votre signalement',
+          desc:txt.substring(0,80)+(txt.length>80?'...':''),
+          icon:'reply',
+          bg:'#e8f0ff',
+          ic:'#3a5a9a',
+          read:false,
+          createdAt:firebase.firestore.FieldValue.serverTimestamp()
+        }).catch(function(){});
+      }
+      showToast('Réponse envoyée ✓','send');
+      closeAdmSlide();
+      admLoadReports();
+      admLoadDash();
+    });
   }).catch(function(){if(btn)btn.disabled=false;showToast('Erreur','error');});
 }
 
 /* ── Vue Messages élève (drawer) ── */
-function showMessages(){
-  showV('messages');scrollT();
-  loadUserMessages();
-}
+
 
 
 /* ── Ouvrir conversation côté élève ── */
@@ -2471,116 +2506,19 @@ var QUICK_REPLIES_POS=['Item corrigé, merci pour le signalement ! ✅','Problè
 var QUICK_REPLIES_NEG=['Item vérifié, aucun problème constaté. ❌','Image normale, qualité conforme. ❌','Ce n\'est pas un doublon, les items sont différents. ❌','Contenu approprié, signalement non retenu. ❌'];
 
 /* ── Sélection réponse rapide ── */
-function admSelectQuick(el){
-  document.querySelectorAll('.qr-chip').forEach(function(c){c.style.outline='none';c.style.fontWeight='700';});
-  el.style.outline='2.5px solid var(--gd)';
-  var inp=document.getElementById('msgReplyInput');if(inp)inp.value=el.textContent;
-}
+
 
 /* ── Supprimer signalement ── */
-function deleteReport(id){
-  if(!confirm('Supprimer définitivement ce signalement ?'))return;
-  db.collection('reports').doc(id).delete().then(function(){
-    showToast('Signalement supprimé','delete');
-    closeMsgDetail();admLoadReports();admLoadDash();
-  }).catch(function(){showToast('Erreur','error');});
-}
+
 
 /* ── Messages dans onglet Profil (élève) ── */
-function loadProfileMessages(){
-  if(!currentUser)return;
-  var lEl=document.getElementById('profileMsgList');
-  if(!lEl)return;
-  lEl.innerHTML='<div style="text-align:center;padding:12px"><div class="auth-spin" style="display:inline-block"></div></div>';
-  db.collection('reports').where('reportedBy','==',currentUser.email).get().then(function(snap){
-    if(!snap.size){
-      lEl.innerHTML='<div style="font-size:.75rem;color:var(--gr);text-align:center;padding:16px">'+(currentLang==='en'?'No messages yet.':'Aucun message pour l\'instant.')+'</div>';
-      return;
-    }
-    var docs=[];
-    snap.forEach(function(doc){docs.push({id:doc.id,d:doc.data()});});
-    docs.sort(function(a,b){
-      var da=a.d.createdAt&&a.d.createdAt.toDate?a.d.createdAt.toDate():new Date(0);
-      var db2=b.d.createdAt&&b.d.createdAt.toDate?b.d.createdAt.toDate():new Date(0);
-      return db2-da;
-    });
-    var unread=docs.filter(function(x){return x.d.adminReply&&!x.d.replyRead;}).length;
-    var bdg=document.getElementById('msgBadge');
-    if(bdg){bdg.textContent=unread;bdg.style.display=unread>0?'flex':'none';}
-    var pbdg=document.getElementById('profileMsgBadge');
-    if(pbdg){pbdg.textContent=unread;pbdg.style.display=unread>0?'inline':'none';}
-    var h='';
-    docs.forEach(function(item){
-      var d=item.d;
-      var hasReply=!!d.adminReply;
-      var isUnread=hasReply&&!d.replyRead;
-      var ts='';try{if(d.createdAt&&d.createdAt.toDate)ts=d.createdAt.toDate().toLocaleDateString('fr-FR');}catch(e){}
-      h+='<div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:8px;'
-        +'border:1.5px solid '+(isUnread?'var(--g)':'var(--bl)')+(isUnread?';background:var(--gp)':'')
-        +';cursor:'+(hasReply?'pointer':'default')+'"'
-        +(hasReply?' onclick="openUserMsg(\''+item.id+'\')"':'')+'>'
-        +'<div style="display:flex;align-items:center;gap:10px">'
-        +(d.itemImg?'<img src="'+d.itemImg+'" style="width:36px;height:46px;object-fit:cover;border-radius:7px;flex-shrink:0"/>':'')
-        +'<div style="flex:1">'
-        +'<div style="font-size:.78rem;font-weight:800;color:var(--tx)">'+d.itemMat+' · '+d.itemYr+(d.itemTitle?' · '+d.itemTitle:'')+'</div>'
-        +'<div style="font-size:.62rem;color:var(--gr);margin-top:2px">'+(d.reasons?d.reasons.join(', '):(d.reason||''))+'</div>'
-        +(hasReply
-          ?'<div style="font-size:.65rem;color:var(--gd);font-weight:700;margin-top:4px">'
-            +(isUnread?'🔔 ':'✅ ')
-            +d.adminReply.substring(0,55)+(d.adminReply.length>55?'...':'')+'</div>'
-          :'<div style="font-size:.62rem;color:var(--gr);margin-top:4px">⏳ '+(currentLang==='en'?'Awaiting response...':'En attente de réponse...')+'</div>')
-        +'</div>'
-        +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">'
-        +'<div style="font-size:.55rem;color:var(--gr)">'+ts+'</div>'
-        +(isUnread?'<div style="width:8px;height:8px;background:var(--g);border-radius:50%"></div>':'')
-        +'</div></div></div>';
-    });
-    lEl.innerHTML=h;
-  }).catch(function(){
-    var lEl2=document.getElementById('profileMsgList');
-    if(lEl2)lEl2.innerHTML='<div style="font-size:.75rem;color:var(--danger);text-align:center;padding:12px">Erreur chargement</div>';
-  });
-}
+
 
 /* ── Voir réponse complète (élève) ── */
-function openUserMsg(reportId){
-  db.collection('reports').doc(reportId).get().then(function(doc){
-    if(!doc.exists)return;
-    var d=doc.data();
-    if(d.adminReply&&!d.replyRead){
-      db.collection('reports').doc(reportId).update({replyRead:true})
-        .then(function(){loadProfileMessages();}).catch(function(){});
-    }
-    currentReportId=reportId;
-    var ts='';try{if(d.adminReplyAt&&d.adminReplyAt.toDate)ts=d.adminReplyAt.toDate().toLocaleString('fr-FR');}catch(e){}
-    document.getElementById('msgDetailTitle').textContent=currentLang==='en'?'💬 Admin Reply':'💬 Réponse de l\'admin';
-    document.getElementById('msgDetailTime').textContent=d.itemMat+' · '+d.itemYr+(d.itemTitle?' · '+d.itemTitle:'');
-    document.getElementById('msgDetailItemRow').innerHTML='<div class="msg-item-row">'
-      +(d.itemImg?'<div class="msg-item-thumb"><img src="'+d.itemImg+'" loading="lazy"/></div>':'')
-      +'<div class="msg-item-info">'
-      +'<div class="msg-item-title">'+d.itemMat+' · '+d.itemYr+'</div>'
-      +'<div class="msg-item-meta">'+(d.reasons?d.reasons.join(', '):(d.reason||''))+'</div>'
-      +(d.userMessage?'<div style="font-size:.7rem;color:var(--tx);margin-top:6px;padding:8px;background:var(--bg);border-radius:8px;border-left:3px solid var(--gr)">'
-        +(currentLang==='en'?'Your message: ':'Votre message : ')+d.userMessage+'</div>':'')
-      +'</div></div>';
-    document.getElementById('msgDetailConv').innerHTML=
-      '<div style="background:linear-gradient(135deg,var(--gd),var(--gm));border-radius:16px;padding:14px;margin:8px 0">'
-      +'<div style="font-size:.6rem;color:rgba(255,255,255,.7);margin-bottom:5px">'+(d.adminName||'Admin')+' · '+ts+'</div>'
-      +'<div style="font-size:.82rem;color:#fff;line-height:1.55;font-weight:500">'+d.adminReply+'</div></div>';
-    document.getElementById('msgDetailReplyWrap').innerHTML='';
-    document.getElementById('msgDetailOvl').classList.add('active');
-  }).catch(function(){showToast(currentLang==='en'?'Error':'Erreur','error');});
-}
+
 
 /* ── Badge messages au démarrage ── */
-function checkMsgBadge(){
-  if(!currentUser)return;
-  db.collection('reports').where('reportedBy','==',currentUser.email).get().then(function(snap){
-    var n=0;snap.forEach(function(doc){var d=doc.data();if(d.adminReply&&!d.replyRead)n++;});
-    var b1=document.getElementById('msgBadge');if(b1){b1.textContent=n;b1.style.display=n>0?'flex':'none';}
-    var b2=document.getElementById('settingsMsgBadge');if(b2){b2.textContent=n;b2.style.display=n>0?'flex':'none';}
-  }).catch(function(){});
-}
+
 function showMessages(){showView('profile');}
 
 /* ── Fermer éditeur inline ── */
@@ -2679,7 +2617,61 @@ function doSaveUpdate(id,data,okEl,errEl){
 function admPreviewItem(id){
   var it=items.find(function(i){return i.id===id;});
   if(!it)return;
-  openModal(id);
+  var o=ALLOPTS.find(function(x){return x.id===it.oid;});
+  var img=it.imgUrl||it.img||null;
+  var bodyHtml='';
+  if(it.type==='pdf'&&it.pdfUrl){
+    bodyHtml='<div style="font-size:.78rem;font-weight:700;color:var(--tx);margin-bottom:10px">'+(it.courseTitle||it.mat)+' · '+it.yr+'</div>'
+      +'<iframe src="'+it.pdfUrl+'#toolbar=0&navpanes=0" style="width:100%;height:65vh;border:none;border-radius:12px;display:block;background:#525659"></iframe>';
+  }else if(img){
+    bodyHtml='<div style="font-size:.78rem;font-weight:700;color:var(--tx);margin-bottom:10px">'+(it.courseTitle||it.mat)+' · '+it.yr+'</div>'
+      +'<img src="'+img+'" style="width:100%;border-radius:14px;box-shadow:var(--sh)" loading="lazy"/>'
+      +'<div style="margin-top:12px;background:var(--bg);border-radius:12px;padding:12px">'
+      +'<div style="font-size:.7rem;font-weight:800;color:var(--tx)">'+(it.courseTitle||'')+'</div>'
+      +'<div style="font-size:.65rem;color:var(--gr);margin-top:3px">'+(o?o.name:'')+' · '+it.mat+' · '+it.yr+(it.views?' · 👁 '+it.views:'')+'</div>'
+      +'</div>';
+  }else{
+    bodyHtml='<div class="empty"><span class="material-icons-round mi">description</span><div class="empty-txt">Aperçu non disponible</div></div>';
+  }
+  document.getElementById('admSlideBody').innerHTML=bodyHtml;
+  openAdmSlide((it.courseTitle||it.mat)+' · '+it.yr);
+}
+
+/* ── Panneau glissant admin ── */
+function openAdmSlide(title){
+  document.getElementById('admSlideTitle').textContent=title||'';
+  var p=document.getElementById('admSlidePanel');
+  p.style.display='flex';
+  requestAnimationFrame(function(){p.classList.add('active');});
+}
+function closeAdmSlide(){
+  var p=document.getElementById('admSlidePanel');
+  p.classList.add('closing');
+  setTimeout(function(){p.classList.remove('active','closing');p.style.display='none';},320);
+}
+function admSelectQR(el,reportId){
+  document.querySelectorAll('.qr-chip').forEach(function(c){c.classList.remove('selected');});
+  el.classList.add('selected');
+  var inp=document.getElementById('admReplyTxt_'+reportId);
+  if(inp)inp.value=el.getAttribute('data-reply');
+}
+function admDeleteReport(id){
+  if(!confirm('Supprimer définitivement ?'))return;
+  db.collection('reports').doc(id).delete().then(function(){
+    showToast('Supprimé','delete');closeAdmSlide();admLoadReports();admLoadDash();
+  }).catch(function(){showToast('Erreur','error');});
+}
+
+/* ── Notifications élève depuis Firebase ── */
+function checkUserNotifs(){
+  if(!currentUser)return;
+  db.collection('userNotifs').where('toEmail','==',currentUser.email).where('read','==',false).get().then(function(snap){
+    snap.forEach(function(doc){
+      var d=doc.data();
+      addNotif(d.title,d.desc,d.icon||'reply',d.bg||'#e8f0ff',d.ic||'#3a5a9a',true);
+      db.collection('userNotifs').doc(doc.id).update({read:true}).catch(function(){});
+    });
+  }).catch(function(){});
 }
 </script>
 
@@ -2797,7 +2789,6 @@ function admPreviewItem(id){
         </div>
       </div>
       <div class="aact" onclick="toggleTheme()"><div class="aact-ico" style="background:var(--gl)"><span class="material-icons-round mi" style="color:var(--gd)">dark_mode</span></div><div class="aact-inf"><div class="aact-n">Mode sombre</div><div class="aact-d">Changer l'apparence</div></div></div>
-      <div class="aact" style="margin-top:8px" onclick="closeAdminInterface();setTimeout(function(){showView('profile');},300)"><div class="aact-ico" style="background:#e8f0ff"><span class="material-icons-round mi" style="color:#3a5a9a">forum</span></div><div class="aact-inf"><div class="aact-n">Messages signalements</div><div class="aact-d">Voir les échanges avec les élèves</div></div><span class="material-icons-round mi" style="color:var(--g)">chevron_right</span></div>
       <div class="aact" style="margin-top:12px" onclick="doSignOut()"><div class="aact-ico" style="background:#fff0f0"><span class="material-icons-round mi" style="color:#c00">logout</span></div><div class="aact-inf"><div class="aact-n">Se déconnecter</div><div class="aact-d">Quitter votre session</div></div></div>
     </div>
 
@@ -2813,22 +2804,14 @@ function admPreviewItem(id){
   </div>
 </div>
 
-<!-- MODAL DÉTAIL SIGNALEMENT -->
-<div class="msg-ovl" id="msgDetailOvl" onclick="if(event.target===this)closeMsgDetail()">
-  <div class="msg-sheet" id="msgDetailSheet">
-    <div class="msg-handle"></div>
-    <div class="atitle" id="msgDetailTitle">📋 Détail du signalement</div>
-    <div class="asub" id="msgDetailTime"></div>
-    <div id="msgDetailItemRow"></div>
-    <div id="msgDetailReasons" class="msg-reasons"></div>
-    <div id="msgDetailConv" style="margin-bottom:12px"></div>
-    <div id="msgDetailReplyWrap">
-      <div class="msg-input-wrap">
-        <textarea class="msg-input" id="msgReplyInput" placeholder="Répondre à l'élève..." rows="2"></textarea>
-        <button class="msg-send-btn" onclick="sendAdminReply()"><span class="material-icons-round mi">send</span></button>
-      </div>
-    </div>
+
+<!-- PANNEAU GLISSANT ADMIN -->
+<div class="adm-slide-panel" id="admSlidePanel">
+  <div class="adm-slide-hdr">
+    <button class="adm-slide-back" onclick="closeAdmSlide()"><span class="material-icons-round mi">arrow_back</span></button>
+    <div class="adm-slide-title" id="admSlideTitle">Détail</div>
   </div>
+  <div class="adm-slide-body" id="admSlideBody"></div>
 </div>
 </body>
-          </html>
+  </html>
