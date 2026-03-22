@@ -131,6 +131,10 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
 .ob-step{display:flex;justify-content:center;gap:6px;margin-bottom:20px}
 .ob-step-dot{width:8px;height:8px;border-radius:4px;background:var(--bl);transition:all .3s}
 .ob-step-dot.active{background:var(--gd);width:24px}
+.ob-lang-btn{flex:1;padding:12px 8px;border:2px solid var(--bl);border-radius:16px;background:var(--bg);cursor:pointer;text-align:center;transition:all .3s;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;color:var(--tx);display:flex;flex-direction:column;align-items:center;gap:5px}
+.ob-lang-btn.active{border-color:var(--gd);background:var(--gl);color:var(--gd)}
+.ob-lang-btn:active{transform:scale(.97)}
+.ob-lang-flag{font-size:1.6rem}
 #app{height:100vh;display:none;flex-direction:column;overflow:hidden}
 .hdr{background:var(--hbg);padding:0 14px;height:58px;display:flex;align-items:center;gap:10px;flex-shrink:0;box-shadow:0 4px 24px rgba(13,74,26,.3);z-index:10}
 .hbtn,.hico{background:rgba(255,255,255,.12);border:none;color:#fff;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;position:relative;overflow:hidden}
@@ -553,6 +557,11 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
     <div class="ob-title" id="obTitle">Parlez-nous de vous</div>
     <div class="ob-sub" id="obSub">Pour personnaliser votre expérience</div>
     <div id="obStep1">
+      <label class="auth-lbl">Langue / Language</label>
+      <div style="display:flex;gap:10px;margin-bottom:16px">
+        <div class="ob-lang-btn active" id="oblang-fr" onclick="selectObLang('fr',this)"><div class="ob-lang-flag">🇫🇷</div>Français</div>
+        <div class="ob-lang-btn" id="oblang-en" onclick="selectObLang('en',this)"><div class="ob-lang-flag">🇬🇧</div>English</div>
+      </div>
       <label class="auth-lbl">Vous êtes / You are</label>
       <div class="ob-role">
         <div class="ob-role-btn active" onclick="selectRole('eleve',this)"><div class="ob-role-ico">🎒</div><div class="ob-role-txt">Élève / Student</div></div>
@@ -974,8 +983,14 @@ function updateAdminUI(){
 
 function loadUserProfile(uid){
   db.collection('users').doc(uid).get().then(function(doc){
-    if(doc.exists&&doc.data().profile){userProfile=doc.data().profile;showApp();}
-    else{showOnboarding();}
+    if(doc.exists&&doc.data().profile){
+      userProfile=doc.data().profile;
+      if(userProfile.lang&&userProfile.lang!==currentLang){
+        currentLang=userProfile.lang;
+        localStorage.setItem('isd_lang',currentLang);
+      }
+      showApp();
+    }else{showOnboarding();}
   }).catch(function(){showOnboarding();});
 }
 
@@ -985,6 +1000,7 @@ function showApp(){
   setTimeout(function(){
     document.getElementById('app').style.display='flex';
     applyTheme();applyLang();generateNotifs();updateWelcome();renderRecommended();
+    document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.dataset.lang===currentLang);});
     if(!localStorage.getItem('isd_guided'))setTimeout(startGuide,800);setTimeout(checkMyNotifs,3500);
   },3300);
 }
@@ -1022,13 +1038,23 @@ function refreshUI(){
   if(curMat&&document.getElementById('view-items').classList.contains('active')){rdrAnnees();rdrGrid();}
 }
 
+function selectObLang(lang,btn){
+  currentLang=lang;localStorage.setItem('isd_lang',lang);
+  document.querySelectorAll('.ob-lang-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  applyLang();
+  var title=document.getElementById('obTitle');
+  var sub=document.getElementById('obSub');
+  if(title)title.textContent=lang==='en'?'Tell us about you':'Parlez-nous de vous';
+  if(sub)sub.textContent=lang==='en'?'To personalize your experience':'Pour personnaliser votre expérience';
+}
 function selectRole(role,btn){obRole=role;document.querySelectorAll('.ob-role-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');document.getElementById('obAvatar').textContent=role==='prof'?'👨‍🏫':'🎒';}
 function obNext(){var opt=document.getElementById('obOption').value;if(!opt){showToast(t('chooseOption'),'error');return;}document.getElementById('obStep1').style.display='none';document.getElementById('obStep2').style.display='block';document.getElementById('obTitle').textContent=currentLang==='en'?'Last step!':'Dernière étape !';document.getElementById('obSub').textContent=currentLang==='en'?'A few more details':'Quelques détails supplémentaires';document.getElementById('obSteps').innerHTML='<div class="ob-step-dot"></div><div class="ob-step-dot active"></div>';}
 function obBack(){document.getElementById('obStep1').style.display='block';document.getElementById('obStep2').style.display='none';document.getElementById('obTitle').textContent=currentLang==='en'?'Tell us about you':'Parlez-nous de vous';document.getElementById('obSub').textContent=currentLang==='en'?'To personalize your experience':'Pour personnaliser votre expérience';document.getElementById('obSteps').innerHTML='<div class="ob-step-dot active"></div><div class="ob-step-dot"></div>';}
 function obFinish(){
   var opt=document.getElementById('obOption').value,province=document.getElementById('obProvince').value,school=document.getElementById('obSchool').value.trim(),age=document.getElementById('obAge').value;
   if(!province){showToast(t('chooseProvince'),'error');return;}
-  var profile={role:obRole,option:opt,province:province,school:school||null,age:age?parseInt(age):null,createdAt:new Date().toISOString()};
+  var profile={role:obRole,option:opt,province:province,school:school||null,age:age?parseInt(age):null,lang:currentLang,createdAt:new Date().toISOString()};
   if(currentUser){
     db.collection('users').doc(currentUser.uid).set({profile:profile},{merge:true}).then(function(){
       userProfile=profile;document.getElementById('onboarding').style.display='none';document.getElementById('app').style.display='flex';
