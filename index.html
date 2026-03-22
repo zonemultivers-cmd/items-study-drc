@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
@@ -634,7 +634,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
       <div id="drawerAdmin" style="display:none">
         <div class="drawer-section">🔐 Administration</div>
         <div class="drawer-item" onclick="openSettings();setTimeout(showAdd,100);closeDrawer()"><span class="material-icons-round mi">add_photo_alternate</span><span data-t="addItem">Ajouter un Item</span></div>
-        <div class="drawer-item" onclick="openSettings();setTimeout(showMg,100);closeDrawer()"><span class="material-icons-round mi">folder_open</span><span data-t="manageItems">Gérer les Items</span></div>
+        <div class="drawer-item" onclick="openSettings();setTimeout(showMyDash,100);closeDrawer()"><span class="material-icons-round mi">folder_open</span><span data-t="manageItems">Gérer les Items</span></div>
       </div>
       <div class="drawer-divider"></div>
       <div class="drawer-item" onclick="doSignOut();closeDrawer()" style="color:var(--danger)"><span class="material-icons-round mi" style="color:var(--danger)">logout</span><span data-t="signOut">Se déconnecter</span></div>
@@ -1523,7 +1523,7 @@ function showAdd(){
 }
 function showMg(){
   document.getElementById('amg').style.display='block';
-  ['apanel-settings','aadd','areports'].forEach(function(s){document.getElementById(s).style.display='none';});
+  ['apanel-settings','aadd','areports','amydash'].forEach(function(s){document.getElementById(s).style.display='none';});
   var mf=document.getElementById('mgFilter');
   mf.innerHTML='<option value="all">'+t('allOptions')+'</option>'+ALLOPTS.map(function(o){return'<option value="'+o.id+'">'+o.name+'</option>';}).join('');
   rdrMg();
@@ -1884,4 +1884,4 @@ if(!navigator.onLine){showOffline();}
   <div class="off-dot"><span></span><span class="pulse"></span><span></span></div>
 </div>
 </body>
-  </html>
+    </html>
