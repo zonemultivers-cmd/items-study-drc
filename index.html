@@ -1744,19 +1744,65 @@ function delItem(id){
   db.collection('items').doc(id).delete().then(function(){var fi=favs.indexOf(id);if(fi>=0){favs.splice(fi,1);saveFavs();}showToast(t('deleted'),'delete');rdrMg();}).catch(function(){showToast('Error','error');});
 }
 function openEdit(id){
-  editItemId=id;var it=items.find(function(i){return i.id===id;});if(!it)return;
-  document.getElementById('editTitle').value=it.courseTitle||'';
+  editItemId=id;
+  var it=items.find(function(i){return i.id===id;});
+  if(!it)return;
   var o=ALLOPTS.find(function(x){return x.id===it.oid;});
-  if(o){document.getElementById('editMat').innerHTML=o.mats.map(function(m){return'<option'+(m===it.mat?' selected':'')+'>'+m+'</option>';}).join('');}
-  document.getElementById('editYr').innerHTML=ANNEES.map(function(a){return'<option value="'+a+'"'+(a===it.yr?' selected':'')+'>'+a+'</option>';}).join('');
-  document.getElementById('editOk').style.display='none';document.getElementById('editErr').style.display='none';
-  document.getElementById('editOvl').classList.add('active');
+  var matsHtml=o?o.mats.map(function(m){return'<option'+(m===it.mat?' selected':'')+'>'+m+'</option>';}).join(''):'';
+  var yrsHtml=ANNEES.map(function(a){return'<option value="'+a+'"'+(a===it.yr?' selected':'')+'>'+a+'</option>';}).join('');
+  var imgUrl=it.imgUrl||it.img||null;
+  var formHtml='<div id="editInline_'+id+'" style="background:var(--gp);border:1.5px solid var(--g);border-radius:14px;padding:14px;margin-top:8px;animation:fu .3s">'
+    +'<div style="font-size:.72rem;font-weight:800;color:var(--gd);margin-bottom:10px">✏️ Modifier l\'item</div>'
+    +'<label class="flbl">Titre du cours *</label>'
+    +'<input type="text" class="fin" id="ei_title_'+id+'" value="'+(it.courseTitle||'')+'" style="margin-bottom:8px"/>'
+    +'<label class="flbl">Matière</label>'
+    +'<select class="fsel" id="ei_mat_'+id+'" style="margin-bottom:8px">'+matsHtml+'</select>'
+    +'<label class="flbl">Année</label>'
+    +'<select class="fsel" id="ei_yr_'+id+'" style="margin-bottom:10px">'+yrsHtml+'</select>'
+    +'<label class="flbl">Remplacer l\'image/PDF (optionnel)</label>'
+    +'<div class="fzone" onclick="document.getElementById(\'ei_file_'+id+'\').click()" style="margin-bottom:8px">'
+    +(imgUrl?'<img src="'+imgUrl+'" style="width:40px;height:50px;object-fit:cover;border-radius:6px"/>':'<span class="material-icons-round mi">add_a_photo</span>')
+    +'<div class="fzone-txt"><strong>Appuyer pour changer</strong><br/>JPG / PNG / PDF · Max 5MB</div></div>'
+    +'<input type="file" id="ei_file_'+id+'" accept="image/*,application/pdf" style="display:none" onchange="admEditPrevFile(\''+id+'\',event)"/>'
+    +'<div id="ei_prev_'+id+'" style="display:none;margin-bottom:8px"></div>'
+    +'<div id="ei_err_'+id+'" class="aerr" style="display:none"></div>'
+    +'<div id="ei_ok_'+id+'" class="aok" style="display:none"></div>'
+    +'<div style="display:flex;gap:8px;margin-top:6px">'
+    +'<button class="btnp" style="flex:1" onclick="saveEditInline(\''+id+'\')"><span class="material-icons-round mi" style="font-size:.9rem">save</span> Enregistrer</button>'
+    +'<button class="btng" style="flex:1" onclick="closeEditInline(\''+id+'\')">Annuler</button>'
+    +'</div></div>';
+  /* Fermer tout autre éditeur inline ouvert */
+  document.querySelectorAll('[id^="editInline_"]').forEach(function(el){el.remove();});
+  var itemEl=document.querySelector('.mgitem[data-id="'+id+'"]');
+  if(!itemEl){
+    /* Fallback si data-id pas présent */
+    var allItems=document.querySelectorAll('#admItemsList .mgitem');
+    allItems.forEach(function(el){
+      var btns=el.querySelectorAll('button');
+      btns.forEach(function(b){
+        if(b.getAttribute('onclick')&&b.getAttribute('onclick').indexOf(id)>=0)itemEl=el;
+      });
+    });
+  }
+  if(itemEl){
+    var tmp=document.createElement('div');
+    tmp.innerHTML=formHtml;
+    itemEl.parentNode.insertBefore(tmp.firstChild,itemEl.nextSibling);
+    document.getElementById('editInline_'+id).scrollIntoView({behavior:'smooth',block:'center'});
+  }else{
+    document.getElementById('editOvl').classList.add('active');
+    document.getElementById('editTitle').value=it.courseTitle||'';
+    if(o)document.getElementById('editMat').innerHTML=matsHtml;
+    document.getElementById('editYr').innerHTML=yrsHtml;
+    document.getElementById('editOk').style.display='none';
+    document.getElementById('editErr').style.display='none';
+  }
 }
 function saveEdit(){
   if(!editItemId)return;var title=document.getElementById('editTitle').value.trim(),mat=document.getElementById('editMat').value,yr=parseInt(document.getElementById('editYr').value);
   var errEl=document.getElementById('editErr'),okEl=document.getElementById('editOk');errEl.style.display='none';okEl.style.display='none';
   if(!mat||!yr){errEl.textContent=t('errorFill');errEl.style.display='block';return;}
-  db.collection('items').doc(editItemId).update({courseTitle:title||null,mat:mat,yr:yr}).then(function(){okEl.style.display='block';showToast(t('modified'),'check_circle');setTimeout(function(){document.getElementById('editOvl').classList.remove('active');rdrMg();},1500);}).catch(function(e){errEl.textContent='Error: '+e.message;errEl.style.display='block';});
+  db.collection('items').doc(editItemId).update({courseTitle:title||null,mat:mat,yr:yr}).then(function(){okEl.style.display='block';showToast(t('modified'),'check_circle');setTimeout(function(){document.getElementById('editOvl').classList.remove('active');rdrMg();admRenderItems('');admLoadDash();},1500);}).catch(function(e){errEl.textContent='Error: '+e.message;errEl.style.display='block';});
 }
 
 function fireConfetti(){
@@ -2150,12 +2196,14 @@ function admRenderItems(search){
     var o=ALLOPTS.find(function(x){return x.id===it.oid;});
     var img=it.imgUrl||it.img||null;var ds='';
     try{if(it.createdAt&&it.createdAt.toDate)ds=it.createdAt.toDate().toLocaleDateString('fr-FR');}catch(e){}
-    return'<div class="mgitem" style="animation:fr .3s ease '+(i*.04)+'s both">'
+    return'<div class="mgitem" data-id="'+it.id+'" style="animation:fr .3s ease '+(i*.04)+'s both">'
       +'<div class="mgthumb">'+(it.type==='pdf'?'<span class="material-icons-round mi" style="color:var(--danger)">picture_as_pdf</span>':(img?'<img src="'+img+'" loading="lazy"/>':'<span class="material-icons-round mi">description</span>'))+'</div>'
       +'<div class="mginfo"><div class="mgname">'+(it.courseTitle?it.courseTitle+' · ':'')+it.mat+' · '+it.yr+'</div>'
       +'<div class="mgmeta">'+(o?o.name:'')+' · '+ds+(it.views?' · 👁 '+it.views:'')+'</div></div>'
-      +'<div class="mgacts"><button class="mgedit" onclick="openEdit(\''+it.id+'\')"><span class="material-icons-round mi">edit</span></button>'
-      +'<button class="mgdel" onclick="admDelItem(\''+it.id+'\')"><span class="material-icons-round mi">delete</span></button></div></div>';
+      +'<div class="mgacts">'
+      +'<button style="width:30px;height:30px;border:none;border-radius:9px;background:#e8f7e0;color:var(--gd);cursor:pointer;display:flex;align-items:center;justify-content:center" onclick="admPreviewItem(\''+it.id+'\')" title="Prévisualiser"><span class="material-icons-round mi" style="font-size:.9rem">visibility</span></button>'
+      +'<button class="mgedit" onclick="openEdit(\''+it.id+'\')" title="Modifier"><span class="material-icons-round mi">edit</span></button>'
+      +'<button class="mgdel" onclick="admDelItem(\''+it.id+'\')" title="Supprimer"><span class="material-icons-round mi">delete</span></button></div></div>';
   }).join('');
 }
 function admDelItem(id){
@@ -2527,13 +2575,112 @@ function openUserMsg(reportId){
 /* ── Badge messages au démarrage ── */
 function checkMsgBadge(){
   if(!currentUser)return;
-  db.collection('reports').where('reportedBy','==',currentUser.email).where('replyRead','==',false).get().then(function(snap){
-    var n=snap.size;
+  db.collection('reports').where('reportedBy','==',currentUser.email).get().then(function(snap){
+    var n=0;snap.forEach(function(doc){var d=doc.data();if(d.adminReply&&!d.replyRead)n++;});
     var b1=document.getElementById('msgBadge');if(b1){b1.textContent=n;b1.style.display=n>0?'flex':'none';}
     var b2=document.getElementById('settingsMsgBadge');if(b2){b2.textContent=n;b2.style.display=n>0?'flex':'none';}
   }).catch(function(){});
 }
 function showMessages(){showView('profile');}
+
+/* ── Fermer éditeur inline ── */
+function closeEditInline(id){
+  var el=document.getElementById('editInline_'+id);
+  if(el)el.remove();
+}
+
+/* ── Preview fichier dans éditeur inline ── */
+var admEditNewFile=null;
+function admEditPrevFile(id,e){
+  var file=e.target.files[0];if(!file)return;
+  if(file.size>5*1024*1024){showToast('Max 5MB','error');return;}
+  admEditNewFile={id:id,file:file};
+  var prevEl=document.getElementById('ei_prev_'+id);if(!prevEl)return;
+  if(file.type==='application/pdf'){
+    prevEl.innerHTML='<div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--gp);border-radius:8px"><span class="material-icons-round mi" style="color:var(--danger)">picture_as_pdf</span><span style="font-size:.72rem;font-weight:700;color:var(--gd)">'+file.name.substring(0,30)+'</span></div>';
+    prevEl.style.display='block';
+  }else{
+    var r=new FileReader();
+    r.onload=function(ev){
+      prevEl.innerHTML='<img src="'+ev.target.result+'" style="width:80px;height:100px;object-fit:cover;border-radius:8px;border:2px solid var(--g)"/>';
+      prevEl.style.display='block';
+    };r.readAsDataURL(file);
+  }
+}
+
+/* ── Enregistrer modification inline ── */
+function saveEditInline(id){
+  var titleEl=document.getElementById('ei_title_'+id);
+  var matEl=document.getElementById('ei_mat_'+id);
+  var yrEl=document.getElementById('ei_yr_'+id);
+  var errEl=document.getElementById('ei_err_'+id);
+  var okEl=document.getElementById('ei_ok_'+id);
+  if(!titleEl||!matEl||!yrEl)return;
+  var title=titleEl.value.trim();
+  var mat=matEl.value;
+  var yr=parseInt(yrEl.value);
+  errEl.style.display='none';okEl.style.display='none';
+  if(!title){errEl.textContent='⚠️ Le titre est obligatoire.';errEl.style.display='block';titleEl.focus();return;}
+  if(!mat||!yr){errEl.textContent=t('errorFill');errEl.style.display='block';return;}
+  var updateData={courseTitle:title,mat:mat,yr:yr};
+  /* Si nouveau fichier sélectionné */
+  if(admEditNewFile&&admEditNewFile.id===id){
+    var file=admEditNewFile.file;
+    if(file.type==='application/pdf'){
+      /* Upload PDF */
+      var r=new FileReader();
+      r.onload=function(ev){
+        var base64=ev.target.result.split(',')[1];
+        var d2=new FormData();d2.append('key',IMGBB_KEY);
+        var xhr=new XMLHttpRequest();xhr.open('POST','https://api.imgbb.com/1/upload');
+        xhr.onload=function(){
+          var url=null;
+          if(xhr.status===200){try{var r2=JSON.parse(xhr.responseText);if(r2.success)url=r2.data.url;}catch(e){}}
+          if(url)updateData.pdfUrl=url;
+          doSaveUpdate(id,updateData,okEl,errEl);
+        };
+        xhr.onerror=function(){errEl.textContent='Erreur réseau';errEl.style.display='block';};
+        d2.append('image',base64);xhr.send(d2);
+      };r.readAsDataURL(file);
+    }else{
+      /* Compresser et upload image */
+      var reader=new FileReader();
+      reader.onload=function(ev){
+        var img2=new Image();
+        img2.onload=function(){
+          var canvas=document.createElement('canvas');
+          var w=img2.width,h=img2.height;
+          if(w>1200){h=Math.round(h*(1200/w));w=1200;}
+          canvas.width=w;canvas.height=h;
+          canvas.getContext('2d').drawImage(img2,0,0,w,h);
+          var b64=canvas.toDataURL('image/jpeg',0.75);
+          uploadToImgBB(b64,function(err,imgUrl){
+            if(err){errEl.textContent=err;errEl.style.display='block';return;}
+            updateData.imgUrl=imgUrl;
+            doSaveUpdate(id,updateData,okEl,errEl);
+          });
+        };img2.src=ev.target.result;
+      };reader.readAsDataURL(file);
+    }
+  }else{
+    doSaveUpdate(id,updateData,okEl,errEl);
+  }
+}
+function doSaveUpdate(id,data,okEl,errEl){
+  db.collection('items').doc(id).update(data).then(function(){
+    okEl.textContent='✅ Modifié !';okEl.style.display='block';
+    showToast(t('modified'),'check_circle');
+    admEditNewFile=null;
+    setTimeout(function(){closeEditInline(id);admRenderItems('');admLoadDash();},1500);
+  }).catch(function(e){errEl.textContent='Erreur: '+e.message;errEl.style.display='block';});
+}
+
+/* ── Prévisualiser item (admin) ── */
+function admPreviewItem(id){
+  var it=items.find(function(i){return i.id===id;});
+  if(!it)return;
+  openModal(id);
+}
 </script>
 
 <div id="offlineScreen">
@@ -2650,6 +2797,7 @@ function showMessages(){showView('profile');}
         </div>
       </div>
       <div class="aact" onclick="toggleTheme()"><div class="aact-ico" style="background:var(--gl)"><span class="material-icons-round mi" style="color:var(--gd)">dark_mode</span></div><div class="aact-inf"><div class="aact-n">Mode sombre</div><div class="aact-d">Changer l'apparence</div></div></div>
+      <div class="aact" style="margin-top:8px" onclick="closeAdminInterface();setTimeout(function(){showView('profile');},300)"><div class="aact-ico" style="background:#e8f0ff"><span class="material-icons-round mi" style="color:#3a5a9a">forum</span></div><div class="aact-inf"><div class="aact-n">Messages signalements</div><div class="aact-d">Voir les échanges avec les élèves</div></div><span class="material-icons-round mi" style="color:var(--g)">chevron_right</span></div>
       <div class="aact" style="margin-top:12px" onclick="doSignOut()"><div class="aact-ico" style="background:#fff0f0"><span class="material-icons-round mi" style="color:#c00">logout</span></div><div class="aact-inf"><div class="aact-n">Se déconnecter</div><div class="aact-d">Quitter votre session</div></div></div>
     </div>
 
@@ -2683,4 +2831,4 @@ function showMessages(){showView('profile');}
   </div>
 </div>
 </body>
-  </html>
+          </html>
