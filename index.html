@@ -323,7 +323,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
 .stbar-n{font-size:.72rem;font-weight:700;color:var(--tx)}
 .stbar-v{font-size:.68rem;font-weight:800;color:var(--gm)}
 .stbar{height:8px;background:var(--bg);border-radius:4px;overflow:hidden}
-.stbar-f{height:100%;border-radius:4px;transition:width .8s;background:linear-gradient(90deg,var(--g),var(--gd))}
+.stbar-f{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--g),var(--gd))}
 .stchart{display:flex;align-items:flex-end;gap:6px;height:100px;padding:10px 0}
 .stchart-bar{flex:1;background:linear-gradient(0deg,var(--g),var(--gd));border-radius:6px 6px 0 0;transition:height .5s;position:relative;min-height:4px}
 .stchart-bar span{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:.5rem;color:var(--gr);font-weight:700}
@@ -1244,15 +1244,17 @@ function closeModal(e){if(e.target===document.getElementById('modal')){document.
 
 function loadPdf(url){
   var pv=document.getElementById('pdfViewer');
-  pv.innerHTML='<div style="padding:20px;text-align:center;color:var(--gr)"><div class="auth-spin" style="display:inline-block;margin-bottom:10px"></div><br/>Chargement du PDF...</div>';
+  pv.innerHTML='<div style="padding:20px;text-align:center;color:var(--gr)"><div class="auth-spin" style="display:inline-block;margin-bottom:10px"></div><br/>Chargement...</div>';
+  var wrap=document.createElement('div');
+  wrap.style.cssText='width:100%;height:72vh;overflow:auto;-webkit-overflow-scrolling:touch;background:#525659;border-radius:12px;display:flex;flex-direction:column;align-items:center';
   var iframe=document.createElement('iframe');
-  iframe.src=url;
-  iframe.style.cssText='width:100%;height:70vh;border:none;border-radius:12px;display:block;background:#fff';
-  iframe.onload=function(){pv.innerHTML='';pv.appendChild(iframe);};
-  iframe.onerror=function(){
-    pv.innerHTML='<div style="padding:20px;text-align:center"><span class="material-icons-round mi" style="font-size:2rem;color:var(--danger)">picture_as_pdf</span><div style="font-size:.8rem;color:var(--gr);margin-top:8px">Aperçu non disponible</div><a href="'+url+'" target="_blank" style="display:inline-block;margin-top:10px;padding:8px 16px;background:var(--gd);color:#fff;border-radius:10px;font-size:.8rem;font-weight:700;text-decoration:none">Ouvrir le PDF</a></div>';
-  };
-  setTimeout(function(){if(pv.querySelector('.auth-spin')){pv.innerHTML='';pv.appendChild(iframe);}},500);
+  iframe.src=url+'#toolbar=0&navpanes=0&scrollbar=1&zoom=page-width';
+  iframe.style.cssText='width:100%;min-height:72vh;border:none;display:block;flex:1';
+  iframe.allow='fullscreen';
+  wrap.appendChild(iframe);
+  var loaded=false;
+  iframe.onload=function(){if(!loaded){loaded=true;pv.innerHTML='';pv.appendChild(wrap);}};
+  setTimeout(function(){if(!loaded){loaded=true;pv.innerHTML='';pv.appendChild(wrap);}},800);
 }
 function renderPdf(url){loadPdf(url);}
 function renderPdfPage(){}
@@ -1317,7 +1319,7 @@ function renderStats(){
   var totalViews=0;items.forEach(function(it){totalViews+=(it.views||0);});
   var h='<div class="stcard"><div class="stcard-t"><span class="material-icons-round mi">analytics</span>'+t('overview')+'</div><div class="strow"><div class="stitem"><div class="stnum">'+total+'</div><div class="stlbl">Items</div></div><div class="stitem"><div class="stnum">'+tf+'</div><div class="stlbl">'+t('favorites')+'</div></div><div class="stitem"><div class="stnum">'+totalViews+'</div><div class="stlbl">Vues</div></div><div class="stitem"><div class="stnum">'+userCount+'</div><div class="stlbl">Users</div></div></div></div>';
   var mx=Math.max(gi,ti,1);
-  function barPct(v,m){return Math.min(Math.round(v/m*100)*0.85,85);}
+  function barPct(v,m){if(v<=0)return 0;return Math.max(8,Math.min(Math.round(v/m*100)*0.82,82));}
   h+='<div class="stcard"><div class="stcard-t"><span class="material-icons-round mi">donut_large</span>Par section</div><div class="stbar-w"><div class="stbar-l"><span class="stbar-n">📚 Générale</span><span class="stbar-v">'+gi+'</span></div><div class="stbar"><div class="stbar-f" style="--bar-target:'+barPct(gi,mx)+'%;animation-delay:.1s"></div></div></div><div class="stbar-w"><div class="stbar-l"><span class="stbar-n">⚙️ Technique</span><span class="stbar-v">'+ti+'</span></div><div class="stbar"><div class="stbar-f" style="--bar-target:'+barPct(ti,mx)+'%;animation-delay:.25s"></div></div></div></div>';
   if(oc.length){var mo=oc[0].c;h+='<div class="stcard"><div class="stcard-t"><span class="material-icons-round mi">school</span>Par option</div>';oc.forEach(function(x,xi){h+='<div class="stbar-w"><div class="stbar-l"><span class="stbar-n">'+x.n+'</span><span class="stbar-v">'+x.c+'</span></div><div class="stbar"><div class="stbar-f" style="--bar-target:'+barPct(x.c,mo)+'%;animation-delay:'+(0.1+xi*0.12)+'s"></div></div></div>';});h+='</div>';}
   if(yrs.length){var my=Math.max.apply(null,yrs.map(function(y){return yc[y];}));h+='<div class="stcard"><div class="stcard-t"><span class="material-icons-round mi">timeline</span>Par année</div><div class="stchart">';yrs.forEach(function(y){h+='<div class="stchart-bar" style="height:'+Math.max(Math.round(yc[y]/my*100),5)+'%"><div class="stcv">'+yc[y]+'</div><span>'+String(y).slice(-2)+'</span></div>';});h+='</div></div>';}
@@ -1526,18 +1528,22 @@ function addItem(){
     },700);
   }else{
     stepEl.textContent='📤 Upload PDF...';btn.innerHTML='<div class="auth-spin" style="display:inline-block"></div> Upload...';
+    setTimeout(function(){upFill.style.width='20%';},100);
     var r=new FileReader();r.onload=function(ev){
+      upFill.style.width='45%';
       var base64=ev.target.result.split(',')[1];
       var d2=new FormData();d2.append('key',IMGBB_KEY);
       var xhr2=new XMLHttpRequest();xhr2.open('POST','https://api.imgbb.com/1/upload');
       xhr2.onload=function(){
+        upFill.style.width='80%';
         var pdfUrl=null;
         if(xhr2.status===200){try{var r2=JSON.parse(xhr2.responseText);if(r2.success)pdfUrl=r2.data.url;}catch(e){}}
         if(!pdfUrl){
           var ob=URL.createObjectURL(selPdf);pdfUrl=ob;
           showToast('PDF stocké localement','info');
         }
-        db.collection('items').add({oid:oid,mat:mat,yr:parseInt(yr),courseTitle:title||null,pdfUrl:pdfUrl,type:'pdf',views:0,createdBy:currentUser?currentUser.email:'',createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){onPublished(okEl,btn,stepEl);}).catch(function(e){resetPubBtn();errEl.textContent='Error: '+e.message;errEl.style.display='block';});
+        upFill.style.width='95%';
+        db.collection('items').add({oid:oid,mat:mat,yr:parseInt(yr),courseTitle:title||null,pdfUrl:pdfUrl,type:'pdf',views:0,createdBy:currentUser?currentUser.email:'',createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){upFill.style.width='100%';setTimeout(function(){onPublished(okEl,btn,stepEl);},300);}).catch(function(e){resetPubBtn();errEl.textContent='Error: '+e.message;errEl.style.display='block';});
       };xhr2.onerror=function(){resetPubBtn();errEl.textContent='Erreur réseau';errEl.style.display='block';};
       d2.append('image',base64);xhr2.send(d2);
     };r.readAsDataURL(selPdf);
@@ -1564,7 +1570,9 @@ function resetPubBtn(){
 
 function rdrMg(){
   var c=document.getElementById('mgcnt'),l=document.getElementById('mglist'),fv=document.getElementById('mgFilter').value;
-  var filtered=fv==='all'?items:items.filter(function(it){return it.oid===fv;});
+  var me=currentUser?currentUser.email:'';
+  var myItems=items.filter(function(it){return it.createdBy===me;});
+  var filtered=fv==='all'?myItems:myItems.filter(function(it){return it.oid===fv;});
   c.textContent=filtered.length+' item'+(filtered.length!==1?'s':'');
   if(!filtered.length){l.innerHTML='<div class="empty"><span class="material-icons-round mi">folder_open</span><div class="empty-txt">Aucun item</div></div>';return;}
   l.innerHTML=filtered.slice().sort(function(a,b){return(b.yr||0)-(a.yr||0);}).map(function(it,idx){
@@ -1801,4 +1809,4 @@ function checkMyNotifs(){
 }
 </script>
 </body>
-                                                                          </html>
+    </html>
