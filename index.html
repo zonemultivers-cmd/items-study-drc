@@ -712,7 +712,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
       <button class="hico" onclick="toggleSearch()"><span class="material-icons-round mi">search</span></button>
       <button class="hico" onclick="showView('notifs')"><span class="material-icons-round mi">notifications</span><span class="bdg" id="notifBdg" style="display:none">0</span></button>
       <button class="hico" onclick="toggleTheme()"><span class="material-icons-round mi" id="themeIcon">dark_mode</span></button>
-      <button class="hico" onclick="showView('profile')"><span class="material-icons-round mi">account_circle</span><span class="huser-dot"></span></button>
+      <button class="hico" onclick="showView('profile')"><span class="material-icons-round mi">account_circle</span><span class="huser-dot"></span><span class="bdg" id="msgBadge" style="display:none">0</span></button>
     </div>
   </div>
 
@@ -729,7 +729,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
       <div class="drawer-item" onclick="showView('favs');closeDrawer()"><span class="material-icons-round mi">favorite</span><span data-t="navFavs">Mes Favoris</span></div>
       <div class="drawer-item" onclick="showView('stats');closeDrawer()"><span class="material-icons-round mi">bar_chart</span><span data-t="navStats">Statistiques</span></div>
       <div class="drawer-item" onclick="showView('notifs');closeDrawer()"><span class="material-icons-round mi">notifications</span><span data-t="navNotifs">Notifications</span></div>
-      <div class="drawer-item" onclick="showMessages();closeDrawer()"><span class="material-icons-round mi">forum</span><span>Messages</span><span class="bdg" id="msgBadge" style="position:static;min-width:16px;height:16px;border-radius:8px;padding:0 4px;font-size:.5rem;font-weight:800;color:#fff;background:var(--g);display:none;align-items:center;justify-content:center;margin-left:auto">0</span></div>
+
       <div class="drawer-item" onclick="showView('profile');closeDrawer()"><span class="material-icons-round mi">person</span><span data-t="navProfile">Mon Profil</span></div>
       <div class="drawer-item" onclick="showTerms();closeDrawer()"><span class="material-icons-round mi">gavel</span><span>Conditions d'utilisation</span></div>
       <div class="drawer-divider"></div>
@@ -1498,7 +1498,9 @@ function renderProfile(){
   var myItems=userProfile?items.filter(function(it){return it.oid===userProfile.option;}).length:0;
   h+='<div class="profile-card"><div class="profile-card-t"><span class="material-icons-round mi">bar_chart</span>'+t('personalStats')+'</div><div class="strow"><div class="stitem"><div class="stnum">'+myItems+'</div><div class="stlbl">Items</div></div><div class="stitem"><div class="stnum">'+favs.length+'</div><div class="stlbl">'+t('favorites')+'</div></div></div></div>';
   if(isAdmin)h+='<div class="profile-card"><div class="profile-card-t"><span class="material-icons-round mi">admin_panel_settings</span>Admin</div><div class="profile-row"><span class="profile-row-label">Status</span><span class="profile-row-value" style="color:var(--gm)">👑 Admin</span></div></div>';
+  h+='<div class="profile-card" id="profileMsgCard"><div class="profile-card-t"><span class="material-icons-round mi">forum</span>Messages <span id="profileMsgBadge" style="display:none;background:var(--danger);color:#fff;font-size:.55rem;font-weight:800;padding:2px 7px;border-radius:8px;margin-left:6px">0</span></div><div id="profileMsgList"><div style="text-align:center;padding:12px"><div class="auth-spin" style="display:inline-block"></div></div></div></div>';
   pb.innerHTML=h;
+  loadProfileMessages();
 }
 
 function showAbout(){
@@ -1515,7 +1517,7 @@ function showTerms(){closeSettings();closeDrawer();showV('terms');scrollT();}
 function showTermsAuth(){document.getElementById('authScreen').classList.add('hidden');document.getElementById('app').style.display='flex';setTimeout(function(){showV('terms');scrollT();},100);}
 
 function showV(id){document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});document.getElementById('view-'+id).classList.add('active');}
-function showView(id){showV(id);scrollT();document.querySelectorAll('.nitem').forEach(function(n){n.classList.remove('active');});var nb=document.getElementById('nav-'+id);if(nb)nb.classList.add('active');if(id==='favs')renderFavs();if(id==='stats')renderStats();if(id==='notifs')renderNotifs();if(id==='profile')renderProfile();}
+function showView(id){showV(id);scrollT();document.querySelectorAll('.nitem').forEach(function(n){n.classList.remove('active');});var nb=document.getElementById('nav-'+id);if(nb)nb.classList.add('active');if(id==='favs')renderFavs();if(id==='stats')renderStats();if(id==='notifs')renderNotifs();if(id==='profile'){renderProfile();}}
 function goHome(){showV('home');scrollT();document.querySelectorAll('.nitem').forEach(function(n){n.classList.remove('active');});document.getElementById('nav-home').classList.add('active');updateWelcome();}
 function scrollT(){document.getElementById('scr').scrollTop=0;}
 
@@ -2350,62 +2352,56 @@ function openReportDetail(reportId){
   db.collection('reports').doc(reportId).get().then(function(doc){
     if(!doc.exists)return;
     var d=doc.data();
-    // Marquer comme lu
     if(!d.read)db.collection('reports').doc(reportId).update({read:true}).then(function(){admLoadDash();checkMyNotifs();}).catch(function(){});
-    // Titre + temps
     var ts='';try{if(d.createdAt&&d.createdAt.toDate)ts=d.createdAt.toDate().toLocaleString('fr-FR');}catch(e){}
-    document.getElementById('msgDetailTitle').textContent='📋 Signalement de '+(d.reporterName||d.reportedBy);
+    document.getElementById('msgDetailTitle').textContent='📋 '+(d.reporterName||d.reportedBy);
     document.getElementById('msgDetailTime').textContent=ts+(d.reporterSchool?' · '+d.reporterSchool:'')+(d.reporterProvince?' · '+d.reporterProvince:'');
-    // Item concerné
-    var itemRow=document.getElementById('msgDetailItemRow');
-    itemRow.innerHTML='<div class="msg-item-row">'
+    document.getElementById('msgDetailItemRow').innerHTML='<div class="msg-item-row">'
       +(d.itemImg?'<div class="msg-item-thumb"><img src="'+d.itemImg+'" loading="lazy"/></div>':'')
-      +'<div class="msg-item-info">'
-      +'<div class="msg-item-title">'+d.itemMat+' · '+d.itemYr+(d.itemTitle?' · '+d.itemTitle:'')+'</div>'
-      +'<div class="msg-item-meta">'+(d.reasons?d.reasons.join(', '):(d.reason||''))+'</div>'
+      +'<div class="msg-item-info"><div class="msg-item-title">'+d.itemMat+' · '+d.itemYr+(d.itemTitle?' · '+d.itemTitle:'')+'</div>'
+      +'<div class="msg-item-meta">'+(d.reasons?d.reasons.join(' · '):(d.reason||''))+'</div>'
+      +(d.userMessage?'<div style="font-size:.7rem;color:var(--tx);margin-top:6px;padding:8px;background:var(--bg);border-radius:8px;border-left:3px solid var(--g)">💬 '+d.userMessage+'</div>':'')
       +'</div></div>';
-    // Conversation
-    var convEl=document.getElementById('msgDetailConv');
-    var convHtml='';
-    if(d.userMessage){
-      convHtml+='<div class="msg-bubble-wrap"><div style="font-size:.6rem;font-weight:700;color:var(--gr);margin-bottom:3px">'+(d.reporterName||d.reportedBy)+'</div>'
-        +'<div class="msg-bubble user">'+d.userMessage+'</div></div>';
-    }
-    if(d.adminReply){
-      convHtml+='<div class="msg-bubble-wrap" style="display:flex;flex-direction:column;align-items:flex-end">'
-        +'<div style="font-size:.6rem;font-weight:700;color:var(--gm);margin-bottom:3px">Vous (Admin)</div>'
-        +'<div class="msg-bubble admin">'+d.adminReply+'</div></div>';
-    }
-    convEl.innerHTML=convHtml||'<div style="font-size:.75rem;color:var(--gr);text-align:center;padding:8px">Aucun message</div>';
-    // Cacher bouton réponse si déjà répondu
     var replyWrap=document.getElementById('msgDetailReplyWrap');
-    replyWrap.style.display=d.adminReply?'none':'block';
-    document.getElementById('msgReplyInput').value='';
+    var convEl=document.getElementById('msgDetailConv');
+    if(d.adminReply){
+      convEl.innerHTML='<div style="background:var(--gp);border:1.5px solid var(--gl);border-radius:12px;padding:12px;margin-bottom:8px">'
+        +'<div style="font-size:.6rem;font-weight:800;color:var(--gd);margin-bottom:4px">✅ Votre réponse envoyée</div>'
+        +'<div style="font-size:.78rem;color:var(--tx)">'+d.adminReply+'</div></div>';
+      replyWrap.innerHTML='<button class="btng" onclick="deleteReport(\''+reportId+'\')" style="color:var(--danger);border-color:var(--danger)"><span class="material-icons-round mi" style="font-size:.9rem;vertical-align:middle">delete</span> Supprimer ce signalement</button>';
+    }else{
+      convEl.innerHTML='';
+      var qrHtml='<div style="font-size:.65rem;font-weight:800;color:var(--gd);margin-bottom:8px">⚡ Réponses rapides positives</div>'
+        +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">'
+        +QUICK_REPLIES_POS.map(function(r){return'<div class="qr-chip pos" onclick="admSelectQuick(this)" style="padding:7px 12px;background:var(--gp);border:1.5px solid var(--gl);border-radius:10px;font-size:.68rem;font-weight:700;color:var(--gd);cursor:pointer">'+r+'</div>';}).join('')+'</div>'
+        +'<div style="font-size:.65rem;font-weight:800;color:var(--danger);margin-bottom:8px">⚡ Réponses rapides négatives</div>'
+        +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">'
+        +QUICK_REPLIES_NEG.map(function(r){return'<div class="qr-chip neg" onclick="admSelectQuick(this)" style="padding:7px 12px;background:#fff0f0;border:1.5px solid #ffcccc;border-radius:10px;font-size:.68rem;font-weight:700;color:var(--danger);cursor:pointer">'+r+'</div>';}).join('')+'</div>'
+        +'<div style="font-size:.65rem;font-weight:800;color:var(--gr);margin-bottom:6px">✏️ Ou répondez personnellement</div>'
+        +'<div class="msg-input-wrap"><textarea class="msg-input" id="msgReplyInput" placeholder="Écrivez votre réponse..." rows="2"></textarea>'
+        +'<button class="msg-send-btn" onclick="sendAdminReply()"><span class="material-icons-round mi">send</span></button></div>';
+      replyWrap.innerHTML=qrHtml;
+    }
     document.getElementById('msgDetailOvl').classList.add('active');
-  }).catch(function(){showToast('Erreur chargement','error');});
+  }).catch(function(){showToast('Erreur','error');});
 }
 
 /* ── Envoyer réponse admin ── */
 function sendAdminReply(){
-  var msg=document.getElementById('msgReplyInput').value.trim();
-  if(!msg||!currentReportId)return;
+  var inp=document.getElementById('msgReplyInput');
+  if(!inp||!inp.value.trim()||!currentReportId)return;
+  var txt=inp.value.trim();
   var btn=document.querySelector('#msgDetailReplyWrap .msg-send-btn');
   if(btn)btn.disabled=true;
   db.collection('reports').doc(currentReportId).update({
-    adminReply:msg,
+    adminReply:txt,
     adminReplyAt:firebase.firestore.FieldValue.serverTimestamp(),
-    adminEmail:currentUser?currentUser.email:'',
-    adminName:currentUser?currentUser.displayName||currentUser.email:'Admin',
+    adminName:currentUser?(currentUser.displayName||currentUser.email):'Admin',
     replyRead:false
   }).then(function(){
     showToast('Réponse envoyée ✓','send');
-    closeMsgDetail();
-    admLoadReports();
-    admLoadDash();
-  }).catch(function(){
-    if(btn)btn.disabled=false;
-    showToast('Erreur','error');
-  });
+    closeMsgDetail();admLoadReports();admLoadDash();checkMyNotifs();
+  }).catch(function(){if(btn)btn.disabled=false;showToast('Erreur','error');});
 }
 
 /* ── Vue Messages élève (drawer) ── */
@@ -2501,6 +2497,88 @@ function checkMsgBadge(){
     if(bdg){bdg.textContent=snap.size;bdg.style.display=snap.size>0?'flex':'none';}
   }).catch(function(){});
 }
+
+/* ── Variables réponses rapides ── */
+var QUICK_REPLIES_POS=['Item corrigé, merci pour le signalement ! ✅','Problème résolu, l\'item a été mis à jour. ✅','Merci pour votre vigilance, nous avons pris note. ✅','Item vérifié et validé, qualité conforme. ✅'];
+var QUICK_REPLIES_NEG=['Item vérifié, aucun problème constaté. ❌','Image normale, qualité conforme. ❌','Ce n\'est pas un doublon, les items sont différents. ❌','Contenu approprié, signalement non retenu. ❌'];
+
+/* ── Sélection réponse rapide ── */
+function admSelectQuick(el){
+  document.querySelectorAll('.qr-chip').forEach(function(c){c.style.outline='none';c.style.fontWeight='700';});
+  el.style.outline='2.5px solid var(--gd)';
+  var inp=document.getElementById('msgReplyInput');if(inp)inp.value=el.textContent;
+}
+
+/* ── Supprimer signalement ── */
+function deleteReport(id){
+  if(!confirm('Supprimer définitivement ce signalement ?'))return;
+  db.collection('reports').doc(id).delete().then(function(){
+    showToast('Signalement supprimé','delete');
+    closeMsgDetail();admLoadReports();admLoadDash();
+  }).catch(function(){showToast('Erreur','error');});
+}
+
+/* ── Messages dans onglet Profil (élève) ── */
+function loadProfileMessages(){
+  if(!currentUser)return;
+  var lEl=document.getElementById('profileMsgList');if(!lEl)return;
+  db.collection('reports').where('reportedBy','==',currentUser.email).get().then(function(snap){
+    if(!snap.size){lEl.innerHTML='<div style="font-size:.75rem;color:var(--gr);text-align:center;padding:12px">Aucun message.</div>';return;}
+    var docs=[];snap.forEach(function(doc){docs.push({id:doc.id,d:doc.data()});});
+    docs.sort(function(a,b){var da=a.d.createdAt&&a.d.createdAt.toDate?a.d.createdAt.toDate():new Date(0);var db2=b.d.createdAt&&b.d.createdAt.toDate?b.d.createdAt.toDate():new Date(0);return db2-da;});
+    var unread=docs.filter(function(x){return x.d.adminReply&&!x.d.replyRead;}).length;
+    var bdg=document.getElementById('msgBadge');if(bdg){bdg.textContent=unread;bdg.style.display=unread>0?'flex':'none';}
+    var pbdg=document.getElementById('profileMsgBadge');if(pbdg){pbdg.textContent=unread;pbdg.style.display=unread>0?'inline':'none';}
+    var h='';
+    docs.forEach(function(item){
+      var d=item.d;var hasReply=!!d.adminReply;var isUnread=hasReply&&!d.replyRead;
+      var ts='';try{if(d.createdAt&&d.createdAt.toDate)ts=d.createdAt.toDate().toLocaleDateString('fr-FR');}catch(e){}
+      h+='<div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:8px;border:1.5px solid '+(isUnread?'var(--g)':'var(--bl)')+(isUnread?';background:var(--gp)':'')+';cursor:'+(hasReply?'pointer':'default')+'"'+(hasReply?' onclick="openUserMsg(\''+item.id+'\')"':'')+'>'
+        +'<div style="display:flex;align-items:center;gap:10px">'
+        +(d.itemImg?'<img src="'+d.itemImg+'" style="width:36px;height:46px;object-fit:cover;border-radius:7px;flex-shrink:0"/>':'')
+        +'<div style="flex:1"><div style="font-size:.78rem;font-weight:800;color:var(--tx)">'+d.itemMat+' · '+d.itemYr+(d.itemTitle?' · '+d.itemTitle:'')+'</div>'
+        +'<div style="font-size:.62rem;color:var(--gr);margin-top:2px">'+(d.reasons?d.reasons.join(', '):(d.reason||''))+'</div>'
+        +(hasReply?'<div style="font-size:.65rem;color:var(--gd);font-weight:700;margin-top:4px">'+(isUnread?'🔔 ':'✅ ')+d.adminReply.substring(0,60)+(d.adminReply.length>60?'...':'')+'</div>'
+          :'<div style="font-size:.62rem;color:var(--gr);margin-top:4px">⏳ En attente de réponse...</div>')
+        +'</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div style="font-size:.55rem;color:var(--gr)">'+ts+'</div>'
+        +(isUnread?'<div style="width:8px;height:8px;background:var(--g);border-radius:50%"></div>':'')+'</div></div></div>';
+    });
+    lEl.innerHTML=h;
+  }).catch(function(){});
+}
+
+/* ── Voir réponse complète (élève) ── */
+function openUserMsg(reportId){
+  db.collection('reports').doc(reportId).get().then(function(doc){
+    if(!doc.exists)return;
+    var d=doc.data();
+    if(d.adminReply&&!d.replyRead){db.collection('reports').doc(reportId).update({replyRead:true}).then(function(){loadProfileMessages();}).catch(function(){});}
+    currentReportId=reportId;
+    var ts='';try{if(d.adminReplyAt&&d.adminReplyAt.toDate)ts=d.adminReplyAt.toDate().toLocaleString('fr-FR');}catch(e){}
+    document.getElementById('msgDetailTitle').textContent='💬 Réponse de l\'admin';
+    document.getElementById('msgDetailTime').textContent=ts;
+    document.getElementById('msgDetailItemRow').innerHTML='<div class="msg-item-row">'
+      +(d.itemImg?'<div class="msg-item-thumb"><img src="'+d.itemImg+'" loading="lazy"/></div>':'')
+      +'<div class="msg-item-info"><div class="msg-item-title">'+d.itemMat+' · '+d.itemYr+'</div>'
+      +'<div class="msg-item-meta">'+(d.reasons?d.reasons.join(', '):(d.reason||''))+'</div>'
+      +(d.userMessage?'<div style="font-size:.7rem;color:var(--tx);margin-top:6px;padding:8px;background:var(--bg);border-radius:8px;border-left:3px solid var(--gr)">Votre message : '+d.userMessage+'</div>':'')
+      +'</div></div>';
+    document.getElementById('msgDetailConv').innerHTML='<div style="background:linear-gradient(135deg,var(--gd),var(--gm));border-radius:16px;padding:14px;margin:8px 0">'
+      +'<div style="font-size:.6rem;color:rgba(255,255,255,.7);margin-bottom:4px">'+(d.adminName||'Admin')+' · '+ts+'</div>'
+      +'<div style="font-size:.82rem;color:#fff;line-height:1.5">'+d.adminReply+'</div></div>';
+    document.getElementById('msgDetailReplyWrap').innerHTML='';
+    document.getElementById('msgDetailOvl').classList.add('active');
+  }).catch(function(){});
+}
+
+/* ── Badge messages au démarrage ── */
+function checkMsgBadge(){
+  if(!currentUser)return;
+  db.collection('reports').where('reportedBy','==',currentUser.email).where('replyRead','==',false).get().then(function(snap){
+    var bdg=document.getElementById('msgBadge');if(bdg){bdg.textContent=snap.size;bdg.style.display=snap.size>0?'flex':'none';}
+  }).catch(function(){});
+}
+function showMessages(){showView('profile');}
 </script>
 
 <div id="offlineScreen">
