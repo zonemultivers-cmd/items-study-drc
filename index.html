@@ -811,7 +811,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
       <label class="flbl">Option *</label><select class="fsel" id="aopt" onchange="updMat()"></select>
       <label class="flbl" data-t="subject">Matière *</label><select class="fsel" id="amat"></select>
       <label class="flbl" data-t="year">Année *</label><select class="fsel" id="ayr"></select>
-      <label class="flbl">Titre du cours (optionnel)</label>
+      <label class="flbl">Titre du cours <span style="color:var(--danger)">*</span></label>
       <input type="text" class="fin" id="acourseTitle" placeholder="Ex: Examen de Maths Session 1"/>
       <label class="flbl">Type de fichier</label>
       <div style="display:flex;gap:8px;margin-bottom:12px">
@@ -1505,13 +1505,14 @@ function addItem(){
   var title=document.getElementById('acourseTitle').value.trim();
   var errEl=document.getElementById('aerr'),okEl=document.getElementById('aok'),stepEl=document.getElementById('pubStep');
   errEl.style.display='none';okEl.style.display='none';
+  if(!title){errEl.textContent=currentLang==='en'?'⚠️ Course title is required.':'⚠️ Le titre du cours est obligatoire.';errEl.style.display='block';document.getElementById('acourseTitle').focus();return;}
   if(uploadType==='img'){
     if(!oid||!mat||!yr||!compressedImg){errEl.textContent=t('errorFill');errEl.style.display='block';return;}
     if(scanResult===false){errEl.textContent='⚠️ Image refusée car peu lisible. Veuillez prendre une photo plus claire.';errEl.style.display='block';return;}
   }else{
     if(!oid||!mat||!yr||!selPdf){errEl.textContent=t('errorFill');errEl.style.display='block';return;}
   }
-  var dup=checkDup(oid,mat,yr);
+  var dup=checkDup(oid,mat,yr,title);
   if(dup){errEl.textContent='⚠️ '+dup.mat+' '+dup.yr+(dup.courseTitle?' ('+dup.courseTitle+')':'')+' — '+t('errorDup');errEl.style.display='block';return;}
   var btn=document.getElementById('pubBtn');btn.disabled=true;
   var upFill=document.getElementById('uploadProgFill');upFill.style.width='0%';document.getElementById('uploadProg').style.display='block';
@@ -1719,8 +1720,9 @@ function sendReport(){
 }
 
 /* ===== DOUBLON ===== */
-function checkDup(oid,mat,yr){
-  return items.find(function(it){return it.oid===oid&&it.mat===mat&&it.yr===parseInt(yr);});
+function checkDup(oid,mat,yr,title){
+  var t2=(title||'').trim().toLowerCase();
+  return items.find(function(it){return it.oid===oid&&it.mat===mat&&it.yr===parseInt(yr)&&(it.courseTitle||'').trim().toLowerCase()===t2;});
 }
 
 /* ===== TABLEAU DE BORD ADMIN ===== */
@@ -1809,4 +1811,4 @@ function checkMyNotifs(){
 }
 </script>
 </body>
-    </html>
+          </html>
