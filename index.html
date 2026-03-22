@@ -1001,7 +1001,7 @@ function showApp(){
     document.getElementById('app').style.display='flex';
     applyTheme();applyLang();generateNotifs();updateWelcome();renderRecommended();
     document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.dataset.lang===currentLang);});
-    if(!localStorage.getItem('isd_guided'))setTimeout(startGuide,800);setTimeout(checkMyNotifs,3500);
+    if(!userProfile||!userProfile.guided)setTimeout(startGuide,800);setTimeout(checkMyNotifs,3500);
   },3300);
 }
 
@@ -1059,7 +1059,7 @@ function obFinish(){
     db.collection('users').doc(currentUser.uid).set({profile:profile},{merge:true}).then(function(){
       userProfile=profile;document.getElementById('onboarding').style.display='none';document.getElementById('app').style.display='flex';
       applyTheme();applyLang();generateNotifs();updateWelcome();renderRecommended();
-      showToast(t('welcomeISD'),'school');if(!localStorage.getItem('isd_guided'))setTimeout(startGuide,800);
+      showToast(t('welcomeISD'),'school');setTimeout(startGuide,800);
     }).catch(function(){showToast('Error','error');});
   }
 }
@@ -1671,7 +1671,7 @@ function showGS(){
   if(s.act)s.act();
 }
 function nextGuide(){document.querySelectorAll('.ocard,.mitem,.achip').forEach(function(c){c.classList.remove('hl');});if(guideStep>=GSTEPS.length-1){endGuide();return;}guideStep++;showGS();}
-function endGuide(){document.querySelectorAll('.ocard,.mitem,.achip').forEach(function(c){c.classList.remove('hl');});document.getElementById('guide').classList.add('hidden');localStorage.setItem('isd_guided','1');goHome();showToast(t('guideDone'),'school');}
+function endGuide(){document.querySelectorAll('.ocard,.mitem,.achip').forEach(function(c){c.classList.remove('hl');});document.getElementById('guide').classList.add('hidden');if(currentUser){db.collection('users').doc(currentUser.uid).set({profile:{guided:true}},{merge:true}).catch(function(){});}if(userProfile)userProfile.guided=true;goHome();showToast(t('guideDone'),'school');}
 
 document.addEventListener('DOMContentLoaded',function(){
   applyTheme();
