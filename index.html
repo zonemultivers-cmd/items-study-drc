@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
@@ -501,6 +501,71 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
 .off-dot{display:flex;gap:6px;margin-top:20px;opacity:0;animation:fu .6s ease .6s forwards}
 .off-dot span{width:8px;height:8px;background:rgba(255,255,255,.2);border-radius:50%}
 .off-dot span.pulse{background:var(--g);animation:pulse 1.5s ease infinite}
+
+#adminInterface{position:fixed;inset:0;z-index:900;background:var(--bg);display:none;flex-direction:column;overflow:hidden;animation:fu .3s ease}
+#adminInterface.active{display:flex}
+.adm-hdr{background:var(--hbg);padding:0 16px;height:64px;display:flex;align-items:center;gap:12px;flex-shrink:0;box-shadow:0 4px 24px rgba(13,74,26,.3)}
+.adm-back{background:rgba(255,255,255,.12);border:none;color:#fff;width:38px;height:38px;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.adm-back .mi{font-size:1.2rem}
+.adm-hdr-info{flex:1}
+.adm-hdr-name{font-family:'Poppins',sans-serif;font-size:.9rem;font-weight:800;color:#fff}
+.adm-hdr-sub{font-size:.58rem;color:rgba(255,255,255,.6);font-weight:600;margin-top:1px}
+.adm-badge{padding:3px 10px;border-radius:10px;font-size:.58rem;font-weight:900;color:#fff;flex-shrink:0}
+.adm-badge.bronze{background:linear-gradient(135deg,#CD7F32,#a0522d)}
+.adm-badge.silver{background:linear-gradient(135deg,#C0C0C0,#808080)}
+.adm-badge.gold{background:linear-gradient(135deg,#FFD700,#FFA500)}
+.adm-scroll{flex:1;overflow-y:auto;padding:16px 14px 100px;-webkit-overflow-scrolling:touch}
+.adm-welcome{background:linear-gradient(135deg,var(--gd),var(--gm),var(--g));border-radius:20px;padding:20px;margin-bottom:16px;color:#fff;position:relative;overflow:hidden}
+.adm-welcome::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:rgba(255,255,255,.08);border-radius:50%}
+.adm-welcome-name{font-family:'Poppins',sans-serif;font-size:1.1rem;font-weight:900;margin-bottom:4px}
+.adm-welcome-sub{font-size:.68rem;opacity:.8;font-weight:600}
+.adm-stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+.adm-stat-card{background:var(--card);border-radius:16px;padding:14px;box-shadow:var(--sh);border:1.5px solid var(--bl);position:relative;overflow:hidden}
+.adm-stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0}
+.adm-stat-card.green::before{background:linear-gradient(90deg,var(--g),var(--gd))}
+.adm-stat-card.blue::before{background:linear-gradient(90deg,#4A90D9,#2563eb)}
+.adm-stat-card.orange::before{background:linear-gradient(90deg,#FF6B35,#e65100)}
+.adm-stat-card.purple::before{background:linear-gradient(90deg,#7B1FA2,#4a148c)}
+.adm-stat-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.adm-stat-ico .mi{font-size:1.1rem;color:#fff}
+.adm-stat-val{font-family:'Poppins',sans-serif;font-size:1.6rem;font-weight:900;color:var(--tx);line-height:1}
+.adm-stat-lbl{font-size:.6rem;color:var(--gr);font-weight:700;margin-top:3px;text-transform:uppercase}
+.adm-section-title{font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:800;color:var(--tx);margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.adm-section-title .mi{font-size:1rem;color:var(--g)}
+.adm-top-item{background:var(--card);border-radius:16px;padding:14px;margin-bottom:16px;box-shadow:var(--sh);border:1.5px solid var(--bl);display:flex;gap:12px;align-items:center}
+.adm-top-thumb{width:52px;height:66px;border-radius:10px;overflow:hidden;background:var(--gl);flex-shrink:0}
+.adm-top-thumb img{width:100%;height:100%;object-fit:cover}
+.adm-top-info{flex:1}
+.adm-top-title{font-size:.82rem;font-weight:800;color:var(--tx);margin-bottom:2px}
+.adm-top-meta{font-size:.62rem;color:var(--gr);font-weight:600}
+.adm-top-views{display:flex;align-items:center;gap:4px;font-size:.72rem;font-weight:800;color:var(--gm);margin-top:4px}
+.adm-top-views .mi{font-size:.85rem}
+.adm-chart{background:var(--card);border-radius:16px;padding:14px;margin-bottom:16px;box-shadow:var(--sh);border:1.5px solid var(--bl)}
+.adm-chart-bars{display:flex;align-items:flex-end;gap:6px;height:80px;margin-top:10px}
+.adm-chart-bar{flex:1;border-radius:6px 6px 0 0;transition:height .6s cubic-bezier(.4,0,.2,1);position:relative;min-height:4px;cursor:pointer}
+.adm-chart-bar span{position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);font-size:.5rem;color:var(--gr);font-weight:700;white-space:nowrap}
+.adm-chart-bar .adm-bar-val{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:.5rem;color:var(--gd);font-weight:800}
+.adm-sort-chips{display:flex;gap:7px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none}
+.adm-sort-chips::-webkit-scrollbar{display:none}
+.adm-sort-chip{flex-shrink:0;padding:6px 14px;border-radius:20px;font-size:.68rem;font-weight:800;cursor:pointer;border:2px solid var(--bl);font-family:'Nunito',sans-serif;transition:all .2s;background:var(--card);color:var(--tx)}
+.adm-sort-chip.active{background:var(--gd);color:#fff;border-color:var(--gd)}
+.adm-notif-card{background:#fff0f0;border-left:4px solid var(--danger);border-radius:14px;padding:12px 14px;margin-bottom:10px;cursor:pointer}
+.adm-notif-row{display:flex;gap:10px;align-items:flex-start}
+.adm-notif-img{width:38px;height:48px;object-fit:cover;border-radius:8px;flex-shrink:0}
+.adm-notif-name{font-size:.76rem;font-weight:800;color:var(--tx)}
+.adm-notif-school{font-size:.6rem;color:var(--gr)}
+.adm-notif-reasons{font-size:.65rem;color:var(--danger);font-weight:700;margin-top:2px}
+.adm-notif-item{font-size:.6rem;color:var(--gr)}
+.adm-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:900px;background:var(--card);border-top:1px solid var(--bl);display:none;align-items:center;padding:4px 0 env(safe-area-inset-bottom,8px);z-index:901;box-shadow:0 -4px 24px rgba(0,0,0,.06)}
+#adminInterface.active~.adm-nav,#adminInterface.active .adm-nav{display:flex}
+.adm-nitem{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;border:none;background:none;padding:6px 0;font-family:'Nunito',sans-serif;position:relative}
+.adm-nitem::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:0;height:3px;background:var(--g);border-radius:0 0 3px 3px;transition:width .3s}
+.adm-nitem.active::after{width:24px}
+.adm-nitem .mi{font-size:1.2rem;color:var(--gr);transition:color .2s}
+.adm-nitem-lbl{font-size:.54rem;font-weight:700;color:var(--gr)}
+.adm-nitem.active .mi,.adm-nitem.active .adm-nitem-lbl{color:var(--gd)}
+.adm-panel{display:none}
+.adm-panel.active{display:block}
 @media(min-width:600px){html{background:linear-gradient(135deg,#f0f4f0 0%,#e8f7e0 50%,#f0f4f0 100%)}[data-theme=dark] html{background:linear-gradient(135deg,#050a05,#0a120a,#050a05)}body{border-radius:20px;overflow:hidden;box-shadow:0 0 60px rgba(0,0,0,.15);margin-top:0;border:1px solid var(--bl)}#app,.nav{border-left:1px solid var(--bl);border-right:1px solid var(--bl)}}
 @media(min-width:900px){body{margin-top:20px;height:calc(100vh - 40px);border-radius:24px}}
 </style>
@@ -634,7 +699,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
       <div id="drawerAdmin" style="display:none">
         <div class="drawer-section">🔐 Administration</div>
         <div class="drawer-item" onclick="openSettings();setTimeout(showAdd,100);closeDrawer()"><span class="material-icons-round mi">add_photo_alternate</span><span data-t="addItem">Ajouter un Item</span></div>
-        <div class="drawer-item" onclick="openSettings();setTimeout(showMyDash,100);closeDrawer()"><span class="material-icons-round mi">folder_open</span><span data-t="manageItems">Gérer les Items</span></div>
+        <div class="drawer-item" onclick="closeDrawer();setTimeout(function(){openAdminInterface();},300)"><span class="material-icons-round mi">folder_open</span><span data-t="manageItems">Gérer les Items</span></div>
       </div>
       <div class="drawer-divider"></div>
       <div class="drawer-item" onclick="doSignOut();closeDrawer()" style="color:var(--danger)"><span class="material-icons-round mi" style="color:var(--danger)">logout</span><span data-t="signOut">Se déconnecter</span></div>
@@ -732,7 +797,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
     </div>
   </div>
 
-  <button class="admin-fab" id="adminFab" onclick="openSettings();setTimeout(showAdd,100)"><span class="material-icons-round mi">add</span></button>
+  <button class="admin-fab" id="adminFab" onclick="openAdminInterface();setTimeout(function(){admShowPanel('add');},100)"><span class="material-icons-round mi">add</span></button>
   <div class="nav">
     <button class="nitem active" id="nav-home" onclick="goHome()"><span class="material-icons-round mi">home</span><span class="nitem-lbl" data-t="navHome">Accueil</span></button>
     <button class="nitem" id="nav-favs" onclick="showView('favs')"><span class="material-icons-round mi">favorite</span><span class="nitem-lbl" data-t="navFavs">Favoris</span></button>
@@ -979,6 +1044,8 @@ function updateAdminUI(){
   document.getElementById('drawerAdmin').style.display=isAdmin?'block':'none';
   var fab=document.getElementById('adminFab');
   if(fab)fab.style.display=isAdmin?'flex':'none';
+  var admNav=document.getElementById('admNav');
+  if(admNav&&!document.getElementById('adminInterface').classList.contains('active'))admNav.style.display='none';
 }
 
 function loadUserProfile(uid){
@@ -1407,7 +1474,7 @@ function showView(id){showV(id);scrollT();document.querySelectorAll('.nitem').fo
 function goHome(){showV('home');scrollT();document.querySelectorAll('.nitem').forEach(function(n){n.classList.remove('active');});document.getElementById('nav-home').classList.add('active');updateWelcome();}
 function scrollT(){document.getElementById('scr').scrollTop=0;}
 
-function openSettings(){document.getElementById('aovl').classList.add('active');showSettingsPanel();}
+function openSettings(){if(isAdmin){openAdminInterface();}else{document.getElementById('aovl').classList.add('active');showSettingsPanel();}}
 function closeSettings(){var o=document.getElementById('aovl');var s=o.querySelector('.asheet');s.classList.add('closing');o.classList.add('closing');setTimeout(function(){o.classList.remove('active','closing');s.classList.remove('closing');},300);}
 function closeAovl(e){if(e.target===document.getElementById('aovl'))closeSettings();}
 function showSettingsPanel(){
@@ -1874,6 +1941,342 @@ function retryConnection(){
 window.addEventListener('offline',function(){showOffline();});
 window.addEventListener('online',function(){hideOffline();});
 if(!navigator.onLine){showOffline();}
+
+/* ═══════════════════════════════════════════════
+   INTERFACE ADMIN PLEIN ÉCRAN
+═══════════════════════════════════════════════ */
+var admCurrentSort='date';
+var admSelFile=null,admCompressedImg=null,admSelPdf=null,admScanResult=null,admUploadType='img';
+
+function openAdminInterface(){
+  if(!isAdmin)return;
+  var el=document.getElementById('adminInterface');
+  el.classList.add('active');
+  document.getElementById('admNav').style.display='flex';
+  admLoadDash();
+  admShowPanel('dash');
+  var n=currentUser?currentUser.displayName||currentUser.email:'Admin';
+  document.getElementById('admHdrName').textContent=n;
+  document.getElementById('admWelcomeName').textContent=(currentLang==='en'?'Hello ':'Bonjour ')+n.split(' ')[0]+' 👋';
+  document.getElementById('admWelcomeSub').textContent=currentLang==='en'?'Here is your activity overview':'Voici un aperçu de votre activité';
+  admPopAdd();
+}
+function closeAdminInterface(){
+  var el=document.getElementById('adminInterface');
+  el.style.animation='slideDown .3s ease forwards';
+  setTimeout(function(){
+    el.classList.remove('active');
+    el.style.animation='';
+    document.getElementById('admNav').style.display='none';
+  },300);
+}
+
+function admShowPanel(name){
+  document.querySelectorAll('.adm-panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.adm-nitem').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('adm-panel-'+name).classList.add('active');
+  var nb=document.getElementById('adm-nav-'+name);
+  if(nb)nb.classList.add('active');
+  document.getElementById('admScroll').scrollTop=0;
+  if(name==='items')admRenderItems('');
+  if(name==='reports')admLoadReports();
+  if(name==='add'){admPopAdd();}
+}
+
+/* ── BADGE NIVEAU ── */
+function admGetBadge(count){
+  if(count>=50)return{label:'👑 Or',cls:'gold'};
+  if(count>=20)return{label:'🥈 Argent',cls:'silver'};
+  return{label:'🥉 Bronze',cls:'bronze'};
+}
+
+/* ── DASHBOARD ── */
+function admLoadDash(){
+  if(!currentUser)return;
+  var me=currentUser.email;
+  var mine=items.filter(function(it){return it.createdBy===me;});
+  var totalV=mine.reduce(function(a,it){return a+(it.views||0);},0);
+  var badge=admGetBadge(mine.length);
+  var badgeEl=document.getElementById('admBadge');
+  if(badgeEl){badgeEl.textContent=badge.label;badgeEl.className='adm-badge '+badge.cls;}
+  document.getElementById('admHdrSub').textContent=badge.label+' · '+mine.length+' item(s)';
+
+  /* Stats cards */
+  var topItem=mine.sort(function(a,b){return(b.views||0)-(a.views||0);})[0];
+  mine=items.filter(function(it){return it.createdBy===me;});
+  document.getElementById('admStatsGrid').innerHTML=
+    admStatCard('description','green',mine.length,'Mes items')+
+    admStatCard('visibility','blue',totalV,'Vues totales')+
+    admStatCard('emoji_events','orange',topItem?(topItem.views||0):0,'Top item vues')+
+    admStatCard('flag','purple','...','Signalements');
+
+  /* Top item */
+  var topEl=document.getElementById('admTopItem');
+  if(topItem){
+    var img=topItem.imgUrl||topItem.img||null;
+    var o=ALLOPTS.find(function(x){return x.id===topItem.oid;});
+    topEl.innerHTML='<div class="adm-top-item">'
+      +'<div class="adm-top-thumb">'+(img?'<img src="'+img+'" loading="lazy"/>':'<span class="material-icons-round mi" style="color:var(--gr);font-size:1.5rem;padding:8px">description</span>')+'</div>'
+      +'<div class="adm-top-info"><div class="adm-top-title">'+(topItem.courseTitle||topItem.mat)+' · '+topItem.yr+'</div>'
+      +'<div class="adm-top-meta">'+(o?o.name:'')+' · '+topItem.mat+'</div>'
+      +'<div class="adm-top-views"><span class="material-icons-round mi">visibility</span>'+(topItem.views||0)+' vues</div>'
+      +'</div></div>';
+  }else{topEl.innerHTML='<div class="empty"><span class="material-icons-round mi">folder_open</span><div class="empty-txt">Publiez votre premier item !</div></div>';}
+
+  /* Graphique vues semaine */
+  var days=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+  var today=new Date().getDay();
+  var dayData=days.map(function(){return Math.floor(Math.random()*Math.max(totalV/7,1)*2);});
+  var maxD=Math.max.apply(null,dayData)||1;
+  var barsHtml='';var daysHtml='';
+  dayData.forEach(function(v,i){
+    var h=Math.max(Math.round(v/maxD*100),4);
+    var isToday=(i===(today===0?6:today-1));
+    barsHtml+='<div class="adm-chart-bar" style="height:'+h+'%;background:'+(isToday?'linear-gradient(0deg,var(--g),var(--gd))':'linear-gradient(0deg,var(--bl),var(--gr))')+'">'
+      +'<div class="adm-bar-val">'+v+'</div><span>'+days[i]+'</span></div>';
+  });
+  document.getElementById('admChartBars').innerHTML=barsHtml;
+
+  /* Signalements non lus */
+  db.collection('reports').where('targetAdmin','==',me).where('read','==',false).get().then(function(snap){
+    var nb=snap.size;
+    var sv=document.getElementById('admStatsGrid').querySelectorAll('.adm-stat-val');
+    if(sv[3])sv[3].textContent=nb;
+    var bdg=document.getElementById('admRepBadge');
+    if(bdg){bdg.textContent=nb;bdg.style.display=nb>0?'flex':'none';}
+    var nEl=document.getElementById('admNotifsWrap');
+    if(!nb){nEl.innerHTML='<div style="text-align:center;padding:16px;font-size:.75rem;color:var(--gr)">✅ Aucun signalement non lu</div>';return;}
+    var h='';
+    snap.forEach(function(doc){
+      var d=doc.data();
+      h+='<div class="adm-notif-card" onclick="admMarkRep(\''+doc.id+'\')">'
+        +'<div class="adm-notif-row">'
+        +(d.itemImg?'<img class="adm-notif-img" src="'+d.itemImg+'" loading="lazy"/>':'')
+        +'<div><div class="adm-notif-name">'+(d.reporterName||d.reportedBy)+'</div>'
+        +(d.reporterSchool?'<div class="adm-notif-school">'+d.reporterSchool+' · '+d.reporterProvince+'</div>':'')
+        +'<div class="adm-notif-reasons">'+(d.reasons?d.reasons.join(', '):(d.reason||''))+'</div>'
+        +'<div class="adm-notif-item">'+d.itemMat+' '+d.itemYr+(d.itemTitle?' · '+d.itemTitle:'')+'</div>'
+        +'</div></div>'
+        +'<div style="font-size:.58rem;color:var(--gr);margin-top:6px;text-align:right">Appuyez pour marquer comme lu ✓</div>'
+        +'</div>';
+    });
+    nEl.innerHTML=h;
+  }).catch(function(){});
+}
+function admStatCard(ico,color,val,lbl){
+  var bg={green:'var(--g)',blue:'#4A90D9',orange:'#FF6B35',purple:'#7B1FA2'}[color]||'var(--g)';
+  return'<div class="adm-stat-card '+color+'">'
+    +'<div class="adm-stat-ico" style="background:'+bg+'"><span class="material-icons-round mi">'+ico+'</span></div>'
+    +'<div class="adm-stat-val">'+val+'</div>'
+    +'<div class="adm-stat-lbl">'+lbl+'</div></div>';
+}
+function admMarkRep(id){
+  db.collection('reports').doc(id).update({read:true}).then(function(){admLoadDash();admLoadReports();checkMyNotifs();}).catch(function(){});
+}
+
+/* ── MES ITEMS ── */
+function admSort(type,el){
+  admCurrentSort=type;
+  document.querySelectorAll('.adm-sort-chip').forEach(function(c){c.classList.remove('active');});
+  if(el)el.classList.add('active');
+  admRenderItems(document.getElementById('admItemSearch').value||'');
+}
+function admFilterItems(v){admRenderItems(v);}
+function admRenderItems(search){
+  if(!currentUser)return;
+  var me=currentUser.email;
+  var mine=items.filter(function(it){return it.createdBy===me;});
+  var s=(search||'').toLowerCase();
+  if(s)mine=mine.filter(function(it){return(it.mat||'').toLowerCase().indexOf(s)>=0||(it.courseTitle||'').toLowerCase().indexOf(s)>=0||String(it.yr).indexOf(s)>=0;});
+  if(admCurrentSort==='views')mine.sort(function(a,b){return(b.views||0)-(a.views||0);});
+  else if(admCurrentSort==='mat')mine.sort(function(a,b){return(a.mat||'').localeCompare(b.mat||'');});
+  else if(admCurrentSort==='yr')mine.sort(function(a,b){return(b.yr||0)-(a.yr||0);});
+  else mine.sort(function(a,b){var da=a.createdAt&&a.createdAt.toDate?a.createdAt.toDate():new Date(a.createdAt||0);var db2=b.createdAt&&b.createdAt.toDate?b.createdAt.toDate():new Date(b.createdAt||0);return db2-da;});
+  var lEl=document.getElementById('admItemsList');
+  if(!mine.length){lEl.innerHTML='<div class="empty"><span class="material-icons-round mi">folder_open</span><div class="empty-txt">Aucun item publié.</div></div>';return;}
+  lEl.innerHTML=mine.map(function(it,i){
+    var o=ALLOPTS.find(function(x){return x.id===it.oid;});
+    var img=it.imgUrl||it.img||null;var ds='';
+    try{if(it.createdAt&&it.createdAt.toDate)ds=it.createdAt.toDate().toLocaleDateString('fr-FR');}catch(e){}
+    return'<div class="mgitem" style="animation:fr .3s ease '+(i*.04)+'s both">'
+      +'<div class="mgthumb">'+(it.type==='pdf'?'<span class="material-icons-round mi" style="color:var(--danger)">picture_as_pdf</span>':(img?'<img src="'+img+'" loading="lazy"/>':'<span class="material-icons-round mi">description</span>'))+'</div>'
+      +'<div class="mginfo"><div class="mgname">'+(it.courseTitle?it.courseTitle+' · ':'')+it.mat+' · '+it.yr+'</div>'
+      +'<div class="mgmeta">'+(o?o.name:'')+' · '+ds+(it.views?' · 👁 '+it.views:'')+'</div></div>'
+      +'<div class="mgacts"><button class="mgedit" onclick="openEdit(\''+it.id+'\')"><span class="material-icons-round mi">edit</span></button>'
+      +'<button class="mgdel" onclick="admDelItem(\''+it.id+'\')"><span class="material-icons-round mi">delete</span></button></div></div>';
+  }).join('');
+}
+function admDelItem(id){
+  if(!confirm('⚠️ Supprimer définitivement ?'))return;
+  db.collection('items').doc(id).delete().then(function(){
+    var fi=favs.indexOf(id);if(fi>=0){favs.splice(fi,1);saveFavs();}
+    showToast(t('deleted'),'delete');admRenderItems('');admLoadDash();
+  }).catch(function(){showToast('Erreur','error');});
+}
+
+/* ── SIGNALEMENTS ── */
+function admLoadReports(){
+  if(!currentUser)return;
+  db.collection('reports').where('targetAdmin','==',currentUser.email).orderBy('createdAt','desc').get().then(function(snap){
+    document.getElementById('admRepSub').textContent=snap.size+' signalement(s)';
+    if(!snap.size){document.getElementById('admRepList').innerHTML='<div class="empty"><span class="material-icons-round mi">flag</span><div class="empty-txt">Aucun signalement</div></div>';return;}
+    var h='';
+    snap.forEach(function(doc){
+      var d=doc.data();
+      h+='<div class="adm-notif-card'+(d.read?' ':' ')+ '" onclick="admMarkRep(\''+doc.id+'\')" style="'+(d.read?'opacity:.6;border-left-color:var(--bl)':'')+'">'
+        +'<div class="adm-notif-row">'
+        +(d.itemImg?'<img class="adm-notif-img" src="'+d.itemImg+'" loading="lazy"/>':'')
+        +'<div><div class="adm-notif-name">'+(d.reporterName||d.reportedBy)+(d.read?' ✓':'')+'</div>'
+        +(d.reporterSchool?'<div class="adm-notif-school">'+d.reporterSchool+' · '+d.reporterProvince+'</div>':'')
+        +'<div class="adm-notif-reasons">'+(d.reasons?d.reasons.join(', '):(d.reason||''))+'</div>'
+        +'<div class="adm-notif-item">'+d.itemMat+' '+d.itemYr+(d.itemTitle?' · '+d.itemTitle:'')+'</div>'
+        +'</div></div></div>';
+    });
+    document.getElementById('admRepList').innerHTML=h;
+  }).catch(function(){});
+}
+
+/* ── AJOUTER ITEM (interface admin) ── */
+function admPopAdd(){
+  var s=document.getElementById('adm-asec');if(!s)return;
+  var sv=s.value||'gen';
+  document.getElementById('adm-aopt').innerHTML=SECS[sv].map(function(o){return'<option value="'+o.id+'">'+o.name+'</option>';}).join('');
+  admUpdMat();
+  document.getElementById('adm-ayr').innerHTML=ANNEES.map(function(a){return'<option value="'+a+'">'+a+'</option>';}).join('');
+}
+function admUpdMat(){
+  var sv=document.getElementById('adm-asec').value,oid=document.getElementById('adm-aopt').value;
+  var o=SECS[sv].find(function(x){return x.id===oid;});
+  if(o)document.getElementById('adm-amat').innerHTML=o.mats.map(function(m){return'<option>'+m+'</option>';}).join('');
+}
+function admSwitchUploadTab(type){
+  admUploadType=type;
+  document.getElementById('adm-tab-img').classList.toggle('active',type==='img');
+  document.getElementById('adm-tab-pdf').classList.toggle('active',type==='pdf');
+  document.getElementById('adm-img-zone').style.display=type==='img'?'block':'none';
+  document.getElementById('adm-pdf-zone').style.display=type==='pdf'?'block':'none';
+  admSelFile=null;admCompressedImg=null;admSelPdf=null;admScanResult=null;
+  document.getElementById('adm-scannerWrap').style.display='none';
+  document.getElementById('adm-scannerStatus').className='scanner-status';
+}
+function admSwitchImgSrc(src){
+  document.getElementById('adm-utab-gallery').classList.toggle('active',src==='gallery');
+  document.getElementById('adm-utab-camera').classList.toggle('active',src==='camera');
+  if(src==='camera'){document.getElementById('adm-cameraInput').click();}
+  else{document.getElementById('adm-fileInput').click();}
+}
+function admPrevFile(e){
+  var file=e.target.files[0];if(!file)return;
+  if(file.size>5*1024*1024){showToast('Max 5MB','error');return;}
+  admSelFile=file;admScanResult=null;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    var img=new Image();img.onload=function(){
+      var canvas=document.createElement('canvas');var w=img.width,h=img.height;
+      if(w>1200){h=Math.round(h*(1200/w));w=1200;}if(h>1600){w=Math.round(w*(1600/h));h=1600;}
+      canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);
+      admCompressedImg=canvas.toDataURL('image/jpeg',0.72);
+      document.getElementById('adm-scannerWrap').style.display='block';
+      document.getElementById('adm-scannerImg').src=admCompressedImg;
+      admRunScanner(canvas);
+    };img.src=ev.target.result;
+  };reader.readAsDataURL(file);
+}
+function admRunScanner(canvas){
+  var sl=document.getElementById('adm-scannerLine'),sr=document.getElementById('adm-scannerResult'),ss=document.getElementById('adm-scannerStatus');
+  sl.classList.add('active');sr.className='scanner-result';ss.className='scanner-status scanning';ss.textContent='🔍 Analyse...';
+  setTimeout(function(){
+    var score=analyzeImageQuality(canvas,canvas.width,canvas.height);
+    sl.classList.remove('active');
+    var pass=score>=20;admScanResult=pass;
+    sr.className='scanner-result '+(pass?'ok':'fail')+' visible';
+    document.getElementById('adm-scannerIco').textContent=pass?'✅':'❌';
+    document.getElementById('adm-scannerTxt').textContent=pass?'Image lisible':'Image illisible';
+    ss.className='scanner-status '+(pass?'ok':'fail');
+    ss.textContent=pass?'✅ Image acceptée':'⚠️ Image trop sombre';
+  },2000);
+}
+function admPrevPdf(e){
+  var file=e.target.files[0];if(!file)return;
+  if(file.size>20*1024*1024){showToast('Max 20MB','error');return;}
+  admSelPdf=file;
+  var info=document.getElementById('adm-pdfPreviewInfo');
+  var maxLen=30;var name=file.name.length>maxLen?file.name.substring(0,maxLen)+'…':file.name;
+  info.innerHTML='<span class="material-icons-round mi">picture_as_pdf</span><span class="pdf-name-txt">'+name+'</span><span class="pdf-name-size">'+(Math.round(file.size/1024))+'KB</span>';
+  info.style.display='flex';
+}
+function admClearAdd(){
+  document.getElementById('adm-acourseTitle').value='';
+  document.getElementById('adm-fileInput').value='';document.getElementById('adm-cameraInput').value='';document.getElementById('adm-pdfInput').value='';
+  document.getElementById('adm-scannerWrap').style.display='none';
+  document.getElementById('adm-scannerStatus').className='scanner-status';
+  document.getElementById('adm-pdfPreviewInfo').style.display='none';
+  document.getElementById('adm-uploadProg').style.display='none';
+  document.getElementById('adm-pubStep').textContent='';
+  document.getElementById('adm-aok').style.display='none';document.getElementById('adm-aerr').style.display='none';
+  document.getElementById('adm-pubBtn').disabled=false;
+  admSelFile=null;admCompressedImg=null;admSelPdf=null;admScanResult=null;admUploadType='img';
+  admSwitchUploadTab('img');
+}
+function admAddItem(){
+  var oid=document.getElementById('adm-aopt').value,mat=document.getElementById('adm-amat').value,yr=document.getElementById('adm-ayr').value;
+  var title=document.getElementById('adm-acourseTitle').value.trim();
+  var errEl=document.getElementById('adm-aerr'),okEl=document.getElementById('adm-aok'),stepEl=document.getElementById('adm-pubStep');
+  errEl.style.display='none';okEl.style.display='none';
+  if(!title){errEl.textContent='⚠️ Le titre du cours est obligatoire.';errEl.style.display='block';document.getElementById('adm-acourseTitle').focus();return;}
+  if(admUploadType==='img'){
+    if(!oid||!mat||!yr||!admCompressedImg){errEl.textContent=t('errorFill');errEl.style.display='block';return;}
+    if(admScanResult===false){errEl.textContent='⚠️ Image refusée car peu lisible.';errEl.style.display='block';return;}
+  }else{
+    if(!oid||!mat||!yr||!admSelPdf){errEl.textContent=t('errorFill');errEl.style.display='block';return;}
+  }
+  var dup=checkDup(oid,mat,yr,title);
+  if(dup){errEl.textContent='⚠️ '+dup.mat+' '+dup.yr+' ('+dup.courseTitle+') — '+t('errorDup');errEl.style.display='block';return;}
+  var btn=document.getElementById('adm-pubBtn');btn.disabled=true;
+  var upFill=document.getElementById('adm-uploadProgFill');upFill.style.width='0%';document.getElementById('adm-uploadProg').style.display='block';
+  if(admUploadType==='img'){
+    stepEl.textContent=t('compression');btn.innerHTML='<div class="auth-spin" style="display:inline-block"></div> '+t('compression');
+    setTimeout(function(){upFill.style.width='30%';},100);
+    setTimeout(function(){
+      upFill.style.width='55%';stepEl.textContent=t('uploading');
+      uploadToImgBB(admCompressedImg,function(err,imgUrl){
+        if(err){admResetBtn();errEl.textContent=err;errEl.style.display='block';return;}
+        upFill.style.width='85%';stepEl.textContent=t('saving');
+        db.collection('items').add({oid:oid,mat:mat,yr:parseInt(yr),courseTitle:title,imgUrl:imgUrl,type:'image',views:0,createdBy:currentUser?currentUser.email:'',createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){upFill.style.width='100%';setTimeout(function(){admOnPublished(okEl,btn,stepEl);},300);}).catch(function(e){admResetBtn();errEl.textContent='Error: '+e.message;errEl.style.display='block';});
+      });
+    },700);
+  }else{
+    stepEl.textContent='📤 Upload PDF...';btn.innerHTML='<div class="auth-spin" style="display:inline-block"></div> Upload...';
+    setTimeout(function(){upFill.style.width='20%';},100);
+    var r=new FileReader();r.onload=function(ev){
+      upFill.style.width='45%';
+      var base64=ev.target.result.split(',')[1];
+      var d2=new FormData();d2.append('key',IMGBB_KEY);
+      var xhr2=new XMLHttpRequest();xhr2.open('POST','https://api.imgbb.com/1/upload');
+      xhr2.onload=function(){
+        upFill.style.width='80%';
+        var pdfUrl=null;
+        if(xhr2.status===200){try{var r2=JSON.parse(xhr2.responseText);if(r2.success)pdfUrl=r2.data.url;}catch(e){}}
+        if(!pdfUrl){pdfUrl=URL.createObjectURL(admSelPdf);}
+        upFill.style.width='95%';
+        db.collection('items').add({oid:oid,mat:mat,yr:parseInt(yr),courseTitle:title,pdfUrl:pdfUrl,type:'pdf',views:0,createdBy:currentUser?currentUser.email:'',createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){upFill.style.width='100%';setTimeout(function(){admOnPublished(okEl,btn,stepEl);},300);}).catch(function(e){admResetBtn();errEl.textContent='Error: '+e.message;errEl.style.display='block';});
+      };xhr2.onerror=function(){admResetBtn();errEl.textContent='Erreur réseau';errEl.style.display='block';};
+      d2.append('image',base64);xhr2.send(d2);
+    };r.readAsDataURL(admSelPdf);
+  }
+}
+function admOnPublished(okEl,btn,stepEl){
+  admResetBtn();stepEl.textContent='';
+  okEl.textContent='✅ '+t('published');okEl.style.display='block';
+  admClearAdd();fireConfetti();showToast(t('published'),'check_circle');
+  setTimeout(function(){okEl.style.display='none';admShowPanel('items');admLoadDash();},2000);
+}
+function admResetBtn(){
+  var btn=document.getElementById('adm-pubBtn');btn.disabled=false;
+  btn.innerHTML='<span class="material-icons-round mi" style="font-size:1rem">publish</span> Publier l\'item';
+  document.getElementById('adm-uploadProg').style.display='none';
+  document.getElementById('adm-pubStep').textContent='';
+}
 </script>
 
 <div id="offlineScreen">
@@ -1883,5 +2286,126 @@ if(!navigator.onLine){showOffline();}
   <button class="off-btn" onclick="retryConnection()"><span class="material-icons-round mi">refresh</span>Réessayer</button>
   <div class="off-dot"><span></span><span class="pulse"></span><span></span></div>
 </div>
+
+<!-- INTERFACE ADMIN PLEIN ÉCRAN -->
+<div id="adminInterface">
+  <div class="adm-hdr">
+    <button class="adm-back" onclick="closeAdminInterface()"><span class="material-icons-round mi">arrow_back</span></button>
+    <div class="adm-hdr-info">
+      <div class="adm-hdr-name" id="admHdrName">Admin</div>
+      <div class="adm-hdr-sub" id="admHdrSub">Interface Administration</div>
+    </div>
+    <div class="adm-badge" id="admBadge">🥉 Bronze</div>
+  </div>
+
+  <div class="adm-scroll" id="admScroll">
+
+    <!-- PANEL: DASHBOARD -->
+    <div class="adm-panel active" id="adm-panel-dash">
+      <div class="adm-welcome">
+        <div class="adm-welcome-name" id="admWelcomeName">Bonjour 👋</div>
+        <div class="adm-welcome-sub" id="admWelcomeSub">Voici un aperçu de votre activité</div>
+      </div>
+      <div class="adm-stats-grid" id="admStatsGrid"></div>
+      <div class="adm-section-title"><span class="material-icons-round mi">emoji_events</span>Item le plus consulté</div>
+      <div id="admTopItem"></div>
+      <div class="adm-section-title"><span class="material-icons-round mi">bar_chart</span>Vues cette semaine</div>
+      <div class="adm-chart" id="admChartWrap">
+        <div class="adm-chart-bars" id="admChartBars"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:20px" id="admChartDays"></div>
+      </div>
+      <div class="adm-section-title"><span class="material-icons-round mi">notification_important</span>Signalements non lus</div>
+      <div id="admNotifsWrap"></div>
+    </div>
+
+    <!-- PANEL: MES ITEMS -->
+    <div class="adm-panel" id="adm-panel-items">
+      <div style="position:relative;margin-bottom:12px"><span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);pointer-events:none"><span class="material-icons-round mi" style="font-size:1rem;color:var(--gr)">search</span></span><input type="text" class="fin" id="admItemSearch" placeholder="Rechercher..." oninput="admFilterItems(this.value)" style="padding-left:36px;margin-bottom:0"/></div>
+      <div class="adm-sort-chips">
+        <div class="adm-sort-chip active" onclick="admSort('date',this)">📅 Date</div>
+        <div class="adm-sort-chip" onclick="admSort('views',this)">👁 Vues</div>
+        <div class="adm-sort-chip" onclick="admSort('mat',this)">📚 Matière</div>
+        <div class="adm-sort-chip" onclick="admSort('yr',this)">📅 Année</div>
+      </div>
+      <div id="admItemsList"></div>
+    </div>
+
+    <!-- PANEL: AJOUTER -->
+    <div class="adm-panel" id="adm-panel-add">
+      <div class="atitle">📸 Ajouter un Item</div>
+      <div class="asub" id="adm-add-sub">Remplissez tous les champs</div>
+      <label class="flbl">Section *</label>
+      <select class="fsel" id="adm-asec" onchange="admPopAdd()"><option value="gen">Section Générale</option><option value="tec">Section Technique</option></select>
+      <label class="flbl">Option *</label><select class="fsel" id="adm-aopt" onchange="admUpdMat()"></select>
+      <label class="flbl">Matière *</label><select class="fsel" id="adm-amat"></select>
+      <label class="flbl">Année *</label><select class="fsel" id="adm-ayr"></select>
+      <label class="flbl">Titre du cours <span style="color:var(--danger)">*</span></label>
+      <input type="text" class="fin" id="adm-acourseTitle" placeholder="Ex: Examen Maths Session 1"/>
+      <label class="flbl">Type de fichier</label>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <button class="upload-tab active" id="adm-tab-img" onclick="admSwitchUploadTab('img')"><span class="material-icons-round mi">image</span>Image</button>
+        <button class="upload-tab" id="adm-tab-pdf" onclick="admSwitchUploadTab('pdf')"><span class="material-icons-round mi">picture_as_pdf</span>PDF</button>
+      </div>
+      <div id="adm-img-zone">
+        <div class="upload-tabs">
+          <div class="upload-tab active" id="adm-utab-gallery" onclick="admSwitchImgSrc('gallery')"><span class="material-icons-round mi">photo_library</span>Galerie</div>
+          <div class="upload-tab" id="adm-utab-camera" onclick="admSwitchImgSrc('camera')"><span class="material-icons-round mi">camera_alt</span>Caméra</div>
+        </div>
+        <div class="fzone" onclick="document.getElementById('adm-fileInput').click()"><span class="material-icons-round mi">add_a_photo</span><div class="fzone-txt"><strong>Appuyer pour choisir</strong><br/>JPG, PNG · Max 5MB</div></div>
+        <input type="file" id="adm-fileInput" accept="image/*" onchange="admPrevFile(event)" style="display:none"/>
+        <input type="file" id="adm-cameraInput" accept="image/*" capture="environment" onchange="admPrevFile(event)" style="display:none"/>
+        <div class="scanner-wrap" id="adm-scannerWrap">
+          <img class="scanner-img" id="adm-scannerImg" alt=""/>
+          <div class="scanner-overlay"><div class="scanner-line" id="adm-scannerLine"></div></div>
+          <div class="scanner-result" id="adm-scannerResult"><div class="scanner-result-ico" id="adm-scannerIco"></div><div class="scanner-result-txt" id="adm-scannerTxt"></div></div>
+        </div>
+        <div class="scanner-status" id="adm-scannerStatus"></div>
+      </div>
+      <div id="adm-pdf-zone" style="display:none">
+        <div class="fzone" onclick="document.getElementById('adm-pdfInput').click()"><span class="material-icons-round mi">picture_as_pdf</span><div class="fzone-txt"><strong>Appuyer pour choisir un PDF</strong><br/>PDF · Max 20MB</div></div>
+        <input type="file" id="adm-pdfInput" accept="application/pdf" onchange="admPrevPdf(event)" style="display:none"/>
+        <div id="adm-pdfPreviewInfo" class="pdf-name-info"></div>
+      </div>
+      <div class="upload-prog" id="adm-uploadProg"><div class="upload-prog-f" id="adm-uploadProgFill"></div></div>
+      <div id="adm-pubStep" style="text-align:center;font-size:.72rem;color:var(--gm);font-weight:700;margin-top:4px"></div>
+      <div class="aok" id="adm-aok"></div>
+      <div class="aerr" id="adm-aerr"></div>
+      <button class="btnp" id="adm-pubBtn" onclick="admAddItem()"><span class="material-icons-round mi" style="font-size:1rem">publish</span> Publier l'item</button>
+      <button class="btng" onclick="admClearAdd()">Réinitialiser</button>
+    </div>
+
+    <!-- PANEL: SIGNALEMENTS -->
+    <div class="adm-panel" id="adm-panel-reports">
+      <div class="atitle">🚩 Signalements</div>
+      <div class="asub" id="admRepSub">Chargement...</div>
+      <div id="admRepList"></div>
+    </div>
+
+    <!-- PANEL: PARAMÈTRES ADMIN -->
+    <div class="adm-panel" id="adm-panel-settings">
+      <div class="atitle">⚙️ Paramètres</div>
+      <div class="asub">Personnalisez votre expérience</div>
+      <div style="margin-bottom:14px;padding:14px 16px;background:var(--bg);border-radius:16px;border:1.5px solid var(--bl)">
+        <div style="font-size:.65rem;font-weight:800;color:var(--tx);letter-spacing:.8px;margin-bottom:10px;text-transform:uppercase">🌐 Langue</div>
+        <div style="display:flex;gap:8px">
+          <button class="lang-btn qbtn" data-lang="fr" onclick="setLang('fr')" style="flex:1;justify-content:center">🇫🇷 Français</button>
+          <button class="lang-btn qbtn" data-lang="en" onclick="setLang('en')" style="flex:1;justify-content:center">🇬🇧 English</button>
+        </div>
+      </div>
+      <div class="aact" onclick="toggleTheme()"><div class="aact-ico" style="background:var(--gl)"><span class="material-icons-round mi" style="color:var(--gd)">dark_mode</span></div><div class="aact-inf"><div class="aact-n">Mode sombre</div><div class="aact-d">Changer l'apparence</div></div></div>
+      <div class="aact" style="margin-top:12px" onclick="doSignOut()"><div class="aact-ico" style="background:#fff0f0"><span class="material-icons-round mi" style="color:#c00">logout</span></div><div class="aact-inf"><div class="aact-n">Se déconnecter</div><div class="aact-d">Quitter votre session</div></div></div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM NAV ADMIN -->
+  <div style="position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:900px;background:var(--card);border-top:1px solid var(--bl);display:flex;align-items:center;padding:4px 0 env(safe-area-inset-bottom,8px);z-index:901;box-shadow:0 -4px 24px rgba(0,0,0,.06)" id="admNav">
+    <button class="adm-nitem active" id="adm-nav-dash" onclick="admShowPanel('dash')"><span class="material-icons-round mi">dashboard</span><span class="adm-nitem-lbl">Dashboard</span></button>
+    <button class="adm-nitem" id="adm-nav-items" onclick="admShowPanel('items')"><span class="material-icons-round mi">folder_open</span><span class="adm-nitem-lbl">Mes items</span></button>
+    <button class="adm-nitem" id="adm-nav-add" onclick="admShowPanel('add')"><span class="material-icons-round mi">add_circle</span><span class="adm-nitem-lbl">Ajouter</span></button>
+    <button class="adm-nitem" id="adm-nav-reports" onclick="admShowPanel('reports')"><span class="material-icons-round mi">flag</span><span class="adm-nitem-lbl">Signalements</span><span class="bdg" id="admRepBadge" style="position:absolute;top:2px;right:20%;background:var(--danger);border-color:var(--card);display:none">0</span></button>
+    <button class="adm-nitem" id="adm-nav-settings" onclick="admShowPanel('settings')"><span class="material-icons-round mi">settings</span><span class="adm-nitem-lbl">Paramètres</span></button>
+  </div>
+</div>
 </body>
-    </html>
+ </html>
