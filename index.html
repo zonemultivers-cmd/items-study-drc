@@ -566,6 +566,44 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
 .adm-nitem.active .mi,.adm-nitem.active .adm-nitem-lbl{color:var(--gd)}
 .adm-panel{display:none}
 .adm-panel.active{display:block}
+
+.msg-ovl{display:none;position:fixed;inset:0;z-index:810;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);align-items:flex-end;justify-content:center}
+.msg-ovl.active{display:flex}
+.msg-sheet{width:100%;max-width:900px;background:var(--card);border-radius:28px 28px 0 0;padding:20px 18px 32px;max-height:92vh;overflow-y:auto;animation:sup .35s ease}
+.msg-sheet.closing{animation:slideDown .28s cubic-bezier(.4,0,.2,1) forwards}
+.msg-handle{width:40px;height:4px;background:var(--bl);border-radius:2px;margin:0 auto 16px}
+.msg-item-row{display:flex;gap:12px;align-items:center;background:var(--bg);border-radius:14px;padding:10px 12px;margin-bottom:14px}
+.msg-item-thumb{width:44px;height:56px;border-radius:8px;overflow:hidden;background:var(--gl);flex-shrink:0}
+.msg-item-thumb img{width:100%;height:100%;object-fit:cover}
+.msg-item-info{flex:1}
+.msg-item-title{font-size:.8rem;font-weight:800;color:var(--tx)}
+.msg-item-meta{font-size:.62rem;color:var(--gr);margin-top:2px}
+.msg-reasons{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.msg-reason-tag{background:#fff0f0;color:var(--danger);font-size:.65rem;font-weight:700;padding:4px 10px;border-radius:10px;border:1px solid #ffcccc}
+.msg-bubble-wrap{margin-bottom:14px}
+.msg-bubble{padding:10px 14px;border-radius:16px;font-size:.78rem;line-height:1.5;max-width:85%}
+.msg-bubble.user{background:var(--gl);border-bottom-left-radius:4px;color:var(--tx);align-self:flex-start}
+.msg-bubble.admin{background:linear-gradient(135deg,var(--gd),var(--gm));color:#fff;border-bottom-right-radius:4px;align-self:flex-end;margin-left:auto}
+.msg-bubble-sender{font-size:.6rem;font-weight:700;margin-bottom:3px}
+.msg-bubble-time{font-size:.55rem;opacity:.6;margin-top:4px;text-align:right}
+.msg-input-wrap{display:flex;gap:8px;align-items:flex-end;margin-top:8px}
+.msg-input{flex:1;padding:10px 14px;border:2px solid var(--bl);border-radius:14px;font-size:.82rem;font-family:'Nunito',sans-serif;color:var(--tx);outline:none;background:var(--bg);resize:none;min-height:42px;max-height:100px;transition:border-color .2s}
+.msg-input:focus{border-color:var(--g)}
+.msg-send-btn{width:42px;height:42px;background:linear-gradient(135deg,var(--gd),var(--gm));border:none;border-radius:14px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.msg-send-btn .mi{font-size:1.1rem}
+.msg-send-btn:active{transform:scale(.92)}
+.msg-view{padding:16px 14px 120px}
+.msg-conv-card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:var(--sh);cursor:pointer;border:2px solid transparent;transition:all .2s}
+.msg-conv-card:hover{border-color:var(--g)}
+.msg-conv-card.unread{border-left:4px solid var(--g);background:var(--gp)}
+.msg-conv-top{display:flex;gap:10px;align-items:center}
+.msg-conv-thumb{width:38px;height:48px;border-radius:8px;overflow:hidden;background:var(--gl);flex-shrink:0}
+.msg-conv-thumb img{width:100%;height:100%;object-fit:cover}
+.msg-conv-info{flex:1}
+.msg-conv-title{font-size:.8rem;font-weight:800;color:var(--tx)}
+.msg-conv-preview{font-size:.68rem;color:var(--gr);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.msg-conv-time{font-size:.58rem;color:var(--gr);flex-shrink:0}
+.msg-unread-dot{width:8px;height:8px;background:var(--g);border-radius:50%;flex-shrink:0}
 @media(min-width:600px){html{background:linear-gradient(135deg,#f0f4f0 0%,#e8f7e0 50%,#f0f4f0 100%)}[data-theme=dark] html{background:linear-gradient(135deg,#050a05,#0a120a,#050a05)}body{border-radius:20px;overflow:hidden;box-shadow:0 0 60px rgba(0,0,0,.15);margin-top:0;border:1px solid var(--bl)}#app,.nav{border-left:1px solid var(--bl);border-right:1px solid var(--bl)}}
 @media(min-width:900px){body{margin-top:20px;height:calc(100vh - 40px);border-radius:24px}}
 </style>
@@ -691,6 +729,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
       <div class="drawer-item" onclick="showView('favs');closeDrawer()"><span class="material-icons-round mi">favorite</span><span data-t="navFavs">Mes Favoris</span></div>
       <div class="drawer-item" onclick="showView('stats');closeDrawer()"><span class="material-icons-round mi">bar_chart</span><span data-t="navStats">Statistiques</span></div>
       <div class="drawer-item" onclick="showView('notifs');closeDrawer()"><span class="material-icons-round mi">notifications</span><span data-t="navNotifs">Notifications</span></div>
+      <div class="drawer-item" onclick="showMessages();closeDrawer()"><span class="material-icons-round mi">forum</span><span>Messages</span><span class="bdg" id="msgBadge" style="position:static;min-width:16px;height:16px;border-radius:8px;padding:0 4px;font-size:.5rem;font-weight:800;color:#fff;background:var(--g);display:none;align-items:center;justify-content:center;margin-left:auto">0</span></div>
       <div class="drawer-item" onclick="showView('profile');closeDrawer()"><span class="material-icons-round mi">person</span><span data-t="navProfile">Mon Profil</span></div>
       <div class="drawer-item" onclick="showTerms();closeDrawer()"><span class="material-icons-round mi">gavel</span><span>Conditions d'utilisation</span></div>
       <div class="drawer-divider"></div>
@@ -698,7 +737,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
       <div class="drawer-item" onclick="startGuide();closeDrawer()"><span class="material-icons-round mi">help_outline</span><span data-t="reviewGuide">Revoir le guide</span></div>
       <div id="drawerAdmin" style="display:none">
         <div class="drawer-section">🔐 Administration</div>
-        <div class="drawer-item" onclick="openSettings();setTimeout(showAdd,100);closeDrawer()"><span class="material-icons-round mi">add_photo_alternate</span><span data-t="addItem">Ajouter un Item</span></div>
+        <div class="drawer-item" onclick="closeDrawer();setTimeout(function(){openAdminInterface('add');},300)"><span class="material-icons-round mi">add_photo_alternate</span><span data-t="addItem">Ajouter un Item</span></div>
         <div class="drawer-item" onclick="closeDrawer();setTimeout(function(){openAdminInterface();},300)"><span class="material-icons-round mi">folder_open</span><span data-t="manageItems">Gérer les Items</span></div>
       </div>
       <div class="drawer-divider"></div>
@@ -783,6 +822,10 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
       <div class="profile-body" id="profileBody"></div>
     </div>
 
+    <div class="view" id="view-messages">
+      <div class="phdr"><button class="pbk" onclick="goHome()"><span class="material-icons-round mi">arrow_back</span> Retour</button><div class="ptitle">💬 Messages</div><div class="psub" id="msgViewSub">Vos échanges avec les admins</div></div>
+      <div class="msg-view" id="msgList"></div>
+    </div>
     <div class="view" id="view-about"></div>
     <div class="view" id="view-terms">
       <div class="phdr"><button class="pbk" onclick="goHome()"><span class="material-icons-round mi">arrow_back</span> Retour</button><div class="ptitle">Conditions d'utilisation</div><div class="psub">Items Study DRC</div></div>
@@ -797,7 +840,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
     </div>
   </div>
 
-  <button class="admin-fab" id="adminFab" onclick="openAdminInterface();setTimeout(function(){admShowPanel('add');},100)"><span class="material-icons-round mi">add</span></button>
+  <button class="admin-fab" id="adminFab" onclick="openAdminInterface('add')"><span class="material-icons-round mi">add</span></button>
   <div class="nav">
     <button class="nitem active" id="nav-home" onclick="goHome()"><span class="material-icons-round mi">home</span><span class="nitem-lbl" data-t="navHome">Accueil</span></button>
     <button class="nitem" id="nav-favs" onclick="showView('favs')"><span class="material-icons-round mi">favorite</span><span class="nitem-lbl" data-t="navFavs">Favoris</span></button>
@@ -837,7 +880,9 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
     <div class="rep-chk" onclick="togRep(this,'Contenu inapproprié')"><span class="material-icons-round mi rep-ico">block</span><span class="rep-lbl">Contenu inapproprié</span><span class="material-icons-round mi rep-box">check_box_outline_blank</span></div>
     <div class="rep-chk" onclick="togRep(this,'Doublon')"><span class="material-icons-round mi rep-ico">content_copy</span><span class="rep-lbl">Doublon</span><span class="material-icons-round mi rep-box">check_box_outline_blank</span></div>
     <div class="rep-chk" onclick="togRep(this,'Mauvaise qualité')"><span class="material-icons-round mi rep-ico">image_not_supported</span><span class="rep-lbl">Image de mauvaise qualité</span><span class="material-icons-round mi rep-box">check_box_outline_blank</span></div>
-    <button class="btnp" id="repSendBtn" onclick="sendReport()" disabled style="margin-top:14px;opacity:.5"><span class="material-icons-round mi" style="font-size:.9rem">send</span> Envoyer le signalement</button>
+    <label class="auth-lbl" style="margin-top:12px">Message (optionnel)</label>
+    <textarea class="msg-input fin" id="repMessage" placeholder="Décrivez le problème en détail..." rows="3" style="width:100%;resize:none;margin-bottom:8px"></textarea>
+    <button class="btnp" id="repSendBtn" onclick="sendReport()" disabled style="margin-top:6px;opacity:.5"><span class="material-icons-round mi" style="font-size:.9rem">send</span> Envoyer le signalement</button>
     <button class="btng" onclick="closeRep()">Annuler</button>
   </div>
 </div>
@@ -1068,7 +1113,7 @@ function showApp(){
     document.getElementById('app').style.display='flex';
     applyTheme();applyLang();generateNotifs();updateWelcome();renderRecommended();
     document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.dataset.lang===currentLang);});
-    if(!userProfile||!userProfile.guided)setTimeout(startGuide,800);setTimeout(checkMyNotifs,3500);
+    if(!userProfile||!userProfile.guided)setTimeout(startGuide,800);setTimeout(checkMyNotifs,3500);setTimeout(checkMsgBadge,4000);
   },3300);
 }
 
@@ -1787,6 +1832,7 @@ function closeRep(){
     });
     var sb=document.getElementById('repSendBtn');
     if(sb){sb.disabled=true;sb.style.opacity='.5';}
+    var rm=document.getElementById('repMessage');if(rm)rm.value='';
   },300);
 }
 
@@ -1822,7 +1868,9 @@ function sendReport(){
     itemYr:it?it.yr:'',
     itemImg:it?(it.imgUrl||it.img||null):null,
     itemTitle:it?(it.courseTitle||''):'',
+    userMessage:document.getElementById('repMessage')?document.getElementById('repMessage').value.trim()||null:null,
     read:false,
+    replyRead:false,
     createdAt:firebase.firestore.FieldValue.serverTimestamp()
   }).then(function(){showToast('Signalement envoyé','flag');closeRep();})
     .catch(function(){showToast('Erreur','error');closeRep();});
@@ -1948,13 +1996,14 @@ if(!navigator.onLine){showOffline();}
 var admCurrentSort='date';
 var admSelFile=null,admCompressedImg=null,admSelPdf=null,admScanResult=null,admUploadType='img';
 
-function openAdminInterface(){
+function openAdminInterface(startPanel){
   if(!isAdmin)return;
   var el=document.getElementById('adminInterface');
   el.classList.add('active');
   document.getElementById('admNav').style.display='flex';
-  admLoadDash();
-  admShowPanel('dash');
+  var panel=startPanel||'dash';
+  if(panel==='dash')admLoadDash();
+  admShowPanel(panel);
   var n=currentUser?currentUser.displayName||currentUser.email:'Admin';
   document.getElementById('admHdrName').textContent=n;
   document.getElementById('admWelcomeName').textContent=(currentLang==='en'?'Hello ':'Bonjour ')+n.split(' ')[0]+' 👋';
@@ -2117,14 +2166,18 @@ function admDelItem(id){
 /* ── SIGNALEMENTS ── */
 function admLoadReports(){
   if(!currentUser)return;
-  db.collection('reports').where('targetAdmin','==',currentUser.email).orderBy('createdAt','desc').get().then(function(snap){
+  db.collection('reports').where('targetAdmin','==',currentUser.email).get().then(function(snap){
+    var docs=[];snap.forEach(function(doc){docs.push({id:doc.id,data:doc.data()});});
+    docs.sort(function(a,b){var da=a.data.createdAt&&a.data.createdAt.toDate?a.data.createdAt.toDate():new Date(a.data.createdAt||0);var db2=b.data.createdAt&&b.data.createdAt.toDate?b.data.createdAt.toDate():new Date(b.data.createdAt||0);return db2-da;});
+    var fakeSnap={size:docs.length,forEach:function(fn){docs.forEach(function(d){fn({id:d.id,data:function(){return d.data;}});});}};
+    snap=fakeSnap;
     document.getElementById('admRepSub').textContent=snap.size+' signalement(s)';
     if(!snap.size){document.getElementById('admRepList').innerHTML='<div class="empty"><span class="material-icons-round mi">flag</span><div class="empty-txt">Aucun signalement</div></div>';return;}
     var h='';
     snap.forEach(function(doc){
       var d=doc.data();
-      h+='<div class="adm-notif-card'+(d.read?' ':' ')+ '" onclick="admMarkRep(\''+doc.id+'\')" style="'+(d.read?'opacity:.6;border-left-color:var(--bl)':'')+'">'
-        +'<div class="adm-notif-row">'
+      h+='<div class="adm-notif-card" onclick="openReportDetail(\''+doc.id+'\')" style="'+(d.read?'opacity:.7;border-left-color:var(--bl)':'')+'">'
+        +'<div class="adm-notif-row">'+(d.adminReply?'<span style="position:absolute;top:8px;right:8px;font-size:.6rem;background:var(--gp);color:var(--gd);padding:2px 8px;border-radius:8px;font-weight:700">Répondu ✓</span>':'')
         +(d.itemImg?'<img class="adm-notif-img" src="'+d.itemImg+'" loading="lazy"/>':'')
         +'<div><div class="adm-notif-name">'+(d.reporterName||d.reportedBy)+(d.read?' ✓':'')+'</div>'
         +(d.reporterSchool?'<div class="adm-notif-school">'+d.reporterSchool+' · '+d.reporterProvince+'</div>':'')
@@ -2277,6 +2330,177 @@ function admResetBtn(){
   document.getElementById('adm-uploadProg').style.display='none';
   document.getElementById('adm-pubStep').textContent='';
 }
+
+/* ═══════════════════════════════════════════
+   SYSTÈME DE MESSAGERIE SIGNALEMENTS
+═══════════════════════════════════════════ */
+var currentReportId=null;
+
+/* ── Fermeture modal détail ── */
+function closeMsgDetail(){
+  var o=document.getElementById('msgDetailOvl');
+  var s=document.getElementById('msgDetailSheet');
+  s.classList.add('closing');
+  setTimeout(function(){o.classList.remove('active');s.classList.remove('closing');currentReportId=null;},280);
+}
+
+/* ── Ouvrir détail signalement (admin) ── */
+function openReportDetail(reportId){
+  currentReportId=reportId;
+  db.collection('reports').doc(reportId).get().then(function(doc){
+    if(!doc.exists)return;
+    var d=doc.data();
+    // Marquer comme lu
+    if(!d.read)db.collection('reports').doc(reportId).update({read:true}).then(function(){admLoadDash();checkMyNotifs();}).catch(function(){});
+    // Titre + temps
+    var ts='';try{if(d.createdAt&&d.createdAt.toDate)ts=d.createdAt.toDate().toLocaleString('fr-FR');}catch(e){}
+    document.getElementById('msgDetailTitle').textContent='📋 Signalement de '+(d.reporterName||d.reportedBy);
+    document.getElementById('msgDetailTime').textContent=ts+(d.reporterSchool?' · '+d.reporterSchool:'')+(d.reporterProvince?' · '+d.reporterProvince:'');
+    // Item concerné
+    var itemRow=document.getElementById('msgDetailItemRow');
+    itemRow.innerHTML='<div class="msg-item-row">'
+      +(d.itemImg?'<div class="msg-item-thumb"><img src="'+d.itemImg+'" loading="lazy"/></div>':'')
+      +'<div class="msg-item-info">'
+      +'<div class="msg-item-title">'+d.itemMat+' · '+d.itemYr+(d.itemTitle?' · '+d.itemTitle:'')+'</div>'
+      +'<div class="msg-item-meta">'+(d.reasons?d.reasons.join(', '):(d.reason||''))+'</div>'
+      +'</div></div>';
+    // Conversation
+    var convEl=document.getElementById('msgDetailConv');
+    var convHtml='';
+    if(d.userMessage){
+      convHtml+='<div class="msg-bubble-wrap"><div style="font-size:.6rem;font-weight:700;color:var(--gr);margin-bottom:3px">'+(d.reporterName||d.reportedBy)+'</div>'
+        +'<div class="msg-bubble user">'+d.userMessage+'</div></div>';
+    }
+    if(d.adminReply){
+      convHtml+='<div class="msg-bubble-wrap" style="display:flex;flex-direction:column;align-items:flex-end">'
+        +'<div style="font-size:.6rem;font-weight:700;color:var(--gm);margin-bottom:3px">Vous (Admin)</div>'
+        +'<div class="msg-bubble admin">'+d.adminReply+'</div></div>';
+    }
+    convEl.innerHTML=convHtml||'<div style="font-size:.75rem;color:var(--gr);text-align:center;padding:8px">Aucun message</div>';
+    // Cacher bouton réponse si déjà répondu
+    var replyWrap=document.getElementById('msgDetailReplyWrap');
+    replyWrap.style.display=d.adminReply?'none':'block';
+    document.getElementById('msgReplyInput').value='';
+    document.getElementById('msgDetailOvl').classList.add('active');
+  }).catch(function(){showToast('Erreur chargement','error');});
+}
+
+/* ── Envoyer réponse admin ── */
+function sendAdminReply(){
+  var msg=document.getElementById('msgReplyInput').value.trim();
+  if(!msg||!currentReportId)return;
+  var btn=document.querySelector('#msgDetailReplyWrap .msg-send-btn');
+  if(btn)btn.disabled=true;
+  db.collection('reports').doc(currentReportId).update({
+    adminReply:msg,
+    adminReplyAt:firebase.firestore.FieldValue.serverTimestamp(),
+    adminEmail:currentUser?currentUser.email:'',
+    adminName:currentUser?currentUser.displayName||currentUser.email:'Admin',
+    replyRead:false
+  }).then(function(){
+    showToast('Réponse envoyée ✓','send');
+    closeMsgDetail();
+    admLoadReports();
+    admLoadDash();
+  }).catch(function(){
+    if(btn)btn.disabled=false;
+    showToast('Erreur','error');
+  });
+}
+
+/* ── Vue Messages élève (drawer) ── */
+function showMessages(){
+  showV('messages');scrollT();
+  loadUserMessages();
+}
+function loadUserMessages(){
+  if(!currentUser)return;
+  var me=currentUser.email;
+  var lEl=document.getElementById('msgList');
+  var subEl=document.getElementById('msgViewSub');
+  lEl.innerHTML='<div style="text-align:center;padding:20px"><div class="auth-spin" style="display:inline-block"></div></div>';
+  db.collection('reports').where('reportedBy','==',me).get().then(function(snap){
+    if(!snap.size){
+      lEl.innerHTML='<div class="empty"><span class="material-icons-round mi">forum</span><div class="empty-txt">Aucun message.<br/>Signalez un item pour contacter un admin.</div></div>';
+      subEl.textContent='Aucun message';
+      return;
+    }
+    var docs=[];
+    snap.forEach(function(doc){docs.push({id:doc.id,d:doc.data()});});
+    docs.sort(function(a,b){var da=a.d.createdAt&&a.d.createdAt.toDate?a.d.createdAt.toDate():new Date(0);var db2=b.d.createdAt&&b.d.createdAt.toDate?b.d.createdAt.toDate():new Date(0);return db2-da;});
+    var unread=docs.filter(function(x){return x.d.adminReply&&!x.d.replyRead;}).length;
+    subEl.textContent=docs.length+' conversation(s)'+(unread?' · '+unread+' réponse(s) non lue(s)':'');
+    var h='';
+    docs.forEach(function(item){
+      var d=item.d;var hasReply=!!d.adminReply;var isUnread=hasReply&&!d.replyRead;
+      var ts='';try{if(d.createdAt&&d.createdAt.toDate)ts=d.createdAt.toDate().toLocaleDateString('fr-FR');}catch(e){}
+      var preview=d.adminReply?'👨‍💼 Admin : '+d.adminReply.substring(0,50)+(d.adminReply.length>50?'...':'')
+        :(d.userMessage?'Vous : '+d.userMessage.substring(0,50):'Signalement envoyé');
+      h+='<div class="msg-conv-card'+(isUnread?' unread':'')+'" onclick="openUserConv(\''+item.id+'\')">'
+        +'<div class="msg-conv-top">'
+        +(d.itemImg?'<div class="msg-conv-thumb"><img src="'+d.itemImg+'" loading="lazy"/></div>':'')
+        +'<div class="msg-conv-info">'
+        +'<div class="msg-conv-title">'+d.itemMat+' '+d.itemYr+(d.itemTitle?' · '+d.itemTitle:'')+'</div>'
+        +'<div class="msg-conv-preview">'+preview+'</div>'
+        +(hasReply?'<div style="font-size:.6rem;color:var(--gm);font-weight:700;margin-top:3px">✅ L\'admin a répondu</div>':'<div style="font-size:.6rem;color:var(--gr);margin-top:3px">⏳ En attente de réponse</div>')
+        +'</div>'
+        +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">'
+        +'<div class="msg-conv-time">'+ts+'</div>'
+        +(isUnread?'<div class="msg-unread-dot"></div>':'')
+        +'</div></div></div>';
+    });
+    lEl.innerHTML=h;
+    // Badge drawer
+    var bdg=document.getElementById('msgBadge');
+    if(bdg){bdg.textContent=unread;bdg.style.display=unread>0?'flex':'none';}
+  }).catch(function(){lEl.innerHTML='<div class="empty"><span class="material-icons-round mi">error</span><div class="empty-txt">Erreur chargement</div></div>';});
+}
+
+/* ── Ouvrir conversation côté élève ── */
+function openUserConv(reportId){
+  db.collection('reports').doc(reportId).get().then(function(doc){
+    if(!doc.exists)return;
+    var d=doc.data();
+    // Marquer réponse comme lue
+    if(d.adminReply&&!d.replyRead){
+      db.collection('reports').doc(reportId).update({replyRead:true}).catch(function(){});
+    }
+    currentReportId=reportId;
+    var ts='';try{if(d.createdAt&&d.createdAt.toDate)ts=d.createdAt.toDate().toLocaleString('fr-FR');}catch(e){}
+    document.getElementById('msgDetailTitle').textContent='💬 Conversation';
+    document.getElementById('msgDetailTime').textContent=d.itemMat+' '+d.itemYr+(d.itemTitle?' · '+d.itemTitle:'');
+    // Item row
+    document.getElementById('msgDetailItemRow').innerHTML='<div class="msg-item-row">'
+      +(d.itemImg?'<div class="msg-item-thumb"><img src="'+d.itemImg+'" loading="lazy"/></div>':'')
+      +'<div class="msg-item-info"><div class="msg-item-title">'+d.itemMat+' '+d.itemYr+'</div>'
+      +'<div class="msg-item-meta">'+(d.reasons?d.reasons.join(', '):(d.reason||''))+'</div></div></div>';
+    // Conversation
+    var convHtml='';
+    if(d.userMessage){
+      convHtml+='<div class="msg-bubble-wrap"><div style="font-size:.6rem;font-weight:700;color:var(--gr);margin-bottom:3px">Vous</div>'
+        +'<div class="msg-bubble user">'+d.userMessage+'</div></div>';
+    }
+    if(d.adminReply){
+      convHtml+='<div class="msg-bubble-wrap" style="display:flex;flex-direction:column;align-items:flex-end">'
+        +'<div style="font-size:.6rem;font-weight:700;color:var(--gm);margin-bottom:3px">'+(d.adminName||'Admin')+'</div>'
+        +'<div class="msg-bubble admin">'+d.adminReply+'</div></div>';
+    }
+    document.getElementById('msgDetailConv').innerHTML=convHtml;
+    // Cacher le champ réponse pour l'élève
+    document.getElementById('msgDetailReplyWrap').style.display='none';
+    document.getElementById('msgDetailOvl').classList.add('active');
+    loadUserMessages();
+  }).catch(function(){});
+}
+
+/* ── Badge messages au démarrage ── */
+function checkMsgBadge(){
+  if(!currentUser)return;
+  db.collection('reports').where('reportedBy','==',currentUser.email).where('replyRead','==',false).get().then(function(snap){
+    var bdg=document.getElementById('msgBadge');
+    if(bdg){bdg.textContent=snap.size;bdg.style.display=snap.size>0?'flex':'none';}
+  }).catch(function(){});
+}
 </script>
 
 <div id="offlineScreen">
@@ -2407,5 +2631,23 @@ function admResetBtn(){
     <button class="adm-nitem" id="adm-nav-settings" onclick="admShowPanel('settings')"><span class="material-icons-round mi">settings</span><span class="adm-nitem-lbl">Paramètres</span></button>
   </div>
 </div>
+
+<!-- MODAL DÉTAIL SIGNALEMENT -->
+<div class="msg-ovl" id="msgDetailOvl" onclick="if(event.target===this)closeMsgDetail()">
+  <div class="msg-sheet" id="msgDetailSheet">
+    <div class="msg-handle"></div>
+    <div class="atitle" id="msgDetailTitle">📋 Détail du signalement</div>
+    <div class="asub" id="msgDetailTime"></div>
+    <div id="msgDetailItemRow"></div>
+    <div id="msgDetailReasons" class="msg-reasons"></div>
+    <div id="msgDetailConv" style="margin-bottom:12px"></div>
+    <div id="msgDetailReplyWrap">
+      <div class="msg-input-wrap">
+        <textarea class="msg-input" id="msgReplyInput" placeholder="Répondre à l'élève..." rows="2"></textarea>
+        <button class="msg-send-btn" onclick="sendAdminReply()"><span class="material-icons-round mi">send</span></button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
- </html>
+  </html>
