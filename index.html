@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
@@ -182,7 +182,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
 .hbody{padding:16px 14px 120px}
 .wcard{background:linear-gradient(135deg,var(--gd),var(--gm),var(--g));border-radius:var(--r);padding:18px 20px;margin-bottom:18px;color:#fff;position:relative;overflow:hidden;animation:fu .5s}
 .wcard::after{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;background:rgba(255,255,255,.08);border-radius:50%}
-.wcard::before{content:'absolute;bottom:-20px;left:-20px;width:70px;height:70px;background:rgba(255,255,255,.05);border-radius:50%}
+.wcard::before{content:'';position:absolute;bottom:-20px;left:-20px;width:70px;height:70px;background:rgba(255,255,255,.05);border-radius:50%}
 .wgreet{font-size:.72rem;opacity:.8;font-weight:600}
 .wname{font-family:'Poppins',sans-serif;font-size:1.1rem;font-weight:800;margin:4px 0 8px;line-height:1.2}
 .wstats{display:flex;gap:12px;flex-wrap:wrap}
@@ -366,8 +366,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
 .guide-dot{width:8px;height:8px;background:var(--g);border-radius:50%;animation:blink 1.2s ease infinite}
 .guide-txt{font-size:.78rem;color:var(--tx);line-height:1.55;margin-bottom:12px}
 .guide-btns{display:flex;gap:8px;justify-content:flex-end}
-.guide-next{background:linear-gradient(135deg,var(--gd),var(--gm));color:#fff;border:none;border-radius:12px;padding:```html
-8px 18px;font-size:.74rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif}
+.guide-next{background:linear-gradient(135deg,var(--gd),var(--gm));color:#fff;border:none;border-radius:12px;padding:8px 18px;font-size:.74rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif}
 .guide-next:active{transform:scale(.95)}
 .guide-skip{background:none;color:var(--gr);border:1.5px solid var(--bl);border-radius:12px;padding:8px 14px;font-size:.72rem;cursor:pointer;font-family:'Nunito',sans-serif}
 .guide-steps{display:flex;gap:5px;align-items:center;margin-bottom:10px}
@@ -1129,7 +1128,7 @@ function showApp(){
     document.getElementById('app').style.display='flex';
     applyTheme();applyLang();generateNotifs();updateWelcome();renderRecommended();
     document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.dataset.lang===currentLang);});
-    if(!userProfile||!userProfile.guided)setTimeout(startGuide,800);setTimeout(checkMyNotifs,3500);setTimeout(checkUserNotifs,4000);setTimeout(listenUserNotifs,4500);checkUnreadMessages();
+    if(!userProfile||!userProfile.guided)setTimeout(startGuide,800);setTimeout(checkMyNotifs,3500);setTimeout(checkUserNotifs,4000);setTimeout(listenUserNotifs,4500);
   },3300);
 }
 
@@ -1497,7 +1496,7 @@ function renderStats(){
   var sb=document.getElementById('statsBody');var total=items.length,tf=favs.length;
   var gi=items.filter(function(it){return SECS.gen.some(function(o){return o.id===it.oid;});}).length;
   var ti=items.filter(function(it){return SECS.tec.some(function(o){return o.id===it.oid;});}).length;
-  var oc=ALLOPTS.map(function(o){return{n:o.name,c:items.filter(function(it){return it.oid===o.id;});}).filter(function(x){return x.c>0;}).sort(function(a,b){return b.c-a.c;});
+  var oc=ALLOPTS.map(function(o){return{n:o.name,c:items.filter(function(it){return it.oid===o.id;}).length};}).filter(function(x){return x.c>0;}).sort(function(a,b){return b.c-a.c;});
   var yc={};items.forEach(function(it){yc[it.yr]=(yc[it.yr]||0)+1;});var yrs=Object.keys(yc).sort();
   var totalViews=0;items.forEach(function(it){totalViews+=(it.views||0);});
   var h='<div class="stcard"><div class="stcard-t"><span class="material-icons-round mi">analytics</span>'+t('overview')+'</div><div class="strow"><div class="stitem"><div class="stnum">'+total+'</div><div class="stlbl">Items</div></div><div class="stitem"><div class="stnum">'+tf+'</div><div class="stlbl">'+t('favorites')+'</div></div><div class="stitem"><div class="stnum">'+totalViews+'</div><div class="stlbl">Vues</div></div><div class="stitem"><div class="stnum">'+userCount+'</div><div class="stlbl">Users</div></div></div></div>';
@@ -1533,9 +1532,6 @@ function renderProfile(){
   var myItems=userProfile?items.filter(function(it){return it.oid===userProfile.option;}).length:0;
   h+='<div class="profile-card"><div class="profile-card-t"><span class="material-icons-round mi">bar_chart</span>'+t('personalStats')+'</div><div class="strow"><div class="stitem"><div class="stnum">'+myItems+'</div><div class="stlbl">Items</div></div><div class="stitem"><div class="stnum">'+favs.length+'</div><div class="stlbl">'+t('favorites')+'</div></div></div></div>';
   if(isAdmin)h+='<div class="profile-card"><div class="profile-card-t"><span class="material-icons-round mi">admin_panel_settings</span>Admin</div><div class="profile-row"><span class="profile-row-label">Status</span><span class="profile-row-value" style="color:var(--gm)">👑 Admin</span></div></div>';
-  
-  // On ajoute le bouton de messagerie à la fin du profil
-  h += '<div class="aact" onclick="showMessages()" style="margin-top:12px; border-color:var(--g); background:var(--gp)"><div class="aact-ico" style="background:#fff"><span class="material-icons-round mi" style="color:var(--g)">chat</span></div><div class="aact-inf"><div class="aact-n">Mes Messages</div><div class="aact-d">Réponses de l\'administration</div></div><span class="material-icons-round mi" style="color:var(--g)">chevron_right</span></div>';
   pb.innerHTML=h;
 }
 
@@ -2171,7 +2167,7 @@ function admLoadDash(){
   document.getElementById('admChartBars').innerHTML=barsHtml;
 
   /* Signalements non lus */
-  db.collection('reports').where('targetAdmin','==me).where('read','==',false).get().then(function(snap){
+  db.collection('reports').where('targetAdmin','==',me).where('read','==',false).get().then(function(snap){
     var nb=snap.size;
     var sv=document.getElementById('admStatsGrid').querySelectorAll('.adm-stat-val');
     if(sv[3])sv[3].textContent=nb;
@@ -2182,7 +2178,7 @@ function admLoadDash(){
     var h='';
     snap.forEach(function(doc){
       var d=doc.data();
-      h+='<div class="adm-notif-card" onclick="openReportDetail(\''+doc.id+'\')">'
+      h+='<div class="adm-notif-card" onclick="admMarkRep(\''+doc.id+'\')">'
         +'<div class="adm-notif-row">'
         +(d.itemImg?'<img class="adm-notif-img" src="'+d.itemImg+'" loading="lazy"/>':'')
         +'<div><div class="adm-notif-name">'+(d.reporterName||d.reportedBy)+'</div>'
@@ -2190,7 +2186,7 @@ function admLoadDash(){
         +'<div class="adm-notif-reasons">'+(d.reasons?d.reasons.join(', '):(d.reason||''))+'</div>'
         +'<div class="adm-notif-item">'+d.itemMat+' '+d.itemYr+(d.itemTitle?' · '+d.itemTitle:'')+'</div>'
         +'</div></div>'
-        +'<div style="font-size:.58rem;color:var(--gr);margin-top:6px;text-align:right">Appuyez pour ouvrir ✓</div>'
+        +'<div style="font-size:.58rem;color:var(--gr);margin-top:6px;text-align:right">Appuyez pour marquer comme lu ✓</div>'
         +'</div>';
     });
     nEl.innerHTML=h;
@@ -2203,6 +2199,7 @@ function admStatCard(ico,color,val,lbl){
     +'<div class="adm-stat-val">'+val+'</div>'
     +'<div class="adm-stat-lbl">'+lbl+'</div></div>';
 }
+
 
 /* ── MES ITEMS ── */
 function admSort(type,el){
@@ -2419,6 +2416,9 @@ function admResetBtn(){
 ═══════════════════════════════════════════ */
 var currentReportId=null;
 
+/* ── Fermeture modal détail ── */
+
+
 /* ── Ouvrir détail signalement (admin) ── */
 function openReportDetail(reportId){
   currentReportId=reportId;
@@ -2510,127 +2510,35 @@ function sendAdminReply(reportId){
   }).catch(function(){if(btn)btn.disabled=false;showToast('Erreur','error');});
 }
 
-/* ── Vue Messages élève ── */
-function loadStudentMessages() {
-  if (!currentUser) return;
-  var ml = document.getElementById('msgList');
-  ml.innerHTML = '<div style="text-align:center;padding:20px;color:var(--gr)"><div class="auth-spin" style="display:inline-block;border-top-color:var(--g)"></div><br/>Chargement...</div>';
+/* ── Vue Messages élève (drawer) ── */
 
-  db.collection('reports').where('reportedBy', '==', currentUser.email).get().then(function(snap) {
-    var msgs = [];
-    snap.forEach(function(doc) {
-      var d = doc.data();
-      if (d.adminReply) msgs.push({ id: doc.id, data: d });
-    });
 
-    if (msgs.length === 0) {
-      ml.innerHTML = '<div class="empty"><span class="material-icons-round mi">chat_bubble_outline</span><div class="empty-txt">Aucun message de l\'administration.</div></div>';
-      return;
-    }
 
-    msgs.sort(function(a, b) {
-      var da = a.data.adminReplyAt && a.data.adminReplyAt.toDate ? a.data.adminReplyAt.toDate() : new Date(0);
-      var db2 = b.data.adminReplyAt && b.data.adminReplyAt.toDate ? b.data.adminReplyAt.toDate() : new Date(0);
-      return db2 - da;
-    });
+/* ── Ouvrir conversation côté élève ── */
 
-    var h = '';
-    msgs.forEach(function(msg) {
-      var d = msg.data;
-      var unread = !d.replyRead;
-      var dateStr = '';
-      try { if (d.adminReplyAt) dateStr = d.adminReplyAt.toDate().toLocaleDateString('fr-FR'); } catch(e){}
 
-      h += '<div class="msg-conv-card ' + (unread ? 'unread' : '') + '" onclick="openStudentMessage(\'' + msg.id + '\')">'
-         + '<div class="msg-conv-top">'
-         + (d.itemImg ? '<div class="msg-conv-thumb"><img src="'+d.itemImg+'" loading="lazy"/></div>' : '<div class="msg-conv-thumb" style="display:flex;align-items:center;justify-content:center;background:var(--gl)"><span class="material-icons-round mi" style="color:var(--g)">description</span></div>')
-         + '<div class="msg-conv-info">'
-         + '<div class="msg-conv-title">Rép. : ' + (d.itemMat || 'Item') + '</div>'
-         + '<div class="msg-conv-preview">' + d.adminReply + '</div>'
-         + '</div>'
-         + '<div class="msg-conv-time">' + dateStr + '</div>'
-         + (unread ? '<div class="msg-unread-dot"></div>' : '')
-         + '</div></div>';
-    });
-    ml.innerHTML = h;
-  }).catch(function(e) {
-    ml.innerHTML = '<div class="empty"><div class="empty-txt">Erreur de chargement</div></div>';
-  });
-}
+/* ── Badge messages au démarrage ── */
 
-function openStudentMessage(reportId) {
-  document.getElementById('msgOvl').classList.add('active');
-  var body = document.getElementById('msgOvlBody');
-  body.innerHTML = '<div style="text-align:center;padding:20px;color:var(--gr)"><div class="auth-spin" style="display:inline-block;border-top-color:var(--g)"></div></div>';
-
-  db.collection('reports').doc(reportId).get().then(function(doc) {
-    if (!doc.exists) return;
-    var d = doc.data();
-
-    if (!d.replyRead) {
-      db.collection('reports').doc(reportId).update({ replyRead: true }).then(function() {
-        checkUnreadMessages();
-        loadStudentMessages();
-      });
-    }
-
-    var h = '<div class="atitle" style="margin-bottom:14px">💬 Conversation</div>';
-
-    var userMsg = d.userMessage ? d.userMessage : '<i>Aucun message supplémentaire.</i>';
-    h += '<div class="msg-bubble-wrap">'
-       + '<div class="msg-bubble-sender">Vous avez signalé : ' + (d.reasons ? d.reasons.join(', ') : (d.reason||'')) + '</div>'
-       + '<div class="msg-bubble user">' + userMsg + '</div>'
-       + '</div>';
-
-    var adminName = d.adminName || 'Administration';
-    var dateRep = d.adminReplyAt && d.adminReplyAt.toDate ? d.adminReplyAt.toDate().toLocaleString('fr-FR', {hour: '2-digit', minute:'2-digit', day:'numeric', month:'short'}) : '';
-    h += '<div class="msg-bubble-wrap">'
-       + '<div class="msg-bubble-sender" style="text-align:right">' + adminName + '</div>'
-       + '<div class="msg-bubble admin">' + d.adminReply + '</div>'
-       + '<div class="msg-bubble-time">' + dateRep + '</div>'
-       + '</div>';
-
-    body.innerHTML = h;
-  });
-}
-
-function closeStudentMessage() {
-  var o = document.getElementById('msgOvl');
-  var s = o.querySelector('.msg-sheet');
-  s.classList.add('closing');
-  o.classList.add('closing');
-  setTimeout(function() {
-    o.classList.remove('active', 'closing');
-    s.classList.remove('closing');
-  }, 280);
-}
-
-function checkUnreadMessages() {
-  if (!currentUser) return;
-  db.collection('reports')
-    .where('reportedBy', '==', currentUser.email)
-    .where('replyRead', '==', false)
-    .get().then(function(snap) {
-      var count = 0;
-      snap.forEach(function(doc) {
-        if (doc.data().adminReply) count++;
-      });
-      var badge = document.getElementById('msgBadge');
-      if (badge) {
-        badge.textContent = count;
-        badge.style.display = count > 0 ? 'flex' : 'none';
-      }
-    }).catch(function(){});
-}
-
-function showMessages() {
-  showView('messages');
-  loadStudentMessages();
-}
 
 /* ── Variables réponses rapides ── */
 var QUICK_REPLIES_POS=['Item corrigé, merci pour le signalement ! ✅','Problème résolu, l\'item a été mis à jour. ✅','Merci pour votre vigilance, nous avons pris note. ✅','Item vérifié et validé, qualité conforme. ✅'];
 var QUICK_REPLIES_NEG=['Item vérifié, aucun problème constaté. ❌','Image normale, qualité conforme. ❌','Ce n\'est pas un doublon, les items sont différents. ❌','Contenu approprié, signalement non retenu. ❌'];
+
+/* ── Sélection réponse rapide ── */
+
+
+/* ── Supprimer signalement ── */
+
+
+/* ── Messages dans onglet Profil (élève) ── */
+
+
+/* ── Voir réponse complète (élève) ── */
+
+
+/* ── Badge messages au démarrage ── */
+
+function showMessages(){showView('profile');}
 
 /* ── Fermer éditeur inline ── */
 function closeEditInline(id){
@@ -2827,13 +2735,12 @@ function listenUserNotifs(){
 }
 </script>
 
-<!-- OVERLAY MESSAGES ÉLÈVE -->
-<div class="msg-ovl" id="msgOvl" onclick="if(event.target===this)closeStudentMessage()">
-  <div class="msg-sheet">
-    <div class="msg-handle"></div>
-    <div id="msgOvlBody"></div>
-    <button class="btng" onclick="closeStudentMessage()" style="width:100%;margin-top:14px">Fermer</button>
-  </div>
+<div id="offlineScreen">
+  <img class="off-img" src="https://i.ibb.co/99B49j6J/1774105390897-019d10eb-7b45-743d-8521-c3dc348c39a9.png" alt="Offline" onerror="this.style.display='none'"/>
+  <div class="off-title">Pas de connexion 📡</div>
+  <div class="off-sub">Vérifiez votre connexion internet<br/>et réessayez.</div>
+  <button class="off-btn" onclick="retryConnection()"><span class="material-icons-round mi">refresh</span>Réessayer</button>
+  <div class="off-dot"><span></span><span class="pulse"></span><span></span></div>
 </div>
 
 <!-- INTERFACE ADMIN PLEIN ÉCRAN -->
@@ -2871,7 +2778,7 @@ function listenUserNotifs(){
     <div class="adm-panel" id="adm-panel-items">
       <div style="position:relative;margin-bottom:12px"><span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);pointer-events:none"><span class="material-icons-round mi" style="font-size:1rem;color:var(--gr)">search</span></span><input type="text" class="fin" id="admItemSearch" placeholder="Rechercher..." oninput="admFilterItems(this.value)" style="padding-left:36px;margin-bottom:0"/></div>
       <div class="adm-sort-chips">
-        <div class="adm-sort-chip active" onclick="admSort('date',this)">📅Date</div>
+        <div class="adm-sort-chip active" onclick="admSort('date',this)">📅 Date</div>
         <div class="adm-sort-chip" onclick="admSort('views',this)">👁 Vues</div>
         <div class="adm-sort-chip" onclick="admSort('mat',this)">📚 Matière</div>
         <div class="adm-sort-chip" onclick="admSort('yr',this)">📅 Année</div>
@@ -2957,6 +2864,7 @@ function listenUserNotifs(){
   </div>
 </div>
 
+
 <!-- PANNEAU GLISSANT ADMIN -->
 <div class="adm-slide-panel" id="admSlidePanel">
   <div class="adm-slide-hdr">
@@ -2966,4 +2874,4 @@ function listenUserNotifs(){
   <div class="adm-slide-body" id="admSlideBody"></div>
 </div>
 </body>
-  </html>
+     </html>
