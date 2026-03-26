@@ -1128,7 +1128,7 @@ function showApp(){
     document.getElementById('app').style.display='flex';
     applyTheme();applyLang();generateNotifs();updateWelcome();renderRecommended();
     document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.dataset.lang===currentLang);});
-    if(!userProfile||!userProfile.guided)setTimeout(startGuide,800);setTimeout(checkMyNotifs,3500);setTimeout(checkUserNotifs,4000);
+    if(!userProfile||!userProfile.guided)setTimeout(startGuide,800);setTimeout(checkMyNotifs,3500);setTimeout(checkUserNotifs,4000);setTimeout(listenUserNotifs,4500);
   },3300);
 }
 
@@ -1148,8 +1148,25 @@ function loadUserFavs(uid){
 function saveFavs(){if(currentUser)db.collection('users').doc(currentUser.uid).set({favs:favs},{merge:true}).catch(function(){});}
 
 function listenUsers(){
-  usersListener=db.collection('users').onSnapshot(function(snap){
-    userCount=snap.size;var el=document.getElementById('wUsers');if(el)el.textContent=userCount;
+  /* Écouter un compteur centralisé dans stats/global */
+  db.collection('stats').doc('global').onSnapshot(function(doc){
+    if(doc.exists&&doc.data().userCount!==undefined){
+      userCount=doc.data().userCount;
+    }else{
+      /* Fallback : compter la collection users */
+      userCount=0;
+      db.collection('users').get().then(function(snap){
+        userCount=snap.size;
+        var el=document.getElementById('wUsers');if(el)el.textContent=userCount;
+      }).catch(function(){});
+    }
+    var el=document.getElementById('wUsers');if(el)el.textContent=userCount;
+  },function(){
+    /* En cas d'erreur, compter directement */
+    db.collection('users').get().then(function(snap){
+      userCount=snap.size;
+      var el=document.getElementById('wUsers');if(el)el.textContent=userCount;
+    }).catch(function(){});
   });
 }
 function listenItems(){
@@ -1184,6 +1201,8 @@ function obFinish(){
   var profile={role:obRole,option:opt,province:province,school:school||null,age:age?parseInt(age):null,lang:currentLang,createdAt:new Date().toISOString()};
   if(currentUser){
     db.collection('users').doc(currentUser.uid).set({profile:profile},{merge:true}).then(function(){
+      /* Incrémenter compteur global */
+      db.collection('stats').doc('global').set({userCount:firebase.firestore.FieldValue.increment(1)},{merge:true}).catch(function(){});
       userProfile=profile;document.getElementById('onboarding').style.display='none';document.getElementById('app').style.display='flex';
       applyTheme();applyLang();generateNotifs();updateWelcome();renderRecommended();
       showToast(t('welcomeISD'),'school');setTimeout(startGuide,800);
@@ -2665,13 +2684,54 @@ function admDeleteReport(id){
 /* ── Notifications élève depuis Firebase ── */
 function checkUserNotifs(){
   if(!currentUser)return;
-  db.collection('userNotifs').where('toEmail','==',currentUser.email).where('read','==',false).get().then(function(snap){
+  db.collection('userNotifs').where('toEmail','==',currentUser.email).get().then(function(snap){
+    var toProcess=[];
     snap.forEach(function(doc){
       var d=doc.data();
-      addNotif(d.title,d.desc,d.icon||'reply',d.bg||'#e8f0ff',d.ic||'#3a5a9a',true);
-      db.collection('userNotifs').doc(doc.id).update({read:true}).catch(function(){});
+      if(!d.read)toProcess.push({id:doc.id,data:d});
     });
+    if(!toProcess.length)return;
+    toProcess.forEach(function(item){
+      var d=item.data;
+      addNotif(
+        d.title||(currentLang==='en'?'Admin replied':'Réponse de l\'admin'),
+        d.desc||'',
+        d.icon||'reply',
+        d.bg||'#e8f0ff',
+        d.ic||'#3a5a9a',
+        true
+      );
+      db.collection('userNotifs').doc(item.id).update({read:true}).catch(function(){});
+    });
+    showToast(currentLang==='en'?'You have a new message':'Vous avez un nouveau message','reply');
   }).catch(function(){});
+}
+
+/* ── Listener temps réel notifications élève ── */
+var userNotifsListener=null;
+function listenUserNotifs(){
+  if(!currentUser)return;
+  if(userNotifsListener)userNotifsListener();
+  userNotifsListener=db.collection('userNotifs')
+    .where('toEmail','==',currentUser.email)
+    .onSnapshot(function(snap){
+      snap.docChanges().forEach(function(change){
+        if(change.type==='added'){
+          var d=change.doc.data();
+          if(!d.read){
+            addNotif(
+              d.title||(currentLang==='en'?'Admin replied':'Réponse de l\'admin'),
+              d.desc||'',
+              d.icon||'reply',
+              d.bg||'#e8f0ff',
+              d.ic||'#3a5a9a',
+              true
+            );
+            db.collection('userNotifs').doc(change.doc.id).update({read:true}).catch(function(){});
+          }
+        }
+      });
+    },function(){/* silently ignore errors */});
 }
 </script>
 
@@ -2814,4 +2874,4 @@ function checkUserNotifs(){
   <div class="adm-slide-body" id="admSlideBody"></div>
 </div>
 </body>
-  </html>
+    </html>
