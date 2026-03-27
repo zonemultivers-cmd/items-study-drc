@@ -743,6 +743,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
       <div class="drawer-item" onclick="showView('favs');closeDrawer()"><span class="material-icons-round mi">favorite</span><span data-t="navFavs">Mes Favoris</span></div>
       <div class="drawer-item" onclick="showView('stats');closeDrawer()"><span class="material-icons-round mi">bar_chart</span><span data-t="navStats">Statistiques</span></div>
       <div class="drawer-item" onclick="showView('notifs');closeDrawer()"><span class="material-icons-round mi">notifications</span><span data-t="navNotifs">Notifications</span></div>
+      <div class="drawer-item" onclick="showMessages();closeDrawer()"><span class="material-icons-round mi">forum</span><span>Messages</span><span class="bdg" id="msgBadgeDrawer" style="position:static;min-width:16px;height:16px;border-radius:8px;padding:0 4px;font-size:.5rem;font-weight:800;color:#fff;background:var(--g);display:none;align-items:center;justify-content:center;margin-left:auto">0</span></div>
 
       <div class="drawer-item" onclick="showView('profile');closeDrawer()"><span class="material-icons-round mi">person</span><span data-t="navProfile">Mon Profil</span></div>
       <div class="drawer-item" onclick="showTerms();closeDrawer()"><span class="material-icons-round mi">gavel</span><span>Conditions d'utilisation</span></div>
@@ -1128,7 +1129,7 @@ function showApp(){
     document.getElementById('app').style.display='flex';
     applyTheme();applyLang();generateNotifs();updateWelcome();renderRecommended();
     document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.dataset.lang===currentLang);});
-    if(!userProfile||!userProfile.guided)setTimeout(startGuide,800);setTimeout(checkMyNotifs,3500);setTimeout(checkUserNotifs,4000);setTimeout(listenUserNotifs,4500);
+    if(!userProfile||!userProfile.guided)setTimeout(startGuide,800);setTimeout(checkMyNotifs,3500);setTimeout(checkUserNotifs,4000);setTimeout(listenUserNotifs,4500);setTimeout(checkUnreadMessages,4000);
   },3300);
 }
 
@@ -1148,25 +1149,21 @@ function loadUserFavs(uid){
 function saveFavs(){if(currentUser)db.collection('users').doc(currentUser.uid).set({favs:favs},{merge:true}).catch(function(){});}
 
 function listenUsers(){
-  /* Écouter un compteur centralisé dans stats/global */
-  db.collection('stats').doc('global').onSnapshot(function(doc){
-    if(doc.exists&&doc.data().userCount!==undefined){
-      userCount=doc.data().userCount;
-    }else{
-      /* Fallback : compter la collection users */
-      userCount=0;
-      db.collection('users').get().then(function(snap){
-        userCount=snap.size;
-        var el=document.getElementById('wUsers');if(el)el.textContent=userCount;
-      }).catch(function(){});
-    }
+  if(!currentUser)return;
+  var presenceRef=db.collection('stats').doc('presence');
+  var uid=currentUser.uid;
+  var updateData={};updateData[uid]=true;
+  presenceRef.set(updateData,{merge:true}).catch(function(){});
+  window.addEventListener('beforeunload',function(){
+    var delData={};delData[uid]=firebase.firestore.FieldValue.delete();
+    presenceRef.set(delData,{merge:true});
+  });
+  usersListener=presenceRef.onSnapshot(function(doc){
+    if(doc.exists){userCount=Object.keys(doc.data()).length;}
+    else{userCount=1;}
     var el=document.getElementById('wUsers');if(el)el.textContent=userCount;
   },function(){
-    /* En cas d'erreur, compter directement */
-    db.collection('users').get().then(function(snap){
-      userCount=snap.size;
-      var el=document.getElementById('wUsers');if(el)el.textContent=userCount;
-    }).catch(function(){});
+    var el=document.getElementById('wUsers');if(el)el.textContent='1';
   });
 }
 function listenItems(){
@@ -1201,8 +1198,6 @@ function obFinish(){
   var profile={role:obRole,option:opt,province:province,school:school||null,age:age?parseInt(age):null,lang:currentLang,createdAt:new Date().toISOString()};
   if(currentUser){
     db.collection('users').doc(currentUser.uid).set({profile:profile},{merge:true}).then(function(){
-      /* Incrémenter compteur global */
-      db.collection('stats').doc('global').set({userCount:firebase.firestore.FieldValue.increment(1)},{merge:true}).catch(function(){});
       userProfile=profile;document.getElementById('onboarding').style.display='none';document.getElementById('app').style.display='flex';
       applyTheme();applyLang();generateNotifs();updateWelcome();renderRecommended();
       showToast(t('welcomeISD'),'school');setTimeout(startGuide,800);
@@ -2538,7 +2533,90 @@ var QUICK_REPLIES_NEG=['Item vérifié, aucun problème constaté. ❌','Image n
 
 /* ── Badge messages au démarrage ── */
 
-function showMessages(){showView('profile');}
+function showMessages(){
+  showView('messages');
+  loadUserMessages();
+}
+
+function loadUserMessages(){
+  if(!currentUser)return;
+  var ml=document.getElementById('msgList');
+  if(!ml)return;
+  ml.innerHTML='<div style="text-align:center;padding:24px;color:var(--gr)">Chargement...</div>';
+  db.collection('reports').where('reportedBy','==',currentUser.email).get().then(function(snap){
+    if(snap.empty){
+      ml.innerHTML='<div class="empty"><span class="material-icons-round mi">chat_bubble_outline</span><div class="empty-txt">Aucune conversation.</div></div>';
+      return;
+    }
+    var docs=[];
+    snap.forEach(function(doc){docs.push({id:doc.id,data:doc.data()});});
+    docs.sort(function(a,b){
+      var da=a.data.createdAt&&a.data.createdAt.toDate?a.data.createdAt.toDate():new Date(0);
+      var db2=b.data.createdAt&&b.data.createdAt.toDate?b.data.createdAt.toDate():new Date(0);
+      return db2-da;
+    });
+    var h='';
+    docs.forEach(function(item){
+      var d=item.data;
+      var hasReply=!!d.adminReply;
+      var unread=hasReply&&!d.replyRead;
+      h+='<div class="msg-conv-card'+(unread?' unread':'')+'" onclick="openUserConv(\''+item.id+'\')">'
+        +'<div class="msg-conv-top">'
+        +(d.itemImg?'<div class="msg-conv-thumb"><img src="'+d.itemImg+'" loading="lazy"/></div>':'<div class="msg-conv-thumb" style="display:flex;align-items:center;justify-content:center"><span class="material-icons-round mi" style="font-size:1.5rem;color:var(--gr)">description</span></div>')
+        +'<div class="msg-conv-info">'
+        +'<div class="msg-conv-title">Signalement : '+(d.itemTitle||d.itemMat)+'</div>'
+        +'<div class="msg-conv-preview">'+(hasReply?'Admin : '+d.adminReply.substring(0,50)+(d.adminReply.length>50?'...':''):'En attente de réponse...')+'</div>'
+        +'</div>'
+        +(unread?'<div class="msg-unread-dot"></div>':'')
+        +'</div></div>';
+    });
+    ml.innerHTML=h;
+    checkUnreadMessages();
+  }).catch(function(){
+    if(ml)ml.innerHTML='<div class="empty"><span class="material-icons-round mi">error_outline</span><div class="empty-txt">Erreur de chargement</div></div>';
+  });
+}
+
+function openUserConv(id){
+  db.collection('reports').doc(id).get().then(function(doc){
+    if(!doc.exists)return;
+    var d=doc.data();
+    if(d.adminReply&&!d.replyRead){
+      db.collection('reports').doc(id).update({replyRead:true}).then(function(){checkUnreadMessages();}).catch(function(){});
+    }
+    var bodyHtml='<div style="font-size:.85rem;font-weight:800;margin-bottom:14px;color:var(--tx)">'+(d.itemTitle||d.itemMat)+' · '+d.itemYr+'</div>';
+    bodyHtml+='<div class="msg-bubble-wrap"><div class="msg-bubble user">'
+      +'<div class="msg-bubble-sender">Vous</div>'
+      +(d.userMessage||'Signalement : '+(d.reasons?d.reasons.join(', '):(d.reason||'')))
+      +'</div></div>';
+    if(d.adminReply){
+      bodyHtml+='<div class="msg-bubble-wrap"><div class="msg-bubble admin">'
+        +'<div class="msg-bubble-sender">'+(d.adminName||'Administration')+'</div>'
+        +d.adminReply
+        +'</div></div>';
+    }else{
+      bodyHtml+='<div style="text-align:center;font-size:.65rem;color:var(--gr);margin-top:24px;font-style:italic">En attente de réponse de l\'administration...</div>';
+    }
+    document.getElementById('admSlideTitle').textContent='💬 Conversation';
+    document.getElementById('admSlideBody').innerHTML=bodyHtml;
+    var p=document.getElementById('admSlidePanel');
+    p.style.display='flex';
+    requestAnimationFrame(function(){p.classList.add('active');});
+  }).catch(function(){showToast('Erreur','error');});
+}
+
+function checkUnreadMessages(){
+  if(!currentUser)return;
+  db.collection('reports').where('reportedBy','==',currentUser.email).get().then(function(snap){
+    var n=0;
+    snap.forEach(function(doc){
+      var d=doc.data();
+      if(d.adminReply&&!d.replyRead)n++;
+    });
+    var bdg=document.getElementById('msgBadge');
+    if(bdg){bdg.textContent=n;bdg.style.display=n>0?'flex':'none';}
+  }).catch(function(){});
+}
 
 /* ── Fermer éditeur inline ── */
 function closeEditInline(id){
@@ -2874,4 +2952,4 @@ function listenUserNotifs(){
   <div class="adm-slide-body" id="admSlideBody"></div>
 </div>
 </body>
-     </html>
+                                                     </html>
