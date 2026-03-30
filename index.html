@@ -1085,6 +1085,10 @@ auth.onAuthStateChanged(function(user){
     currentUser=null;isAdmin=false;userProfile=null;
     if(itemsListener){itemsListener();itemsListener=null;}
     if(usersListener){usersListener();usersListener=null;}
+    if(window._notifInterval){clearInterval(window._notifInterval);window._notifInterval=null;}
+    if(window._presenceInterval){clearInterval(window._presenceInterval);window._presenceInterval=null;}
+    /* Marquer hors ligne */
+    if(currentUser)db.collection('users').doc(currentUser.uid).set({online:false},{merge:true}).catch(function(){});
     if(loader)setTimeout(function(){loader.style.opacity='0';setTimeout(function(){loader.remove();},800);},2800);
     setTimeout(function(){
       document.getElementById('authScreen').classList.remove('hidden');
@@ -1150,20 +1154,37 @@ function saveFavs(){if(currentUser)db.collection('users').doc(currentUser.uid).s
 
 function listenUsers(){
   if(!currentUser)return;
-  var presenceRef=db.collection('stats').doc('presence');
   var uid=currentUser.uid;
-  var updateData={};updateData[uid]=true;
-  presenceRef.set(updateData,{merge:true}).catch(function(){});
+  /* Marquer cet utilisateur comme en ligne */
+  db.collection('users').doc(uid).set({online:true,lastSeen:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(function(){});
+  /* Heartbeat toutes les 60s */
+  if(window._presenceInterval)clearInterval(window._presenceInterval);
+  window._presenceInterval=setInterval(function(){
+    if(!currentUser){clearInterval(window._presenceInterval);return;}
+    db.collection('users').doc(currentUser.uid).set({online:true,lastSeen:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(function(){});
+  },60000);
+  /* Quitter */
   window.addEventListener('beforeunload',function(){
-    var delData={};delData[uid]=firebase.firestore.FieldValue.delete();
-    presenceRef.set(delData,{merge:true});
+    clearInterval(window._presenceInterval);
+    db.collection('users').doc(uid).set({online:false},{merge:true});
   });
-  usersListener=presenceRef.onSnapshot(function(doc){
-    if(doc.exists){userCount=Object.keys(doc.data()).length;}
-    else{userCount=1;}
-    var el=document.getElementById('wUsers');if(el)el.textContent=userCount;
+  /* Écouter la collection users en temps réel */
+  usersListener=db.collection('users').onSnapshot(function(snap){
+    var active=0;
+    snap.forEach(function(doc){
+      var d=doc.data();
+      if(d.online===true)active++;
+    });
+    userCount=Math.max(active,1);
+    var el=document.getElementById('wUsers');
+    if(el)el.textContent=userCount;
   },function(){
-    var el=document.getElementById('wUsers');if(el)el.textContent='1';
+    /* Fallback: compter tous les users */
+    db.collection('users').get().then(function(snap){
+      userCount=snap.size;
+      var el=document.getElementById('wUsers');
+      if(el)el.textContent=userCount;
+    }).catch(function(){});
   });
 }
 function listenItems(){
@@ -2485,17 +2506,28 @@ function sendAdminReply(reportId){
       replyRead:false
     }).then(function(){
       /* Envoyer notification à l'élève */
-      if(d.reportedBy&&d.reportedBy!=='anonymous'){
+      var toEmail=d.reportedBy||'';
+      if(toEmail&&toEmail!=='anonymous'){
+        var notifTitle=currentLang==='en'?'Admin replied to your report':'Réponse à votre signalement';
+        var notifDesc=txt.substring(0,100)+(txt.length>100?'...':'');
         db.collection('userNotifs').add({
-          toEmail:d.reportedBy,
-          title:'Réponse à votre signalement',
-          desc:txt.substring(0,80)+(txt.length>80?'...':''),
+          toEmail:toEmail,
+          title:notifTitle,
+          desc:notifDesc,
           icon:'reply',
           bg:'#e8f0ff',
           ic:'#3a5a9a',
           read:false,
+          itemMat:d.itemMat||'',
+          itemYr:d.itemYr||'',
+          itemTitle:d.itemTitle||'',
+          reportId:reportId,
           createdAt:firebase.firestore.FieldValue.serverTimestamp()
-        }).catch(function(){});
+        }).then(function(){
+          console.log('Notification envoyée à '+toEmail);
+        }).catch(function(e){
+          console.error('Erreur notif:',e);
+        });
       }
       showToast('Réponse envoyée ✓','send');
       closeAdmSlide();
@@ -2774,42 +2806,35 @@ function checkUserNotifs(){
       addNotif(
         d.title||(currentLang==='en'?'Admin replied':'Réponse de l\'admin'),
         d.desc||'',
-        d.icon||'reply',
-        d.bg||'#e8f0ff',
-        d.ic||'#3a5a9a',
+        'reply',
+        '#e8f0ff',
+        '#3a5a9a',
         true
       );
       db.collection('userNotifs').doc(item.id).update({read:true}).catch(function(){});
     });
-    showToast(currentLang==='en'?'You have a new message':'Vous avez un nouveau message','reply');
-  }).catch(function(){});
+    /* Mettre à jour badge messages */
+    checkUnreadMessages();
+    if(toProcess.length>0){
+      showToast(currentLang==='en'?'New message from admin':'Nouveau message de l\'admin','reply');
+    }
+  }).catch(function(e){
+    console.log('checkUserNotifs error:',e.message);
+  });
 }
 
 /* ── Listener temps réel notifications élève ── */
 var userNotifsListener=null;
 function listenUserNotifs(){
   if(!currentUser)return;
-  if(userNotifsListener)userNotifsListener();
-  userNotifsListener=db.collection('userNotifs')
-    .where('toEmail','==',currentUser.email)
-    .onSnapshot(function(snap){
-      snap.docChanges().forEach(function(change){
-        if(change.type==='added'){
-          var d=change.doc.data();
-          if(!d.read){
-            addNotif(
-              d.title||(currentLang==='en'?'Admin replied':'Réponse de l\'admin'),
-              d.desc||'',
-              d.icon||'reply',
-              d.bg||'#e8f0ff',
-              d.ic||'#3a5a9a',
-              true
-            );
-            db.collection('userNotifs').doc(change.doc.id).update({read:true}).catch(function(){});
-          }
-        }
-      });
-    },function(){/* silently ignore errors */});
+  /* Vérifier immédiatement */
+  checkUserNotifs();
+  /* Puis toutes les 30 secondes */
+  if(window._notifInterval)clearInterval(window._notifInterval);
+  window._notifInterval=setInterval(function(){
+    if(!currentUser){clearInterval(window._notifInterval);return;}
+    checkUserNotifs();
+  },30000);
 }
 </script>
 
@@ -2952,4 +2977,4 @@ function listenUserNotifs(){
   <div class="adm-slide-body" id="admSlideBody"></div>
 </div>
 </body>
-                                                     </html>
+  </html>
