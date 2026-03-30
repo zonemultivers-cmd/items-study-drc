@@ -1305,17 +1305,36 @@ function toggleSearch(){var s=document.getElementById('srch');var h=!s.style.dis
 
 function generateNotifs(){
   notifications=[
-    {title:currentLang==='en'?'Welcome to ISD! 🎓':'Bienvenue sur ISD ! 🎓',desc:currentLang==='en'?'Explore items for your State Exam.':'Explorez les items pour votre Examen d\'État.',time:currentLang==='en'?'Now':'Maintenant',icon:'school',bg:'#e8f7e0',ic:'#1A5C2A',unread:true},
-    {title:currentLang==='en'?'Tip 💡':'Astuce du jour 💡',desc:currentLang==='en'?'Use year filters to find items quickly.':'Utilisez les filtres par année pour trouver rapidement.',time:currentLang==='en'?'Today':'Aujourd\'hui',icon:'tips_and_updates',bg:'#fff3e0',ic:'#F57C00',unread:true},
-    {title:'Quiz '+(currentLang==='en'?'coming soon!':'bientôt !'),desc:currentLang==='en'?'Quiz feature coming soon.':'La fonctionnalité Quiz arrive bientôt.',time:currentLang==='en'?'Recently':'Récemment',icon:'quiz',bg:'#f3e5f5',ic:'#7B1FA2',unread:false}
+    {fromFirebase:false,title:currentLang==='en'?'Welcome to ISD! 🎓':'Bienvenue sur ISD ! 🎓',desc:currentLang==='en'?'Explore items for your State Exam.':'Explorez les items pour votre Examen d\'État.',time:currentLang==='en'?'Now':'Maintenant',icon:'school',bg:'#e8f7e0',ic:'#1A5C2A',unread:true},
+    {fromFirebase:false,title:currentLang==='en'?'Tip 💡':'Astuce du jour 💡',desc:currentLang==='en'?'Use year filters to find items quickly.':'Utilisez les filtres par année pour trouver rapidement.',time:currentLang==='en'?'Today':'Aujourd\'hui',icon:'tips_and_updates',bg:'#fff3e0',ic:'#F57C00',unread:true},
+    {fromFirebase:false,title:'Quiz '+(currentLang==='en'?'coming soon!':'bientôt !'),desc:currentLang==='en'?'Quiz feature coming soon.':'La fonctionnalité Quiz arrive bientôt.',time:currentLang==='en'?'Recently':'Récemment',icon:'quiz',bg:'#f3e5f5',ic:'#7B1FA2',unread:false}
   ];updateNotifBdg();
 }
 function addNotif(ti,d,ico,bg,ic,ur){notifications.unshift({title:ti,desc:d,time:currentLang==='en'?'Just now':'À l\'instant',icon:ico,bg:bg,ic:ic,unread:ur!==false});updateNotifBdg();}
 function updateNotifBdg(){var c=notifications.filter(function(n){return n.unread;}).length;var b=document.getElementById('notifBdg');b.textContent=c;b.style.display=c>0?'flex':'none';}
+
+function markNotifRead(i){
+  if(!notifications[i])return;
+  notifications[i].unread=false;
+  /* Si notif Firebase → marquer dans la DB */
+  if(notifications[i].fromFirebase&&notifications[i].id){
+    db.collection('userNotifs').doc(notifications[i].id).update({read:true}).catch(function(){});
+  }
+  updateNotifBdg();
+  renderNotifs();
+}
 function renderNotifs(){
   var nb=document.getElementById('notifBody');
-  if(!notifications.length){nb.innerHTML='<div class="empty"><span class="material-icons-round mi">notifications_off</span><div class="empty-txt">'+t('notifications')+'</div></div>';return;}
-  nb.innerHTML=notifications.map(function(n,i){return'<div class="notif-i'+(n.unread?' unread':'')+'" onclick="notifications['+i+'].unread=false;updateNotifBdg();renderNotifs()"><div class="notif-ico" style="background:'+n.bg+'"><span class="material-icons-round mi" style="color:'+n.ic+'">'+n.icon+'</span></div><div class="notif-inf"><div class="notif-tt">'+n.title+'</div><div class="notif-ds">'+n.desc+'</div><div class="notif-tm">'+n.time+'</div></div></div>';}).join('');
+  if(!notifications.length){
+    nb.innerHTML='<div class="empty"><span class="material-icons-round mi">notifications_off</span><div class="empty-txt">'+t('notifications')+'</div></div>';
+    return;
+  }
+  nb.innerHTML=notifications.map(function(n,i){
+    return'<div class="notif-i'+(n.unread?' unread':'')+'" onclick="markNotifRead('+i+')">'
+      +'<div class="notif-ico" style="background:'+n.bg+'"><span class="material-icons-round mi" style="color:'+n.ic+'">'+n.icon+'</span></div>'
+      +'<div class="notif-inf"><div class="notif-tt">'+n.title+'</div><div class="notif-ds">'+n.desc+'</div><div class="notif-tm">'+n.time+'</div></div>'
+      +'</div>';
+  }).join('');
 }
 
 function renderMarquee(){
@@ -2647,6 +2666,8 @@ function checkUnreadMessages(){
     });
     var bdg=document.getElementById('msgBadge');
     if(bdg){bdg.textContent=n;bdg.style.display=n>0?'flex':'none';}
+    var bdgDrawer=document.getElementById('msgBadgeDrawer');
+    if(bdgDrawer){bdgDrawer.textContent=n;bdgDrawer.style.display=n>0?'flex':'none';}
   }).catch(function(){});
 }
 
@@ -2793,48 +2814,52 @@ function admDeleteReport(id){
 
 /* ── Notifications élève depuis Firebase ── */
 function checkUserNotifs(){
-  if(!currentUser)return;
-  db.collection('userNotifs').where('toEmail','==',currentUser.email).get().then(function(snap){
-    var toProcess=[];
-    snap.forEach(function(doc){
-      var d=doc.data();
-      if(!d.read)toProcess.push({id:doc.id,data:d});
-    });
-    if(!toProcess.length)return;
-    toProcess.forEach(function(item){
-      var d=item.data;
-      addNotif(
-        d.title||(currentLang==='en'?'Admin replied':'Réponse de l\'admin'),
-        d.desc||'',
-        'reply',
-        '#e8f0ff',
-        '#3a5a9a',
-        true
-      );
-      db.collection('userNotifs').doc(item.id).update({read:true}).catch(function(){});
-    });
-    /* Mettre à jour badge messages */
-    checkUnreadMessages();
-    if(toProcess.length>0){
-      showToast(currentLang==='en'?'New message from admin':'Nouveau message de l\'admin','reply');
-    }
-  }).catch(function(e){
-    console.log('checkUserNotifs error:',e.message);
-  });
+  checkUnreadMessages();
 }
 
 /* ── Listener temps réel notifications élève ── */
 var userNotifsListener=null;
 function listenUserNotifs(){
   if(!currentUser)return;
-  /* Vérifier immédiatement */
-  checkUserNotifs();
-  /* Puis toutes les 30 secondes */
-  if(window._notifInterval)clearInterval(window._notifInterval);
-  window._notifInterval=setInterval(function(){
-    if(!currentUser){clearInterval(window._notifInterval);return;}
-    checkUserNotifs();
-  },30000);
+  if(userNotifsListener)userNotifsListener();
+  userNotifsListener=db.collection('userNotifs')
+    .where('toEmail','==',currentUser.email)
+    .onSnapshot(function(snap){
+      /* Garder les notifs système générées par generateNotifs() */
+      var sysNotifs=notifications.filter(function(n){return !n.fromFirebase;});
+      /* Reconstruire avec les notifs Firebase */
+      var fbDocs=[];
+      snap.forEach(function(doc){fbDocs.push({id:doc.id,data:doc.data()});});
+      /* Trier croissant par date (unshift les inversera) */
+      fbDocs.sort(function(a,b){
+        var da=a.data.createdAt&&a.data.createdAt.toDate?a.data.createdAt.toDate():new Date(0);
+        var db2=b.data.createdAt&&b.data.createdAt.toDate?b.data.createdAt.toDate():new Date(0);
+        return da-db2;
+      });
+      var fbNotifs=fbDocs.map(function(item){
+        var d=item.data;
+        return{
+          id:item.id,
+          fromFirebase:true,
+          title:d.title||(currentLang==='en'?'Admin replied':'Réponse de l\'admin'),
+          desc:d.desc||'',
+          time:currentLang==='en'?'Recently':'Récemment',
+          icon:d.icon||'reply',
+          bg:d.bg||'#e8f0ff',
+          ic:d.ic||'#3a5a9a',
+          unread:!d.read
+        };
+      });
+      /* Fusionner : Firebase en premier (plus récent), puis système */
+      notifications=fbNotifs.concat(sysNotifs);
+      updateNotifBdg();
+      checkUnreadMessages();
+      /* Rafraîchir si l'onglet notifs est ouvert */
+      var nv=document.getElementById('view-notifs');
+      if(nv&&nv.classList.contains('active'))renderNotifs();
+    },function(e){
+      console.log('listenUserNotifs error:',e.message);
+    });
 }
 </script>
 
@@ -2977,4 +3002,4 @@ function listenUserNotifs(){
   <div class="adm-slide-body" id="admSlideBody"></div>
 </div>
 </body>
-  </html>
+      </html>
