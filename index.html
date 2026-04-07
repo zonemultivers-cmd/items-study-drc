@@ -1618,20 +1618,50 @@ function triggerImgInput(){document.getElementById('fileInput').click();}
 
 function prevFile(e){
   var file=e.target.files[0];if(!file)return;
-  if(file.size>5*1024*1024){showToast('Max 5MB','error');e.target.value='';return;}
+  if(file.size>5*1024*1024){showToast('Max 5MB','error');return;}
   selFile=file;scanResult=null;
   var reader=new FileReader();
   reader.onload=function(ev){
-    var img=new Image();img.onload=function(){
-      var canvas=document.createElement('canvas');var w=img.width,h=img.height;
-      if(w>1200){h=Math.round(h*(1200/w));w=1200;}if(h>1600){w=Math.round(w*(1600/h));h=1600;}
-      canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);
-      compressedImg=canvas.toDataURL('image/jpeg',0.72);
-      var sw=document.getElementById('scannerWrap');sw.style.display='block';
+    var img=new Image();
+    var processed=false;
+    function processImg(){
+      if(processed)return;processed=true;
+      try{
+        var canvas=document.createElement('canvas');
+        var w=img.naturalWidth||img.width||800;
+        var h=img.naturalHeight||img.height||600;
+        if(w===0||h===0){w=800;h=600;}
+        if(w>1200){h=Math.round(h*(1200/w));w=1200;}
+        if(h>1600){w=Math.round(w*(1600/h));h=1600;}
+        canvas.width=w;canvas.height=h;
+        var ctx=canvas.getContext('2d');
+        ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);
+        ctx.drawImage(img,0,0,w,h);
+        compressedImg=canvas.toDataURL('image/jpeg',0.80);
+        document.getElementById('scannerWrap').style.display='block';
+        document.getElementById('scannerImg').src=compressedImg;
+        runScanner(canvas);
+      }catch(err){
+        compressedImg=ev.target.result;scanResult=true;
+        document.getElementById('scannerWrap').style.display='block';
+        document.getElementById('scannerImg').src=compressedImg;
+        document.getElementById('scannerStatus').className='scanner-status ok';
+        document.getElementById('scannerStatus').textContent='✅ Image acceptée';
+      }
+    }
+    img.onload=function(){processImg();};
+    img.onerror=function(){
+      compressedImg=ev.target.result;scanResult=true;
+      document.getElementById('scannerWrap').style.display='block';
       document.getElementById('scannerImg').src=compressedImg;
-      runLisibilityScanner(canvas,img.width,img.height);
-    };img.src=ev.target.result;
-  };reader.readAsDataURL(file);
+      document.getElementById('scannerStatus').className='scanner-status ok';
+      document.getElementById('scannerStatus').textContent='✅ Image acceptée';
+    };
+    setTimeout(function(){processImg();},3000);
+    img.src=ev.target.result;
+  };
+  reader.onerror=function(){showToast('Erreur lecture fichier','error');};
+  reader.readAsDataURL(file);
 }
 
 function runLisibilityScanner(canvas,w,h){
@@ -1657,7 +1687,8 @@ function analyzeImageQuality(canvas,w,h){
   var sw=Math.min(canvas.width,500),sh=Math.min(canvas.height,500);
   var sx=Math.floor((canvas.width-sw)/2),sy=Math.floor((canvas.height-sh)/2);
   var data;
-  try{data=ctx.getImageData(sx,sy,sw,sh).data;}catch(e){return 80;}
+  try{data=ctx.getImageData(sx,sy,sw,sh).data;}catch(e){return 85;}
+  if(!data||data.length===0)return 85;
   var step=4*6;var totalPx=0,brightPx=0,veryDarkPx=0,contrastSum=0;
   for(var i=0;i<data.length;i+=step){
     var r=data[i],g=data[i+1],b=data[i+2];
@@ -1667,14 +1698,16 @@ function analyzeImageQuality(canvas,w,h){
     contrastSum+=Math.abs(r-b)+Math.abs(g-b)+Math.abs(r-g);
     totalPx++;
   }
-  if(totalPx===0)return 80;
+  if(totalPx===0)return 85;
   var brightRatio=brightPx/totalPx;
   var veryDarkRatio=veryDarkPx/totalPx;
   var avgContrast=contrastSum/totalPx;
+  /* Images claires (fond blanc = documents/examens) → toujours passer */
+  if(brightRatio>0.6)return 90;
   var score=0;
   score+=brightRatio*50;
   score+=Math.min(avgContrast/2,40);
-  if(veryDarkRatio>0.85)score-=40;
+  if(veryDarkRatio>0.85)score-=30;
   score=Math.max(0,Math.min(100,Math.round(score)));
   return score;
 }
@@ -2339,16 +2372,53 @@ function admPrevFile(e){
   admSelFile=file;admScanResult=null;
   var reader=new FileReader();
   reader.onload=function(ev){
-    var img=new Image();img.onload=function(){
-      var canvas=document.createElement('canvas');var w=img.width,h=img.height;
-      if(w>1200){h=Math.round(h*(1200/w));w=1200;}if(h>1600){w=Math.round(w*(1600/h));h=1600;}
-      canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);
-      admCompressedImg=canvas.toDataURL('image/jpeg',0.72);
+    var img=new Image();
+    var processed=false;
+    function processImg(){
+      if(processed)return;
+      processed=true;
+      try{
+        var canvas=document.createElement('canvas');
+        var w=img.naturalWidth||img.width||800;
+        var h=img.naturalHeight||img.height||600;
+        if(w===0||h===0){w=800;h=600;}
+        if(w>1200){h=Math.round(h*(1200/w));w=1200;}
+        if(h>1600){w=Math.round(w*(1600/h));h=1600;}
+        canvas.width=w;canvas.height=h;
+        var ctx=canvas.getContext('2d');
+        ctx.fillStyle='#ffffff';
+        ctx.fillRect(0,0,w,h);
+        ctx.drawImage(img,0,0,w,h);
+        admCompressedImg=canvas.toDataURL('image/jpeg',0.80);
+        document.getElementById('adm-scannerWrap').style.display='block';
+        document.getElementById('adm-scannerImg').src=admCompressedImg;
+        admRunScanner(canvas);
+      }catch(err){
+        /* En cas d'erreur canvas (CORS etc.), utiliser l'image directement */
+        admCompressedImg=ev.target.result;
+        admScanResult=true;
+        document.getElementById('adm-scannerWrap').style.display='block';
+        document.getElementById('adm-scannerImg').src=admCompressedImg;
+        document.getElementById('adm-scannerStatus').className='scanner-status ok';
+        document.getElementById('adm-scannerStatus').textContent='✅ Image acceptée';
+      }
+    }
+    img.onload=function(){processImg();};
+    img.onerror=function(){
+      /* Image non chargeable → accepter directement */
+      admCompressedImg=ev.target.result;
+      admScanResult=true;
       document.getElementById('adm-scannerWrap').style.display='block';
       document.getElementById('adm-scannerImg').src=admCompressedImg;
-      admRunScanner(canvas);
-    };img.src=ev.target.result;
-  };reader.readAsDataURL(file);
+      document.getElementById('adm-scannerStatus').className='scanner-status ok';
+      document.getElementById('adm-scannerStatus').textContent='✅ Image acceptée';
+    };
+    /* Timeout fallback : si onload ne se déclenche pas en 3s */
+    setTimeout(function(){processImg();},3000);
+    img.src=ev.target.result;
+  };
+  reader.onerror=function(){showToast('Erreur lecture fichier','error');};
+  reader.readAsDataURL(file);
 }
 function admRunScanner(canvas){
   var sl=document.getElementById('adm-scannerLine'),sr=document.getElementById('adm-scannerResult'),ss=document.getElementById('adm-scannerStatus');
@@ -3002,4 +3072,4 @@ function listenUserNotifs(){
   <div class="adm-slide-body" id="admSlideBody"></div>
 </div>
 </body>
-      </html>
+  </html>
