@@ -620,6 +620,95 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
 .msg-unread-dot{width:8px;height:8px;background:var(--g);border-radius:50%;flex-shrink:0}
 @media(min-width:600px){html{background:linear-gradient(135deg,#f0f4f0 0%,#e8f7e0 50%,#f0f4f0 100%)}[data-theme=dark] html{background:linear-gradient(135deg,#050a05,#0a120a,#050a05)}body{border-radius:20px;overflow:hidden;box-shadow:0 0 60px rgba(0,0,0,.15);margin-top:0;border:1px solid var(--bl)}#app,.nav{border-left:1px solid var(--bl);border-right:1px solid var(--bl)}}
 @media(min-width:900px){body{margin-top:20px;height:calc(100vh - 40px);border-radius:24px}}
+
+/* ===== PIN MODAL ===== */
+.pin-ovl{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:20px;animation:fu .3s ease}
+.pin-ovl.active{display:flex}
+.pin-card{background:var(--card);border-radius:24px;padding:28px 22px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.4);animation:mp .35s cubic-bezier(.34,1.56,.64,1)}
+.pin-ico-wrap{width:72px;height:72px;border-radius:24px;background:linear-gradient(135deg,var(--gd),var(--g));display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 24px rgba(26,92,42,.35)}
+.pin-ico-wrap .mi{font-size:2.2rem;color:#fff}
+.pin-title{font-family:'Poppins',sans-serif;font-size:1.15rem;font-weight:900;color:var(--gd);text-align:center;margin-bottom:6px}
+.pin-sub{font-size:.74rem;color:var(--gr);text-align:center;font-weight:600;margin-bottom:20px;line-height:1.5}
+.pin-dots{display:flex;gap:12px;justify-content:center;margin-bottom:20px}
+.pin-dot{width:14px;height:14px;border-radius:50%;background:var(--bl);transition:all .2s}
+.pin-dot.filled{background:var(--gd);transform:scale(1.15);box-shadow:0 2px 8px rgba(26,92,42,.4)}
+.pin-dot.error{background:var(--danger);animation:bounce .4s}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.pin-key{aspect-ratio:1.3;border:none;border-radius:16px;background:var(--bg);font-family:'Poppins',sans-serif;font-size:1.4rem;font-weight:700;color:var(--tx);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.pin-key:active{transform:scale(.94);background:var(--gl)}
+.pin-key.action{background:transparent;color:var(--gr)}
+.pin-key.action .mi{font-size:1.4rem}
+.pin-key.confirm{background:linear-gradient(135deg,var(--gd),var(--g));color:#fff}
+.pin-err{text-align:center;color:var(--danger);font-size:.7rem;font-weight:700;height:16px;margin-bottom:6px}
+.pin-link{text-align:center;font-size:.7rem;color:var(--g);font-weight:700;cursor:pointer;margin-top:8px}
+.pin-cancel{width:100%;padding:10px;background:transparent;border:none;color:var(--gr);font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:6px}
+
+/* ===== SHOP ===== */
+.shop-b{padding:16px 14px 120px}
+.shop-hero{background:linear-gradient(135deg,var(--gd),var(--gm),var(--g));border-radius:20px;padding:18px 20px;color:#fff;margin-bottom:14px;position:relative;overflow:hidden}
+.shop-hero::after{content:'';position:absolute;top:-30px;right:-30px;width:130px;height:130px;background:rgba(255,255,255,.08);border-radius:50%}
+.shop-hero-t{font-family:'Poppins',sans-serif;font-size:1.1rem;font-weight:900;display:flex;align-items:center;gap:8px}
+.shop-hero-s{font-size:.7rem;opacity:.85;margin-top:3px;font-weight:600}
+.shop-filters{display:flex;gap:7px;overflow-x:auto;margin-bottom:14px;scrollbar-width:none;padding-bottom:4px}
+.shop-filters::-webkit-scrollbar{display:none}
+.shop-fchip{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:.7rem;font-weight:800;cursor:pointer;border:1.5px solid var(--bl);background:var(--card);color:var(--tx);transition:all .2s;font-family:'Nunito',sans-serif}
+.shop-fchip.active{background:var(--gd);color:#fff;border-color:var(--gd)}
+.shop-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.shop-card{background:var(--card);border-radius:18px;overflow:hidden;cursor:pointer;border:1.5px solid var(--bl);transition:all .25s;animation:fu .35s ease both}
+.shop-card:active{transform:scale(.97)}
+.shop-cover{width:100%;aspect-ratio:3/4;background:var(--gl);position:relative;overflow:hidden}
+.shop-cover img{width:100%;height:100%;object-fit:cover}
+.shop-cover-ph{display:flex;align-items:center;justify-content:center;height:100%;font-size:2.5rem;color:var(--g)}
+.shop-badge{position:absolute;top:8px;left:8px;background:var(--g);color:#fff;font-size:.55rem;font-weight:900;padding:3px 8px;border-radius:8px;text-transform:uppercase;letter-spacing:.5px}
+.shop-info{padding:10px 12px 14px}
+.shop-title{font-size:.78rem;font-weight:800;color:var(--tx);line-height:1.25;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;min-height:2.05em}
+.shop-meta{font-size:.6rem;color:var(--gr);font-weight:600;display:flex;justify-content:space-between;align-items:center;margin-top:4px}
+.shop-meta .mi{font-size:.78rem}
+.shop-empty{text-align:center;padding:60px 20px;color:var(--gr)}
+.shop-empty .mi{font-size:3.5rem;color:var(--bl);display:block;margin-bottom:10px}
+.shop-empty-t{font-weight:800;font-size:.9rem;color:var(--tx);margin-bottom:4px}
+.shop-empty-s{font-size:.72rem;font-weight:600}
+/* Detail */
+.shop-detail{padding:0 0 120px}
+.shop-d-hero{position:relative;height:280px;background:linear-gradient(180deg,var(--gd),var(--gm));overflow:hidden}
+.shop-d-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,var(--bg))}
+.shop-d-cover-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:1}
+.shop-d-cover{width:160px;height:220px;border-radius:14px;overflow:hidden;box-shadow:0 16px 40px rgba(0,0,0,.4);background:var(--card)}
+.shop-d-cover img{width:100%;height:100%;object-fit:cover}
+.shop-d-back{position:absolute;top:12px;left:12px;z-index:5;background:rgba(0,0,0,.4);color:#fff;border:none;width:38px;height:38px;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.shop-d-body{padding:16px;background:var(--bg)}
+.shop-d-title{font-family:'Poppins',sans-serif;font-size:1.25rem;font-weight:900;color:var(--tx);margin-bottom:4px;text-align:center}
+.shop-d-sub{font-size:.78rem;color:var(--gr);font-weight:600;text-align:center;margin-bottom:14px}
+.shop-d-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:16px}
+.shop-d-tag{background:var(--gl);color:var(--gd);font-size:.6rem;font-weight:800;padding:4px 10px;border-radius:10px}
+.shop-d-meta-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px;background:var(--card);border-radius:14px;padding:12px;border:1.5px solid var(--bl)}
+.shop-d-meta-row{display:flex;align-items:center;gap:8px;font-size:.7rem}
+.shop-d-meta-row .mi{font-size:.95rem;color:var(--g)}
+.shop-d-meta-lbl{color:var(--gr);font-weight:600}
+.shop-d-meta-val{color:var(--tx);font-weight:800;margin-left:auto}
+.shop-d-desc-h{font-family:'Poppins',sans-serif;font-size:.85rem;font-weight:800;color:var(--gd);margin-bottom:8px}
+.shop-d-desc{font-size:.78rem;color:var(--tx);line-height:1.6;font-weight:500;background:var(--card);padding:14px;border-radius:14px;border:1.5px solid var(--bl);margin-bottom:18px;white-space:pre-wrap}
+.shop-d-actions{display:flex;gap:10px;position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:900px;padding:12px 14px env(safe-area-inset-bottom,16px);background:var(--card);border-top:1.5px solid var(--bl);box-shadow:0 -8px 24px rgba(0,0,0,.08);z-index:50}
+.shop-d-btn{flex:1;padding:13px;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.shop-d-btn.primary{background:linear-gradient(135deg,var(--gd),var(--g));color:#fff;box-shadow:0 6px 20px rgba(26,92,42,.3)}
+.shop-d-btn.secondary{background:var(--bg);color:var(--gd);border:1.5px solid var(--gl)}
+/* Admin shop card */
+.adm-prod-card{background:var(--card);border-radius:14px;padding:10px;display:flex;gap:10px;border:1.5px solid var(--bl);margin-bottom:8px;animation:fr .3s}
+.adm-prod-thumb{width:48px;height:64px;border-radius:8px;overflow:hidden;background:var(--gl);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.adm-prod-thumb img{width:100%;height:100%;object-fit:cover}
+.adm-prod-thumb .mi{color:var(--g);font-size:1.5rem}
+.adm-prod-info{flex:1;min-width:0}
+.adm-prod-name{font-size:.78rem;font-weight:800;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.adm-prod-meta{font-size:.6rem;color:var(--gr);font-weight:600;margin-top:2px}
+.adm-prod-stats{display:flex;gap:8px;font-size:.58rem;color:var(--gm);font-weight:700;margin-top:4px}
+.adm-prod-acts{display:flex;flex-direction:column;gap:5px}
+.adm-prod-acts button{width:30px;height:30px;border:none;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.adm-prod-acts button.edit{background:#e3f2fd;color:#1976D2}
+.adm-prod-acts button.del{background:#fff0f0;color:var(--danger)}
+.adm-prod-acts button .mi{font-size:.95rem}
+/* Online users dot pulse */
+.live-dot{display:inline-block;width:7px;height:7px;background:#22c55e;border-radius:50%;margin-right:5px;box-shadow:0 0 0 0 rgba(34,197,94,.6);animation:pulse 1.5s infinite}
+
 </style>
 </head>
 <body>
@@ -743,7 +832,8 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
       <div class="drawer-item" onclick="showView('favs');closeDrawer()"><span class="material-icons-round mi">favorite</span><span data-t="navFavs">Mes Favoris</span></div>
       <div class="drawer-item" onclick="showView('stats');closeDrawer()"><span class="material-icons-round mi">bar_chart</span><span data-t="navStats">Statistiques</span></div>
       <div class="drawer-item" onclick="showView('notifs');closeDrawer()"><span class="material-icons-round mi">notifications</span><span data-t="navNotifs">Notifications</span></div>
-      <div class="drawer-item" onclick="showMessages();closeDrawer()"><span class="material-icons-round mi">forum</span><span>Messages</span><span class="bdg" id="msgBadgeDrawer" style="position:static;min-width:16px;height:16px;border-radius:8px;padding:0 4px;font-size:.5rem;font-weight:800;color:#fff;background:var(--g);display:none;align-items:center;justify-content:center;margin-left:auto">0</span></div>
+      <div class="drawer-item" onclick="showShop();closeDrawer()"><span class="material-icons-round mi">storefront</span><span data-t="shop">Boutique</span></div>
+      <div class="drawer-item" onclick="showMessages();closeDrawer()"><span class="material-icons-round mi">forum</span><span data-t="messages">Messages</span><span class="bdg" id="msgBadgeDrawer" style="position:static;min-width:16px;height:16px;border-radius:8px;padding:0 4px;font-size:.5rem;font-weight:800;color:#fff;background:var(--g);display:none;align-items:center;justify-content:center;margin-left:auto">0</span></div>
 
       <div class="drawer-item" onclick="showView('profile');closeDrawer()"><span class="material-icons-round mi">person</span><span data-t="navProfile">Mon Profil</span></div>
       <div class="drawer-item" onclick="showTerms();closeDrawer()"><span class="material-icons-round mi">gavel</span><span>Conditions d'utilisation</span></div>
@@ -778,7 +868,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
           <div class="qbtn acc" onclick="goHome()"><span class="material-icons-round mi">explore</span><span data-t="explore">Explorer</span></div>
           <div class="qbtn" onclick="showView('favs')"><span class="material-icons-round mi">favorite</span><span data-t="navFavs">Favoris</span></div>
           <div class="qbtn" onclick="showView('stats')"><span class="material-icons-round mi">bar_chart</span>Stats</div>
-          <div class="qbtn" onclick="showView('notifs')"><span class="material-icons-round mi">campaign</span>News</div>
+          <div class="qbtn" onclick="showShop()"><span class="material-icons-round mi">storefront</span><span data-t="shop">Boutique</span></div>
         </div>
         <div id="marqueeSection" class="marquee-section" style="display:none">
           <div class="sh"><div class="shico"><span class="material-icons-round mi">new_releases</span></div><span class="shtxt" data-t="latestItems">Derniers ajouts</span></div>
@@ -840,6 +930,21 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
     <div class="view" id="view-messages">
       <div class="phdr"><button class="pbk" onclick="goHome()"><span class="material-icons-round mi">arrow_back</span> Retour</button><div class="ptitle">💬 Messages</div><div class="psub" id="msgViewSub">Vos échanges avec les admins</div></div>
       <div class="msg-view" id="msgList"></div>
+    </div>
+
+    <div class="view" id="view-shop">
+      <div class="phdr"><button class="pbk" onclick="goHome()"><span class="material-icons-round mi">arrow_back</span> <span data-t="back">Retour</span></button><div class="ptitle" data-t="shop">Boutique</div><div class="psub" data-t="shopSub">Ebooks et ressources</div></div>
+      <div class="shop-b">
+        <div class="shop-hero">
+          <div class="shop-hero-t"><span class="material-icons-round mi">auto_stories</span><span data-t="ebooks">Ebooks</span></div>
+          <div class="shop-hero-s" data-t="shopSub">Ebooks et ressources</div>
+        </div>
+        <div class="shop-filters" id="shopFilters"></div>
+        <div class="shop-grid" id="shopGrid"></div>
+      </div>
+    </div>
+    <div class="view" id="view-shop-detail">
+      <div class="shop-detail" id="shopDetailBody"></div>
     </div>
     <div class="view" id="view-about"></div>
     <div class="view" id="view-terms">
@@ -1018,15 +1123,16 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);max-wi
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 <script>
 firebase.initializeApp({apiKey:"AIzaSyAQ_LtV3zavew1XP1x4yrsjkusSGBUitys",authDomain:"items-study-drc.firebaseapp.com",projectId:"items-study-drc",storageBucket:"items-study-drc.firebasestorage.app",messagingSenderId:"523693099745",appId:"1:523693099745:web:9e29345090a5649d34c5a0"});
-var auth=firebase.auth(),db=firebase.firestore();
+var auth=firebase.auth(),db=firebase.firestore(),storage=firebase.storage();
 db.enablePersistence({synchronizeTabs:true}).catch(function(){});
 var IMGBB_KEY='1904af55604975b9c127bf6dde007f5f';
 
 var T={
-fr:{email:'Adresse e-mail',password:'Mot de passe',confirm:'Confirmer',fullName:'Nom complet',forgotPwd:'Mot de passe oublié ?',login:'Se connecter',createAccount:'Créer un compte',navHome:'Accueil',navFavs:'Favoris',navStats:'Stats',navNotifs:'Notifications',navProfile:'Mon Profil',navSettings:'Paramètres',back:'Retour',explore:'Explorer',favorites:'favoris',students:'étudiants',latestItems:'Derniers ajouts',recommended:'Recommandé pour vous',sectionGen:'Section Générale',sectionTec:'Section Technique',myFavorites:'Mes Favoris',statistics:'Statistiques',overview:'Vue d\'ensemble',notifications:'Notifications',stayInformed:'Restez informé',about:'À propos',aboutSub:'Informations sur l\'app',reviewGuide:'Revoir le guide',signOut:'Se déconnecter',signOutSub:'Quitter votre session',darkMode:'Mode sombre',darkModeSub:'Changer l\'apparence',language:'Langue',settingsSub:'Personnalisez votre expérience',addItem:'Ajouter un Item',addItemSub:'Publier un nouvel examen',manageItems:'Gérer les Items',manageItemsSub:'Modifier, supprimer',subject:'Matière',year:'Année',courseTitle:'Titre du cours (optionnel)',itemPhoto:'Photo de l\'item',tapToChoose:'Appuyer pour choisir',publish:'Publier l\'item',cancel:'Annuler',fillFields:'Remplissez tous les champs',allOptions:'Toutes les options',download:'Télécharger',share:'Partager',favorite:'Favori',soonTxt:'Cette fonctionnalité sera disponible très prochainement.',soonBtn:'OK, j\'attends !',noFavs:'Aucun favori.\nAppuyez sur ❤️ !',noItems:'Aucun item disponible.',noStats:'Aucune stat.\nAjoutez des items !',profileInfo:'Informations personnelles',profileOption:'Option',profileProvince:'Province',profileSchool:'École',profileAge:'Âge',profileRole:'Rôle',student:'Élève',teacher:'Professeur',editProfile:'Modifier le profil',personalStats:'Statistiques personnelles',greetMorning:'Bonjour ☀️',greetAfternoon:'Bon après-midi 🌤️',greetEvening:'Bonsoir 🌙',welcome:'Bienvenue,',guideDone:'Guide terminé ! Bonne révision 🎓',published:'Item publié !',deleted:'Supprimé',modified:'Item modifié !',added:'Ajouté aux favoris !',removed:'Retiré',disconnected:'Déconnecté',errorFill:'Remplissez tous les champs et ajoutez un fichier.',errorDup:'Cet item existe déjà.',linkCopied:'Lien copié !',downloadStarted:'Téléchargement lancé !',emailSent:'Email envoyé !',noAccount:'Aucun compte avec cet email.',wrongPwd:'Mot de passe incorrect.',tooMany:'Trop de tentatives.',errorConnect:'Erreur de connexion.',pwdMismatch:'Mots de passe différents.',pwdShort:'Minimum 6 caractères.',emailUsed:'Email déjà utilisé.',chooseOption:'Choisissez votre option',chooseProvince:'Choisissez votre province',welcomeISD:'Bienvenue sur Items Study DRC ! 🎓',compression:'⏳ Compression...',uploading:'📤 Upload...',saving:'💾 Sauvegarde...'},
-en:{email:'Email address',password:'Password',confirm:'Confirm',fullName:'Full name',forgotPwd:'Forgot password?',login:'Sign in',createAccount:'Create account',navHome:'Home',navFavs:'Favorites',navStats:'Stats',navNotifs:'Notifications',navProfile:'My Profile',navSettings:'Settings',back:'Back',explore:'Explore',favorites:'favorites',students:'students',latestItems:'Latest additions',recommended:'Recommended for you',sectionGen:'General Section',sectionTec:'Technical Section',myFavorites:'My Favorites',statistics:'Statistics',overview:'Overview',notifications:'Notifications',stayInformed:'Stay informed',about:'About',aboutSub:'App information',reviewGuide:'Review guide',signOut:'Sign out',signOutSub:'Leave your session',darkMode:'Dark mode',darkModeSub:'Change appearance',language:'Language',settingsSub:'Customize your experience',addItem:'Add Item',addItemSub:'Publish a new exam',manageItems:'Manage Items',manageItemsSub:'Edit, delete',subject:'Subject',year:'Year',courseTitle:'Course title (optional)',itemPhoto:'Item photo',tapToChoose:'Tap to choose',publish:'Publish item',cancel:'Cancel',fillFields:'Fill all fields',allOptions:'All options',download:'Download',share:'Share',favorite:'Favorite',soonTxt:'This feature will be available very soon.',soonBtn:'OK, I\'ll wait!',noFavs:'No favorites.\nTap ❤️ to add!',noItems:'No items available.',noStats:'No stats.\nAdd items!',profileInfo:'Personal information',profileOption:'Option',profileProvince:'Province',profileSchool:'School',profileAge:'Age',profileRole:'Role',student:'Student',teacher:'Teacher',editProfile:'Edit profile',personalStats:'Personal statistics',greetMorning:'Good morning ☀️',greetAfternoon:'Good afternoon 🌤️',greetEvening:'Good evening 🌙',welcome:'Welcome,',guideDone:'Guide done! Good studying 🎓',published:'Item published!',deleted:'Deleted',modified:'Item modified!',added:'Added to favorites!',removed:'Removed',disconnected:'Disconnected',errorFill:'Fill all fields and add a file.',errorDup:'This item already exists.',linkCopied:'Link copied!',downloadStarted:'Download started!',emailSent:'Email sent!',noAccount:'No account with this email.',wrongPwd:'Wrong password.',tooMany:'Too many attempts.',errorConnect:'Connection error.',pwdMismatch:'Passwords don\'t match.',pwdShort:'Minimum 6 characters.',emailUsed:'Email already used.',chooseOption:'Choose your option',chooseProvince:'Choose your province',welcomeISD:'Welcome to Items Study DRC! 🎓',compression:'⏳ Compressing...',uploading:'📤 Uploading...',saving:'💾 Saving...'}
+fr:{email:'Adresse e-mail',password:'Mot de passe',confirm:'Confirmer',fullName:'Nom complet',forgotPwd:'Mot de passe oublié ?',login:'Se connecter',createAccount:'Créer un compte',navHome:'Accueil',navFavs:'Favoris',navStats:'Stats',navNotifs:'Notifications',navProfile:'Mon Profil',navSettings:'Paramètres',back:'Retour',explore:'Explorer',favorites:'favoris',students:'étudiants',latestItems:'Derniers ajouts',recommended:'Recommandé pour vous',sectionGen:'Section Générale',sectionTec:'Section Technique',myFavorites:'Mes Favoris',statistics:'Statistiques',overview:'Vue d\'ensemble',notifications:'Notifications',stayInformed:'Restez informé',about:'À propos',aboutSub:'Informations sur l\'app',reviewGuide:'Revoir le guide',signOut:'Se déconnecter',signOutSub:'Quitter votre session',darkMode:'Mode sombre',darkModeSub:'Changer l\'apparence',language:'Langue',settingsSub:'Personnalisez votre expérience',addItem:'Ajouter un Item',addItemSub:'Publier un nouvel examen',manageItems:'Gérer les Items',manageItemsSub:'Modifier, supprimer',subject:'Matière',year:'Année',courseTitle:'Titre du cours (optionnel)',itemPhoto:'Photo de l\'item',tapToChoose:'Appuyer pour choisir',publish:'Publier l\'item',cancel:'Annuler',fillFields:'Remplissez tous les champs',allOptions:'Toutes les options',download:'Télécharger',share:'Partager',favorite:'Favori',soonTxt:'Cette fonctionnalité sera disponible très prochainement.',soonBtn:'OK, j\'attends !',noFavs:'Aucun favori.\nAppuyez sur ❤️ !',noItems:'Aucun item disponible.',noStats:'Aucune stat.\nAjoutez des items !',profileInfo:'Informations personnelles',profileOption:'Option',profileProvince:'Province',profileSchool:'École',profileAge:'Âge',profileRole:'Rôle',student:'Élève',teacher:'Professeur',editProfile:'Modifier le profil',personalStats:'Statistiques personnelles',greetMorning:'Bonjour ☀️',greetAfternoon:'Bon après-midi 🌤️',greetEvening:'Bonsoir 🌙',welcome:'Bienvenue,',guideDone:'Guide terminé ! Bonne révision 🎓',published:'Item publié !',deleted:'Supprimé',modified:'Item modifié !',added:'Ajouté aux favoris !',removed:'Retiré',disconnected:'Déconnecté',errorFill:'Remplissez tous les champs et ajoutez un fichier.',errorDup:'Cet item existe déjà.',linkCopied:'Lien copié !',downloadStarted:'Téléchargement lancé !',emailSent:'Email envoyé !',noAccount:'Aucun compte avec cet email.',wrongPwd:'Mot de passe incorrect.',tooMany:'Trop de tentatives.',errorConnect:'Erreur de connexion.',pwdMismatch:'Mots de passe différents.',pwdShort:'Minimum 6 caractères.',emailUsed:'Email déjà utilisé.',chooseOption:'Choisissez votre option',chooseProvince:'Choisissez votre province',welcomeISD:'Bienvenue sur Items Study DRC ! 🎓',compression:'⏳ Compression...',uploading:'📤 Upload...',saving:'💾 Sauvegarde...',shop:'Boutique',shopSub:'Ebooks et ressources',shopEmpty:'Aucun produit pour le moment',addProduct:'Ajouter un produit',editProduct:'Modifier le produit',productTitle:'Titre du produit',productSubtitle:'Sous-titre',productDesc:'Description',productCover:'Page de couverture',productPdf:'Fichier PDF',productCategory:'Catégorie',productLevel:'Niveau',productSubject:'Matière',productAuthor:'Auteur',productPages:'Nombre de pages',productLang:'Langue du contenu',productYear:'Année de publication',productTags:'Tags / mots-clés',productPreview:'Aperçu gratuit (extrait PDF)',publishProduct:'Publier le produit',filterAll:'Tous',filterRecent:'Récents',filterPopular:'Populaires',downloadEbook:'Télécharger',readOnline:'Lire en ligne',byAuthor:'Par',pages:'pages',free:'Gratuit',adminPin:'Code PIN administrateur',adminPinSub:'Entrez votre code PIN à 4-6 chiffres',adminPinSet:'Créer votre code PIN administrateur',adminPinSetSub:'Ce code sécurisera l\'accès à votre espace admin',adminPinConfirm:'Confirmer votre code PIN',adminPinWrong:'Code PIN incorrect',adminPinShort:'Le PIN doit contenir 4 à 6 chiffres',adminPinMismatch:'Les codes PIN ne correspondent pas',adminPinChanged:'Code PIN mis à jour',messages:'Messages',messagesSub:'Vos échanges avec les admins',adminPanel:'Panneau d\'administration',dashboard:'Tableau de bord',myItems:'Mes items',addTab:'Ajouter',reports:'Signalements',shopAdmin:'Boutique',settingsTab:'Paramètres',totalProducts:'Produits',totalDownloads:'Téléchargements',lastUpdated:'Dernière mise à jour',uploadingPdf:'📤 Upload du PDF...',uploadingCover:'🖼️ Upload de la couverture...',productPublished:'Produit publié !',productDeleted:'Produit supprimé',productUpdated:'Produit modifié',deleteConfirm:'Supprimer ce produit ?',forgotPin:'PIN oublié ?',resetPin:'Réinitialiser via email',pinResetSent:'Email de réinitialisation envoyé',changePin:'Changer le code PIN',currentPin:'PIN actuel',newPin:'Nouveau PIN',ebooks:'Ebooks',activeUsers:'Utilisateurs actifs',realTime:'En temps réel'},
+en:{email:'Email address',password:'Password',confirm:'Confirm',fullName:'Full name',forgotPwd:'Forgot password?',login:'Sign in',createAccount:'Create account',navHome:'Home',navFavs:'Favorites',navStats:'Stats',navNotifs:'Notifications',navProfile:'My Profile',navSettings:'Settings',back:'Back',explore:'Explore',favorites:'favorites',students:'students',latestItems:'Latest additions',recommended:'Recommended for you',sectionGen:'General Section',sectionTec:'Technical Section',myFavorites:'My Favorites',statistics:'Statistics',overview:'Overview',notifications:'Notifications',stayInformed:'Stay informed',about:'About',aboutSub:'App information',reviewGuide:'Review guide',signOut:'Sign out',signOutSub:'Leave your session',darkMode:'Dark mode',darkModeSub:'Change appearance',language:'Language',settingsSub:'Customize your experience',addItem:'Add Item',addItemSub:'Publish a new exam',manageItems:'Manage Items',manageItemsSub:'Edit, delete',subject:'Subject',year:'Year',courseTitle:'Course title (optional)',itemPhoto:'Item photo',tapToChoose:'Tap to choose',publish:'Publish item',cancel:'Cancel',fillFields:'Fill all fields',allOptions:'All options',download:'Download',share:'Share',favorite:'Favorite',soonTxt:'This feature will be available very soon.',soonBtn:'OK, I\'ll wait!',noFavs:'No favorites.\nTap ❤️ to add!',noItems:'No items available.',noStats:'No stats.\nAdd items!',profileInfo:'Personal information',profileOption:'Option',profileProvince:'Province',profileSchool:'School',profileAge:'Age',profileRole:'Role',student:'Student',teacher:'Teacher',editProfile:'Edit profile',personalStats:'Personal statistics',greetMorning:'Good morning ☀️',greetAfternoon:'Good afternoon 🌤️',greetEvening:'Good evening 🌙',welcome:'Welcome,',guideDone:'Guide done! Good studying 🎓',published:'Item published!',deleted:'Deleted',modified:'Item modified!',added:'Added to favorites!',removed:'Removed',disconnected:'Disconnected',errorFill:'Fill all fields and add a file.',errorDup:'This item already exists.',linkCopied:'Link copied!',downloadStarted:'Download started!',emailSent:'Email sent!',noAccount:'No account with this email.',wrongPwd:'Wrong password.',tooMany:'Too many attempts.',errorConnect:'Connection error.',pwdMismatch:'Passwords don\'t match.',pwdShort:'Minimum 6 characters.',emailUsed:'Email already used.',chooseOption:'Choose your option',chooseProvince:'Choose your province',welcomeISD:'Welcome to Items Study DRC! 🎓',compression:'⏳ Compressing...',uploading:'📤 Uploading...',saving:'💾 Saving...',shop:'Shop',shopSub:'Ebooks and resources',shopEmpty:'No products yet',addProduct:'Add product',editProduct:'Edit product',productTitle:'Product title',productSubtitle:'Subtitle',productDesc:'Description',productCover:'Cover page',productPdf:'PDF file',productCategory:'Category',productLevel:'Level',productSubject:'Subject',productAuthor:'Author',productPages:'Number of pages',productLang:'Content language',productYear:'Publication year',productTags:'Tags / keywords',productPreview:'Free preview (PDF excerpt)',publishProduct:'Publish product',filterAll:'All',filterRecent:'Recent',filterPopular:'Popular',downloadEbook:'Download',readOnline:'Read online',byAuthor:'By',pages:'pages',free:'Free',adminPin:'Administrator PIN',adminPinSub:'Enter your 4-6 digit PIN',adminPinSet:'Create your administrator PIN',adminPinSetSub:'This PIN will secure access to your admin area',adminPinConfirm:'Confirm your PIN',adminPinWrong:'Wrong PIN',adminPinShort:'PIN must be 4 to 6 digits',adminPinMismatch:'PINs do not match',adminPinChanged:'PIN updated',messages:'Messages',messagesSub:'Your chats with admins',adminPanel:'Admin panel',dashboard:'Dashboard',myItems:'My items',addTab:'Add',reports:'Reports',shopAdmin:'Shop',settingsTab:'Settings',totalProducts:'Products',totalDownloads:'Downloads',lastUpdated:'Last updated',uploadingPdf:'📤 Uploading PDF...',uploadingCover:'🖼️ Uploading cover...',productPublished:'Product published!',productDeleted:'Product deleted',productUpdated:'Product updated',deleteConfirm:'Delete this product?',forgotPin:'Forgot PIN?',resetPin:'Reset via email',pinResetSent:'Reset email sent',changePin:'Change PIN',currentPin:'Current PIN',newPin:'New PIN',ebooks:'Ebooks',activeUsers:'Active users',realTime:'Real-time'}
 };
 function t(k){return T[currentLang][k]||T.fr[k]||k;}
 
@@ -1157,27 +1263,35 @@ function listenUsers(){
   var uid=currentUser.uid;
   /* Marquer cet utilisateur comme en ligne */
   db.collection('users').doc(uid).set({online:true,lastSeen:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(function(){});
-  /* Heartbeat toutes les 60s */
+  /* Heartbeat toutes les 20s pour fiabilité temps réel */
   if(window._presenceInterval)clearInterval(window._presenceInterval);
   window._presenceInterval=setInterval(function(){
     if(!currentUser){clearInterval(window._presenceInterval);return;}
     db.collection('users').doc(currentUser.uid).set({online:true,lastSeen:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(function(){});
-  },60000);
-  /* Quitter */
+  },20000);
+  /* Quitter (desktop) */
   window.addEventListener('beforeunload',function(){
     clearInterval(window._presenceInterval);
-    db.collection('users').doc(uid).set({online:false},{merge:true});
+    try{db.collection('users').doc(uid).set({online:false,lastSeen:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});}catch(e){}
   });
+  /* Mobile / changement d'onglet : quand la page redevient visible, refresh; quand cachée, marquer offline */
+  document.addEventListener('visibilitychange',function(){
+    if(!currentUser)return;
+    if(document.visibilityState==='hidden'){
+      try{db.collection('users').doc(currentUser.uid).set({online:false,lastSeen:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});}catch(e){}
+    }else{
+      try{db.collection('users').doc(currentUser.uid).set({online:true,lastSeen:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});}catch(e){}
+    }
+  });
+  /* Recompter localement toutes les 30s pour expirer les utilisateurs sans heartbeat récent */
+  if(window._userCountRefresh)clearInterval(window._userCountRefresh);
+  window._userCountRefresh=setInterval(function(){
+    if(window._lastUsersSnap)recomputeOnlineCount(window._lastUsersSnap);
+  },30000);
   /* Écouter la collection users en temps réel */
   usersListener=db.collection('users').onSnapshot(function(snap){
-    var active=0;
-    snap.forEach(function(doc){
-      var d=doc.data();
-      if(d.online===true)active++;
-    });
-    userCount=Math.max(active,1);
-    var el=document.getElementById('wUsers');
-    if(el)el.textContent=userCount;
+    window._lastUsersSnap=snap;
+    recomputeOnlineCount(snap);
   },function(){
     /* Fallback: compter tous les users */
     db.collection('users').get().then(function(snap){
@@ -1186,6 +1300,23 @@ function listenUsers(){
       if(el)el.textContent=userCount;
     }).catch(function(){});
   });
+}
+/* Recompte combien sont vraiment en ligne (online=true ET lastSeen < 90s) */
+function recomputeOnlineCount(snap){
+  var now=Date.now();
+  var THRESHOLD=90*1000; /* 90s = 4.5x le heartbeat de 20s */
+  var active=0;
+  snap.forEach(function(doc){
+    var d=doc.data();
+    if(d.online!==true)return;
+    var ls=null;
+    try{ ls=d.lastSeen&&d.lastSeen.toDate?d.lastSeen.toDate().getTime():null; }catch(e){}
+    if(ls===null){ active++; return; } /* pas de timestamp encore — compter */
+    if((now-ls)<=THRESHOLD) active++;
+  });
+  userCount=Math.max(active,1);
+  var el=document.getElementById('wUsers');
+  if(el)el.textContent=userCount;
 }
 function listenItems(){
   itemsListener=db.collection('items').onSnapshot(function(snap){
@@ -1222,6 +1353,11 @@ function obFinish(){
       userProfile=profile;document.getElementById('onboarding').style.display='none';document.getElementById('app').style.display='flex';
       applyTheme();applyLang();generateNotifs();updateWelcome();renderRecommended();
       showToast(t('welcomeISD'),'school');setTimeout(startGuide,800);
+      /* Démarrer les écouteurs temps réel (notifs admin + messages) pour le nouvel utilisateur */
+      setTimeout(checkMyNotifs,1500);
+      setTimeout(checkUserNotifs,2000);
+      setTimeout(listenUserNotifs,2500);
+      setTimeout(checkUnreadMessages,2000);
     }).catch(function(){showToast('Error','error');});
   }
 }
@@ -1263,7 +1399,7 @@ function togglePwd(id,b){var i=document.getElementById(id);i.type=i.type==='text
 
 function applyTheme(){document.body.setAttribute('data-theme',isDark?'dark':'');var ti=document.getElementById('themeIcon');if(ti)ti.textContent=isDark?'light_mode':'dark_mode';}
 function toggleTheme(){isDark=!isDark;localStorage.setItem('isd_dark',isDark?'1':'0');applyTheme();showToast(isDark?'Dark mode':'Light mode',isDark?'dark_mode':'light_mode');}
-function setLang(lang){currentLang=lang;localStorage.setItem('isd_lang',lang);document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.dataset.lang===lang);});applyLang();updateWelcome();renderOpts();generateNotifs();showToast(lang==='fr'?'Français activé':'English activated','translate');}
+function setLang(lang){currentLang=lang;localStorage.setItem('isd_lang',lang);document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.dataset.lang===lang);});applyLang();updateWelcome();renderOpts();generateNotifs();if(typeof renderShop==='function')renderShop();if(typeof admRenderProducts==='function')admRenderProducts();showToast(lang==='fr'?'Français activé':'English activated','translate');if(currentUser&&db)db.collection('users').doc(currentUser.uid).set({lang:lang},{merge:true}).catch(function(){});}
 
 function updateWelcome(){
   var h=new Date().getHours();
@@ -2146,6 +2282,10 @@ var admSelFile=null,admCompressedImg=null,admSelPdf=null,admScanResult=null,admU
 
 function openAdminInterface(startPanel){
   if(!isAdmin)return;
+  if(!_adminPinVerified){requestAdminPin(function(){_openAdminInterfaceReal(startPanel);});return;}
+  _openAdminInterfaceReal(startPanel);
+}
+function _openAdminInterfaceReal(startPanel){
   var el=document.getElementById('adminInterface');
   el.classList.add('active');
   document.getElementById('admNav').style.display='flex';
@@ -2178,6 +2318,7 @@ function admShowPanel(name){
   if(name==='items')admRenderItems('');
   if(name==='reports')admLoadReports();
   if(name==='add'){admPopAdd();}
+  if(name==='shop')admRenderProducts();
 }
 
 /* ── BADGE NIVEAU ── */
@@ -2889,9 +3030,13 @@ function checkUserNotifs(){
 
 /* ── Listener temps réel notifications élève ── */
 var userNotifsListener=null;
+var _lastNotifIds={}; /* pour détecter l'arrivée d'une nouvelle notif */
+var _userNotifsInitialized=false;
 function listenUserNotifs(){
   if(!currentUser)return;
   if(userNotifsListener)userNotifsListener();
+  _userNotifsInitialized=false;
+  _lastNotifIds={};
   userNotifsListener=db.collection('userNotifs')
     .where('toEmail','==',currentUser.email)
     .onSnapshot(function(snap){
@@ -2906,6 +3051,26 @@ function listenUserNotifs(){
         var db2=b.data.createdAt&&b.data.createdAt.toDate?b.data.createdAt.toDate():new Date(0);
         return da-db2;
       });
+      /* Détecter nouvelles notifs (après initialisation) pour afficher un toast */
+      if(_userNotifsInitialized){
+        fbDocs.forEach(function(item){
+          if(!_lastNotifIds[item.id] && item.data && item.data.read===false){
+            try{
+              var msg=item.data.title||(currentLang==='en'?'New message from admin':'Nouveau message de l\'admin');
+              showToast('💬 '+msg,'mark_email_unread');
+              try{navigator.vibrate&&navigator.vibrate([60,40,60]);}catch(e){}
+              try{
+                if('Notification' in window && Notification.permission==='granted'){
+                  new Notification(msg,{body:item.data.desc||'',icon:'/favicon.ico'});
+                }
+              }catch(e){}
+            }catch(e){}
+          }
+        });
+      }
+      /* Mémoriser les ids */
+      _lastNotifIds={};
+      fbDocs.forEach(function(item){_lastNotifIds[item.id]=true;});
       var fbNotifs=fbDocs.map(function(item){
         var d=item.data;
         return{
@@ -2917,7 +3082,8 @@ function listenUserNotifs(){
           icon:d.icon||'reply',
           bg:d.bg||'#e8f0ff',
           ic:d.ic||'#3a5a9a',
-          unread:!d.read
+          unread:!d.read,
+          reportId:d.reportId||null
         };
       });
       /* Fusionner : Firebase en premier (plus récent), puis système */
@@ -2927,10 +3093,416 @@ function listenUserNotifs(){
       /* Rafraîchir si l'onglet notifs est ouvert */
       var nv=document.getElementById('view-notifs');
       if(nv&&nv.classList.contains('active'))renderNotifs();
+      /* Rafraîchir la liste des conversations si la vue messages est ouverte */
+      var mv=document.getElementById('view-messages');
+      if(mv&&mv.classList.contains('active'))loadUserMessages();
+      _userNotifsInitialized=true;
     },function(e){
       console.log('listenUserNotifs error:',e.message);
     });
+  /* Demander la permission pour les notifications navigateur (une seule fois) */
+  try{
+    if('Notification' in window && Notification.permission==='default'){
+      Notification.requestPermission();
+    }
+  }catch(e){}
 }
+
+
+/* ═══════════════════════════════════════════════════════════
+   🔐 SYSTÈME DE CODE PIN ADMINISTRATEUR
+   ═══════════════════════════════════════════════════════════ */
+var _adminPinVerified=false, _pinBuffer='', _pinMode='check', _pinCallback=null, _pinFirstEntry='', _pinExpectedLen=0;
+
+function pinRenderDots(len){
+  var d=document.getElementById('pinDots');var max=Math.max(len||4,_pinBuffer.length||0,4);
+  var h='';for(var i=0;i<6;i++){h+='<div class="pin-dot'+(i<_pinBuffer.length?' filled':'')+'"></div>';}
+  d.innerHTML=h;
+}
+function pinPress(n){
+  if(_pinBuffer.length>=6)return;
+  _pinBuffer+=n;
+  document.getElementById('pinErr').textContent='';
+  pinRenderDots();
+  if(navigator.vibrate)navigator.vibrate(8);
+  /* Auto-submit when PIN length is reached */
+  if(_pinMode==='check'&&_pinExpectedLen&&_pinBuffer.length===_pinExpectedLen){setTimeout(pinSubmit,150);return;}
+  if((_pinMode==='setup-2'||_pinMode==='change-3')&&_pinFirstEntry&&_pinBuffer.length===_pinFirstEntry.length){setTimeout(pinSubmit,150);return;}
+}
+function pinClear(){_pinBuffer=_pinBuffer.slice(0,-1);pinRenderDots();document.getElementById('pinErr').textContent='';}
+function pinSubmit(){
+  var pin=_pinBuffer;
+  if(pin.length<4||pin.length>6){
+    document.getElementById('pinErr').textContent=t('adminPinShort');
+    document.querySelectorAll('.pin-dot').forEach(function(d){d.classList.add('error');});
+    setTimeout(function(){_pinBuffer='';pinRenderDots();document.querySelectorAll('.pin-dot').forEach(function(d){d.classList.remove('error');});},500);
+    return;
+  }
+  if(_pinMode==='setup-1'){
+    _pinFirstEntry=String(pin);_pinBuffer='';_pinExpectedLen=0;pinRenderDots();
+    document.getElementById('pinTitle').textContent=t('adminPinConfirm');
+    document.getElementById('pinSub').textContent=currentLang==='en'?'Re-enter the same PIN':'Re-saisissez le même PIN';
+    _pinMode='setup-2';return;
+  }
+  if(_pinMode==='setup-2'){
+    if(String(pin)!==String(_pinFirstEntry)){
+      document.getElementById('pinErr').textContent=t('adminPinMismatch');
+      document.querySelectorAll('.pin-dot').forEach(function(d){d.classList.add('error');});
+      setTimeout(function(){document.querySelectorAll('.pin-dot').forEach(function(d){d.classList.remove('error');});},500);
+      _pinBuffer='';_pinFirstEntry='';_pinMode='setup-1';
+      document.getElementById('pinTitle').textContent=t('adminPinSet');
+      document.getElementById('pinSub').textContent=t('adminPinSetSub');
+      pinRenderDots();return;
+    }
+    /* save PIN hash to firestore */
+    var hash=_pinHash(pin);
+    db.collection('admins').doc(currentUser.email).set({pinHash:hash,pinSet:Date.now()},{merge:true}).then(function(){
+      _adminPinVerified=true;closePinOvl();
+      showToast(currentLang==='en'?'PIN created ✓':'Code PIN créé ✓','check_circle');
+      if(_pinCallback){_pinCallback();_pinCallback=null;}
+    }).catch(function(err){console.error('PIN save error:',err);document.getElementById('pinErr').textContent='Erreur sauvegarde: '+(err.message||'');});
+    return;
+  }
+  if(_pinMode==='change-1'){
+    /* verify current */
+    db.collection('admins').doc(currentUser.email).get().then(function(d){
+      var saved=d.data()&&d.data().pinHash;
+      if(_pinHash(pin)!==saved){
+        document.getElementById('pinErr').textContent=t('adminPinWrong');
+        _pinBuffer='';pinRenderDots();return;
+      }
+      _pinBuffer='';pinRenderDots();_pinMode='change-2';
+      document.getElementById('pinTitle').textContent=t('newPin');
+      document.getElementById('pinSub').textContent=currentLang==='en'?'Enter new 4-6 digit PIN':'Nouveau PIN 4-6 chiffres';
+    });return;
+  }
+  if(_pinMode==='change-2'){
+    _pinFirstEntry=String(pin);_pinBuffer='';_pinExpectedLen=0;pinRenderDots();_pinMode='change-3';
+    document.getElementById('pinTitle').textContent=t('adminPinConfirm');
+    return;
+  }
+  if(_pinMode==='change-3'){
+    if(String(pin)!==String(_pinFirstEntry)){
+      document.getElementById('pinErr').textContent=t('adminPinMismatch');
+      _pinBuffer='';_pinFirstEntry='';_pinMode='change-2';
+      document.getElementById('pinTitle').textContent=t('newPin');
+      pinRenderDots();return;
+    }
+    db.collection('admins').doc(currentUser.email).set({pinHash:_pinHash(pin),pinSet:Date.now()},{merge:true}).then(function(){
+      closePinOvl();showToast(t('adminPinChanged'),'check_circle');
+    }).catch(function(err){document.getElementById('pinErr').textContent='Erreur: '+(err.message||'');});return;
+  }
+  /* mode==='check' */
+  db.collection('admins').doc(currentUser.email).get().then(function(d){
+    var saved=d.data()&&d.data().pinHash;
+    if(!saved){
+      /* No PIN set yet → switch to setup */
+      _pinBuffer='';_pinMode='setup-1';
+      document.getElementById('pinTitle').textContent=t('adminPinSet');
+      document.getElementById('pinSub').textContent=t('adminPinSetSub');
+      pinRenderDots();return;
+    }
+    if(_pinHash(pin)===saved){
+      _adminPinVerified=true;closePinOvl();
+      if(_pinCallback){_pinCallback();_pinCallback=null;}
+    }else{
+      document.getElementById('pinErr').textContent=t('adminPinWrong');
+      document.querySelectorAll('.pin-dot').forEach(function(d){d.classList.add('error');});
+      setTimeout(function(){_pinBuffer='';pinRenderDots();document.querySelectorAll('.pin-dot').forEach(function(d){d.classList.remove('error');});},500);
+    }
+  });
+}
+function pinForgot(){
+  if(!currentUser)return;
+  if(!confirm(currentLang==='en'?'Send password reset email to '+currentUser.email+' ? You can then change your PIN once logged in.':'Envoyer un email de réinitialisation à '+currentUser.email+' ? Vous pourrez ensuite changer votre PIN après reconnexion.'))return;
+  auth.sendPasswordResetEmail(currentUser.email).then(function(){
+    showToast(t('pinResetSent'),'mail');closePinOvl();
+  }).catch(function(){showToast('Erreur','error');});
+}
+function pinCancel(){closePinOvl();_pinCallback=null;}
+function closePinOvl(){document.getElementById('pinOvl').classList.remove('active');_pinBuffer='';_pinFirstEntry='';}
+function _pinHash(s){var h=0;for(var i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h=h&h;}return 'isd_'+h.toString(36)+'_'+s.length;}
+
+function requestAdminPin(cb){
+  if(!currentUser){return;}
+  _pinCallback=cb;_pinBuffer='';_pinFirstEntry='';_pinExpectedLen=0;
+  db.collection('admins').doc(currentUser.email).get().then(function(d){
+    var saved=d.data()&&d.data().pinHash;
+    if(!saved){
+      _pinMode='setup-1';
+      document.getElementById('pinTitle').textContent=t('adminPinSet');
+      document.getElementById('pinSub').textContent=t('adminPinSetSub');
+      document.getElementById('pinForgot').style.display='none';
+    }else{
+      _pinMode='check';_pinExpectedLen=parseInt(saved.split('_').pop())||0;
+      document.getElementById('pinTitle').textContent=t('adminPin');
+      document.getElementById('pinSub').textContent=t('adminPinSub');
+      document.getElementById('pinForgot').style.display='block';
+    }
+    pinRenderDots();
+    document.getElementById('pinErr').textContent='';
+    document.getElementById('pinOvl').classList.add('active');
+  }).catch(function(err){console.error('requestAdminPin error:',err);showToast('Erreur: '+(err.message||''),'error');});
+}
+function openChangePin(){
+  _pinBuffer='';_pinFirstEntry='';_pinExpectedLen=0;_pinMode='change-1';
+  document.getElementById('pinTitle').textContent=t('currentPin');
+  document.getElementById('pinSub').textContent=currentLang==='en'?'Enter your current PIN':'Entrez votre PIN actuel';
+  document.getElementById('pinForgot').style.display='block';
+  document.getElementById('pinErr').textContent='';
+  pinRenderDots();
+  document.getElementById('pinOvl').classList.add('active');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   🛍️ BOUTIQUE — STUDENT VIEW
+   ═══════════════════════════════════════════════════════════ */
+var products=[],productsListener=null,shopFilter='all';
+function listenProducts(){
+  if(productsListener)return;
+  productsListener=db.collection('products').orderBy('createdAt','desc').onSnapshot(function(snap){
+    products=[];snap.forEach(function(doc){var d=doc.data();d.id=doc.id;products.push(d);});
+    renderShop();
+    var c=document.getElementById('admShopCount');if(c)c.textContent=products.length;
+    var dl=document.getElementById('admShopDl');if(dl)dl.textContent=products.reduce(function(a,p){return a+(p.downloads||0);},0);
+    if(document.getElementById('adm-panel-shop').classList.contains('active'))admRenderProducts();
+  },function(err){console.warn('products listener',err);});
+}
+function showShop(){listenProducts();showView('shop');renderShop();}
+function renderShop(){
+  var grid=document.getElementById('shopGrid');if(!grid)return;
+  /* Build categories filters dynamically */
+  var cats=[{id:'all',label:t('filterAll'),ico:'apps'}];
+  var catSet={};products.forEach(function(p){if(p.category)catSet[p.category]=true;});
+  var catLbl={exam:currentLang==='en'?'State Exam':"Examen d'État",manuel:currentLang==='en'?'Textbook':'Manuel',exercices:currentLang==='en'?'Exercises':'Exercices',resume:currentLang==='en'?'Summaries':'Résumés',methode:currentLang==='en'?'Method':'Méthodologie',autre:currentLang==='en'?'Other':'Autre'};
+  Object.keys(catSet).forEach(function(c){cats.push({id:c,label:catLbl[c]||c});});
+  cats.push({id:'recent',label:t('filterRecent')});cats.push({id:'popular',label:t('filterPopular')});
+  document.getElementById('shopFilters').innerHTML=cats.map(function(c){return'<div class="shop-fchip'+(shopFilter===c.id?' active':'')+'" onclick="setShopFilter(\''+c.id+'\')">'+c.label+'</div>';}).join('');
+  /* Filter products */
+  var list=products.slice();
+  if(shopFilter==='recent'){list.sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});list=list.slice(0,12);}
+  else if(shopFilter==='popular'){list.sort(function(a,b){return(b.downloads||0)-(a.downloads||0);});}
+  else if(shopFilter!=='all'){list=list.filter(function(p){return p.category===shopFilter;});}
+  if(!list.length){
+    grid.innerHTML='<div class="shop-empty" style="grid-column:1/-1"><span class="material-icons-round mi">storefront</span><div class="shop-empty-t">'+t('shopEmpty')+'</div><div class="shop-empty-s">'+(currentLang==='en'?'Check back soon!':'Revenez bientôt !')+'</div></div>';
+    return;
+  }
+  grid.innerHTML=list.map(function(p,i){
+    var cover=p.coverUrl?'<img src="'+p.coverUrl+'" loading="lazy" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'"/><div class="shop-cover-ph" style="display:none">📚</div>':'<div class="shop-cover-ph">📚</div>';
+    return'<div class="shop-card" onclick="showProductDetail(\''+p.id+'\')" style="animation-delay:'+(i*.04)+'s">'
+      +'<div class="shop-cover">'+cover+'<div class="shop-badge">'+t('free')+'</div></div>'
+      +'<div class="shop-info"><div class="shop-title">'+escHtml(p.title||'Sans titre')+'</div>'
+      +'<div class="shop-meta"><span>'+(p.pages?p.pages+' '+t('pages'):(p.subject||''))+'</span><span><span class="material-icons-round mi">download</span>'+(p.downloads||0)+'</span></div>'
+      +'</div></div>';
+  }).join('');
+}
+function setShopFilter(f){shopFilter=f;renderShop();}
+function escHtml(s){return String(s||'').replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function showProductDetail(id){
+  var p=products.find(function(x){return x.id===id;});if(!p)return;
+  var body=document.getElementById('shopDetailBody');
+  var cover=p.coverUrl?'<img src="'+p.coverUrl+'"/>':'<div class="shop-cover-ph" style="font-size:4rem">📚</div>';
+  var meta=[];
+  if(p.author)meta.push(['person','Auteur',p.author]);
+  if(p.subject)meta.push(['menu_book','Matière',p.subject]);
+  if(p.level)meta.push(['school','Niveau',p.level]);
+  if(p.year)meta.push(['event','Année',p.year]);
+  if(p.pages)meta.push(['description','Pages',p.pages]);
+  if(p.lang)meta.push(['translate','Langue',{fr:'Français',en:'English',ln:'Lingala'}[p.lang]||p.lang]);
+  body.innerHTML='<div class="shop-d-hero"><button class="shop-d-back" onclick="goHome()"><span class="material-icons-round mi">arrow_back</span></button><div class="shop-d-cover-wrap"><div class="shop-d-cover">'+cover+'</div></div></div>'
+    +'<div class="shop-d-body">'
+    +'<div class="shop-d-title">'+escHtml(p.title||'')+'</div>'
+    +(p.subtitle?'<div class="shop-d-sub">'+escHtml(p.subtitle)+'</div>':'')
+    +(p.tags&&p.tags.length?'<div class="shop-d-tags">'+p.tags.map(function(tg){return'<div class="shop-d-tag">#'+escHtml(tg)+'</div>';}).join('')+'</div>':'')
+    +(meta.length?'<div class="shop-d-meta-grid">'+meta.map(function(m){return'<div class="shop-d-meta-row"><span class="material-icons-round mi">'+m[0]+'</span><span class="shop-d-meta-lbl">'+m[1]+'</span><span class="shop-d-meta-val">'+escHtml(m[2])+'</span></div>';}).join('')+'</div>':'')
+    +'<div class="shop-d-desc-h">📖 Description</div>'
+    +'<div class="shop-d-desc">'+escHtml(p.description||'Pas de description.')+'</div>'
+    +'</div>'
+    +'<div class="shop-d-actions">'
+    +'<button class="shop-d-btn secondary" onclick="goHome()"><span class="material-icons-round mi">arrow_back</span> Retour</button>'
+    +(p.pdfUrl?'<button class="shop-d-btn primary" onclick="downloadProduct(\''+p.id+'\')"><span class="material-icons-round mi">download</span> '+t('downloadEbook')+'</button>':'')
+    +'</div>';
+  showView('shop-detail');
+}
+function downloadProduct(id){
+  var p=products.find(function(x){return x.id===id;});if(!p||!p.pdfUrl)return;
+  /* increment downloads counter */
+  db.collection('products').doc(id).update({downloads:firebase.firestore.FieldValue.increment(1)}).catch(function(){});
+  /* open PDF in new tab */
+  var a=document.createElement('a');a.href=p.pdfUrl;a.target='_blank';a.rel='noopener';a.download=(p.title||'ebook')+'.pdf';document.body.appendChild(a);a.click();a.remove();
+  showToast(t('downloadStarted'),'download');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   🛠️ BOUTIQUE ADMIN
+   ═══════════════════════════════════════════════════════════ */
+var _admProdEditing=null,_admProdCover=null,_admProdPdf=null;
+function admOpenProductForm(id){
+  _admProdEditing=id||null;
+  document.getElementById('admProdFormTitle').textContent=id?'✏️ Modifier le produit':'📚 Nouveau produit';
+  /* reset */
+  ['admProdTitle','admProdSubtitle','admProdDesc','admProdAuthor','admProdSubject','admProdYear','admProdPages','admProdTags'].forEach(function(f){document.getElementById(f).value='';});
+  document.getElementById('admProdCategory').value='exam';
+  document.getElementById('admProdLevel').value='';
+  document.getElementById('admProdLangSel').value='fr';
+  document.getElementById('admProdCoverPrev').style.display='none';
+  document.getElementById('admProdPdfInfo').style.display='none';
+  document.getElementById('admProdProg').style.display='none';
+  document.getElementById('admProdOk').style.display='none';
+  document.getElementById('admProdErr').style.display='none';
+  document.getElementById('admProdStep').textContent='';
+  _admProdCover=null;_admProdPdf=null;
+  if(id){
+    var p=products.find(function(x){return x.id===id;});
+    if(p){
+      document.getElementById('admProdTitle').value=p.title||'';
+      document.getElementById('admProdSubtitle').value=p.subtitle||'';
+      document.getElementById('admProdDesc').value=p.description||'';
+      document.getElementById('admProdAuthor').value=p.author||'';
+      document.getElementById('admProdSubject').value=p.subject||'';
+      document.getElementById('admProdYear').value=p.year||'';
+      document.getElementById('admProdPages').value=p.pages||'';
+      document.getElementById('admProdTags').value=(p.tags||[]).join(', ');
+      document.getElementById('admProdCategory').value=p.category||'exam';
+      document.getElementById('admProdLevel').value=p.level||'';
+      document.getElementById('admProdLangSel').value=p.lang||'fr';
+      if(p.coverUrl){var im=document.getElementById('admProdCoverPrev');im.src=p.coverUrl;im.style.display='block';}
+      if(p.pdfUrl){var info=document.getElementById('admProdPdfInfo');info.innerHTML='<span class="material-icons-round mi">picture_as_pdf</span><span class="pdf-name-txt">PDF existant</span><span class="pdf-name-size">déjà uploadé</span>';info.style.display='flex';}
+    }
+  }
+  admShowPanel('prodform');
+}
+function admProdCoverPick(e){
+  var f=e.target.files[0];if(!f)return;
+  if(f.size>5*1024*1024){alert('Image > 5 MB');return;}
+  _admProdCover=f;
+  var r=new FileReader();r.onload=function(ev){var im=document.getElementById('admProdCoverPrev');im.src=ev.target.result;im.style.display='block';};r.readAsDataURL(f);
+}
+function admProdPdfPick(e){
+  var f=e.target.files[0];if(!f)return;
+  if(f.size>50*1024*1024){alert('PDF > 50 MB');return;}
+  _admProdPdf=f;
+  var info=document.getElementById('admProdPdfInfo');
+  info.innerHTML='<span class="material-icons-round mi">picture_as_pdf</span><span class="pdf-name-txt">'+f.name+'</span><span class="pdf-name-size">'+(f.size/1024/1024).toFixed(1)+' MB</span>';
+  info.style.display='flex';
+}
+function admSaveProduct(){
+  var title=document.getElementById('admProdTitle').value.trim();
+  var desc=document.getElementById('admProdDesc').value.trim();
+  var err=document.getElementById('admProdErr');var ok=document.getElementById('admProdOk');var step=document.getElementById('admProdStep');
+  err.style.display='none';ok.style.display='none';
+  if(!title){err.textContent='⚠️ Le titre est obligatoire.';err.style.display='block';return;}
+  if(!desc){err.textContent='⚠️ La description est obligatoire.';err.style.display='block';return;}
+  if(!_admProdEditing&&!_admProdCover){err.textContent='⚠️ Page de couverture obligatoire.';err.style.display='block';return;}
+  if(!_admProdEditing&&!_admProdPdf){err.textContent='⚠️ Fichier PDF obligatoire.';err.style.display='block';return;}
+  var btn=document.getElementById('admProdPubBtn');btn.disabled=true;
+  document.getElementById('admProdProg').style.display='block';
+  var fill=document.getElementById('admProdProgFill');fill.style.width='5%';
+  var data={
+    title:title,
+    subtitle:document.getElementById('admProdSubtitle').value.trim()||null,
+    description:desc,
+    author:document.getElementById('admProdAuthor').value.trim()||null,
+    category:document.getElementById('admProdCategory').value,
+    level:document.getElementById('admProdLevel').value||null,
+    subject:document.getElementById('admProdSubject').value.trim()||null,
+    year:parseInt(document.getElementById('admProdYear').value)||null,
+    pages:parseInt(document.getElementById('admProdPages').value)||null,
+    lang:document.getElementById('admProdLangSel').value,
+    tags:document.getElementById('admProdTags').value.split(',').map(function(s){return s.trim();}).filter(Boolean),
+    createdBy:currentUser.email,
+    isFree:true
+  };
+  var seq=Promise.resolve();
+  if(_admProdCover){
+    seq=seq.then(function(){
+      step.textContent=t('uploadingCover');
+      return _uploadToStorage(_admProdCover,'products/covers',function(p){fill.style.width=(5+p*40)+'%';}).then(function(url){data.coverUrl=url;});
+    });
+  }
+  if(_admProdPdf){
+    seq=seq.then(function(){
+      step.textContent=t('uploadingPdf');
+      return _uploadToStorage(_admProdPdf,'products/pdfs',function(p){fill.style.width=(45+p*45)+'%';}).then(function(url){data.pdfUrl=url;data.fileSize=_admProdPdf.size;});
+    });
+  }
+  seq.then(function(){
+    step.textContent=t('saving');fill.style.width='95%';
+    if(_admProdEditing){
+      data.updatedAt=Date.now();
+      return db.collection('products').doc(_admProdEditing).update(data);
+    }
+    data.createdAt=Date.now();data.downloads=0;
+    return db.collection('products').add(data);
+  }).then(function(){
+    fill.style.width='100%';step.textContent='';
+    ok.textContent='✅ '+t(_admProdEditing?'productUpdated':'productPublished');ok.style.display='block';
+    showToast(t(_admProdEditing?'productUpdated':'productPublished'),'check_circle');
+    setTimeout(function(){btn.disabled=false;document.getElementById('admProdProg').style.display='none';admShowPanel('shop');},800);
+  }).catch(function(e){
+    console.error(e);err.textContent='Erreur : '+(e.message||e.code||'inconnue');err.style.display='block';
+    btn.disabled=false;document.getElementById('admProdProg').style.display='none';step.textContent='';
+  });
+}
+function _uploadToStorage(file,folder,onProgress){
+  return new Promise(function(resolve,reject){
+    var ext=(file.name.split('.').pop()||'bin').toLowerCase();
+    var name=folder+'/'+Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.'+ext;
+    var ref=storage.ref().child(name);
+    var task=ref.put(file,{contentType:file.type});
+    task.on('state_changed',function(snap){if(onProgress)onProgress(snap.bytesTransferred/snap.totalBytes);},
+      function(err){reject(err);},
+      function(){task.snapshot.ref.getDownloadURL().then(resolve).catch(reject);});
+  });
+}
+function admRenderProducts(){
+  var box=document.getElementById('admProductsList');if(!box)return;
+  if(!products.length){box.innerHTML='<div class="empty"><span class="material-icons-round mi">storefront</span><div class="empty-txt">Aucun produit. Cliquez sur « Ajouter » pour commencer.</div></div>';return;}
+  box.innerHTML=products.map(function(p){
+    var thumb=p.coverUrl?'<img src="'+p.coverUrl+'" loading="lazy"/>':'<span class="material-icons-round mi">menu_book</span>';
+    var cat={exam:"📝 Examen",manuel:"📚 Manuel",exercices:"✏️ Exercices",resume:"📑 Résumés",methode:"🎯 Méthode",autre:"📦 Autre"}[p.category]||p.category;
+    return'<div class="adm-prod-card">'
+      +'<div class="adm-prod-thumb">'+thumb+'</div>'
+      +'<div class="adm-prod-info"><div class="adm-prod-name">'+escHtml(p.title||'')+'</div>'
+      +'<div class="adm-prod-meta">'+cat+(p.level?' · '+p.level:'')+(p.subject?' · '+p.subject:'')+'</div>'
+      +'<div class="adm-prod-stats"><span><span class="material-icons-round mi" style="font-size:.8rem;vertical-align:middle">download</span> '+(p.downloads||0)+'</span>'+(p.pages?'<span>· '+p.pages+'p</span>':'')+'</div></div>'
+      +'<div class="adm-prod-acts">'
+      +'<button class="edit" onclick="admOpenProductForm(\''+p.id+'\')" title="Modifier"><span class="material-icons-round mi">edit</span></button>'
+      +'<button class="del" onclick="admDeleteProduct(\''+p.id+'\')" title="Supprimer"><span class="material-icons-round mi">delete</span></button>'
+      +'</div></div>';
+  }).join('');
+}
+function admDeleteProduct(id){
+  if(!confirm(t('deleteConfirm')))return;
+  var p=products.find(function(x){return x.id===id;});
+  var tasks=[db.collection('products').doc(id).delete()];
+  /* try to remove storage files */
+  if(p&&p.coverUrl)try{tasks.push(storage.refFromURL(p.coverUrl).delete().catch(function(){}));}catch(e){}
+  if(p&&p.pdfUrl)try{tasks.push(storage.refFromURL(p.pdfUrl).delete().catch(function(){}));}catch(e){}
+  Promise.all(tasks).then(function(){showToast(t('productDeleted'),'delete');}).catch(function(){showToast('Erreur','error');});
+}
+
+/* ═══════════════════════════════════════════════════════════
+   🔄 INIT — load products listener at app start (visible to all)
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  var origUpdAdminUI=window.updateAdminUI;
+  /* Auto-load products as soon as user is authenticated */
+  var origAuth=auth.onAuthStateChanged;
+  setTimeout(function(){if(auth.currentUser)listenProducts();},1500);
+})();
+
+/* When sign-out happens, reset PIN verification */
+(function(){
+  var origSignOut=window.doSignOut;
+  if(typeof origSignOut==='function'){
+    window.doSignOut=function(){_adminPinVerified=false;return origSignOut.apply(this,arguments);};
+  }
+})();
+
+/* Auto-call listenProducts after dataLoaded becomes true */
+setInterval(function(){if(currentUser&&!productsListener)listenProducts();},3000);
+
 </script>
 
 <div id="offlineScreen">
@@ -3035,6 +3607,61 @@ function listenUserNotifs(){
       <div id="admRepList"></div>
     </div>
 
+
+    <!-- PANEL: BOUTIQUE -->
+    <div class="adm-panel" id="adm-panel-shop">
+      <div class="atitle">🛍️ <span data-t="shopAdmin">Boutique</span></div>
+      <div class="asub" id="admShopSub">Gérez vos ebooks et produits numériques</div>
+      <button class="btnp" onclick="admOpenProductForm()" style="margin:8px 0 14px"><span class="material-icons-round mi">add</span> <span data-t="addProduct">Ajouter un produit</span></button>
+      <div style="display:flex;gap:10px;margin-bottom:14px">
+        <div class="adm-stat-card green" style="flex:1;padding:12px"><div class="adm-stat-val" id="admShopCount" style="font-size:1.3rem">0</div><div class="adm-stat-lbl" data-t="totalProducts">Produits</div></div>
+        <div class="adm-stat-card blue" style="flex:1;padding:12px"><div class="adm-stat-val" id="admShopDl" style="font-size:1.3rem">0</div><div class="adm-stat-lbl" data-t="totalDownloads">Téléchargements</div></div>
+      </div>
+      <div id="admProductsList"></div>
+    </div>
+
+    <!-- PANEL: AJOUT/EDIT PRODUIT (overlay glissant) -->
+    <div class="adm-panel" id="adm-panel-prodform">
+      <button class="pbk" style="background:var(--bg);color:var(--tx);border-radius:12px;padding:8px 14px;margin-bottom:14px;border:1.5px solid var(--bl)" onclick="admShowPanel('shop')"><span class="material-icons-round mi">arrow_back</span> Retour</button>
+      <div class="atitle" id="admProdFormTitle">📚 Nouveau produit</div>
+      <div class="asub">Tous les champs marqués * sont obligatoires</div>
+      <label class="flbl">Page de couverture *</label>
+      <div class="fzone" onclick="document.getElementById('admProdCoverInput').click()" id="admProdCoverZone"><span class="material-icons-round mi">add_photo_alternate</span><div class="fzone-txt"><strong>Cliquer pour choisir</strong><br/>JPG, PNG · ratio 3:4 conseillé</div></div>
+      <input type="file" id="admProdCoverInput" accept="image/*" style="display:none" onchange="admProdCoverPick(event)"/>
+      <img id="admProdCoverPrev" class="prev-img" style="display:none;max-height:240px"/>
+      <label class="flbl">Fichier PDF *</label>
+      <div class="fzone" onclick="document.getElementById('admProdPdfInput').click()" id="admProdPdfZone"><span class="material-icons-round mi">picture_as_pdf</span><div class="fzone-txt"><strong>Cliquer pour choisir un PDF</strong><br/>Max 50 MB</div></div>
+      <input type="file" id="admProdPdfInput" accept="application/pdf" style="display:none" onchange="admProdPdfPick(event)"/>
+      <div id="admProdPdfInfo" class="pdf-name-info"></div>
+      <label class="flbl">Titre du produit *</label>
+      <input type="text" class="fin" id="admProdTitle" placeholder="Ex: Réussir l'examen d'État - Maths"/>
+      <label class="flbl">Sous-titre</label>
+      <input type="text" class="fin" id="admProdSubtitle" placeholder="Ex: Guide complet 2025"/>
+      <label class="flbl">Description *</label>
+      <textarea class="fin" id="admProdDesc" rows="4" placeholder="Décrivez le contenu, le public cible, les chapitres..." style="resize:vertical;font-family:inherit"></textarea>
+      <label class="flbl">Auteur</label>
+      <input type="text" class="fin" id="admProdAuthor" placeholder="Ex: ALTESSE LUKOJI"/>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1"><label class="flbl">Catégorie *</label><select class="fsel" id="admProdCategory"><option value="exam">Examen d'État</option><option value="manuel">Manuel scolaire</option><option value="exercices">Exercices corrigés</option><option value="resume">Résumés</option><option value="methode">Méthodologie</option><option value="autre">Autre</option></select></div>
+        <div style="flex:1"><label class="flbl">Niveau</label><select class="fsel" id="admProdLevel"><option value="">Tous</option><option>1ère</option><option>2ème</option><option>3ème</option><option>4ème</option><option>5ème</option><option>6ème</option><option>Tle A</option><option>Tle C</option><option>Tle D</option></select></div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1"><label class="flbl">Matière</label><input type="text" class="fin" id="admProdSubject" placeholder="Ex: Mathématiques"/></div>
+        <div style="flex:1"><label class="flbl">Année</label><input type="number" class="fin" id="admProdYear" placeholder="2025" min="2000" max="2030"/></div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1"><label class="flbl">Nb pages</label><input type="number" class="fin" id="admProdPages" placeholder="Ex: 120" min="1"/></div>
+        <div style="flex:1"><label class="flbl">Langue</label><select class="fsel" id="admProdLangSel"><option value="fr">Français</option><option value="en">English</option><option value="ln">Lingala</option></select></div>
+      </div>
+      <label class="flbl">Tags / mots-clés (séparés par virgule)</label>
+      <input type="text" class="fin" id="admProdTags" placeholder="Ex: maths, bac, révision"/>
+      <div class="upload-prog" id="admProdProg"><div class="upload-prog-f" id="admProdProgFill"></div></div>
+      <div id="admProdStep" style="text-align:center;font-size:.72rem;color:var(--gm);font-weight:700;margin-top:4px"></div>
+      <div class="aok" id="admProdOk"></div>
+      <div class="aerr" id="admProdErr"></div>
+      <button class="btnp" id="admProdPubBtn" onclick="admSaveProduct()"><span class="material-icons-round mi">publish</span> <span data-t="publishProduct">Publier le produit</span></button>
+      <button class="btng" onclick="admShowPanel('shop')">Annuler</button>
+    </div>
     <!-- PANEL: PARAMÈTRES ADMIN -->
     <div class="adm-panel" id="adm-panel-settings">
       <div class="atitle">⚙️ Paramètres</div>
@@ -3047,6 +3674,7 @@ function listenUserNotifs(){
         </div>
       </div>
       <div class="aact" onclick="toggleTheme()"><div class="aact-ico" style="background:var(--gl)"><span class="material-icons-round mi" style="color:var(--gd)">dark_mode</span></div><div class="aact-inf"><div class="aact-n">Mode sombre</div><div class="aact-d">Changer l'apparence</div></div></div>
+      <div class="aact" onclick="openChangePin()"><div class="aact-ico" style="background:#fff8e1"><span class="material-icons-round mi" style="color:#f57c00">lock</span></div><div class="aact-inf"><div class="aact-n" data-t="changePin">Changer le code PIN</div><div class="aact-d">Sécurité administrateur</div></div><span class="material-icons-round mi" style="color:var(--g)">chevron_right</span></div>
       <div class="aact" style="margin-top:12px" onclick="doSignOut()"><div class="aact-ico" style="background:#fff0f0"><span class="material-icons-round mi" style="color:#c00">logout</span></div><div class="aact-inf"><div class="aact-n">Se déconnecter</div><div class="aact-d">Quitter votre session</div></div></div>
     </div>
 
@@ -3054,11 +3682,11 @@ function listenUserNotifs(){
 
   <!-- BOTTOM NAV ADMIN -->
   <div style="position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:900px;background:var(--card);border-top:1px solid var(--bl);display:flex;align-items:center;padding:4px 0 env(safe-area-inset-bottom,8px);z-index:901;box-shadow:0 -4px 24px rgba(0,0,0,.06)" id="admNav">
-    <button class="adm-nitem active" id="adm-nav-dash" onclick="admShowPanel('dash')"><span class="material-icons-round mi">dashboard</span><span class="adm-nitem-lbl">Dashboard</span></button>
-    <button class="adm-nitem" id="adm-nav-items" onclick="admShowPanel('items')"><span class="material-icons-round mi">folder_open</span><span class="adm-nitem-lbl">Mes items</span></button>
-    <button class="adm-nitem" id="adm-nav-add" onclick="admShowPanel('add')"><span class="material-icons-round mi">add_circle</span><span class="adm-nitem-lbl">Ajouter</span></button>
-    <button class="adm-nitem" id="adm-nav-reports" onclick="admShowPanel('reports')"><span class="material-icons-round mi">flag</span><span class="adm-nitem-lbl">Signalements</span><span class="bdg" id="admRepBadge" style="position:absolute;top:2px;right:20%;background:var(--danger);border-color:var(--card);display:none">0</span></button>
-    <button class="adm-nitem" id="adm-nav-settings" onclick="admShowPanel('settings')"><span class="material-icons-round mi">settings</span><span class="adm-nitem-lbl">Paramètres</span></button>
+    <button class="adm-nitem active" id="adm-nav-dash" onclick="admShowPanel('dash')"><span class="material-icons-round mi">dashboard</span><span class="adm-nitem-lbl" data-t="dashboard">Dashboard</span></button>
+    <button class="adm-nitem" id="adm-nav-items" onclick="admShowPanel('items')"><span class="material-icons-round mi">folder_open</span><span class="adm-nitem-lbl" data-t="myItems">Mes items</span></button>
+    <button class="adm-nitem" id="adm-nav-add" onclick="admShowPanel('add')"><span class="material-icons-round mi">add_circle</span><span class="adm-nitem-lbl" data-t="addTab">Ajouter</span></button><button class="adm-nitem" id="adm-nav-shop" onclick="admShowPanel('shop')"><span class="material-icons-round mi">storefront</span><span class="adm-nitem-lbl" data-t="shopAdmin">Boutique</span></button>
+    <button class="adm-nitem" id="adm-nav-reports" onclick="admShowPanel('reports')"><span class="material-icons-round mi">flag</span><span class="adm-nitem-lbl" data-t="reports">Signalements</span><span class="bdg" id="admRepBadge" style="position:absolute;top:2px;right:20%;background:var(--danger);border-color:var(--card);display:none">0</span></button>
+    <button class="adm-nitem" id="adm-nav-settings" onclick="admShowPanel('settings')"><span class="material-icons-round mi">settings</span><span class="adm-nitem-lbl" data-t="settingsTab">Paramètres</span></button>
   </div>
 </div>
 
@@ -3071,5 +3699,33 @@ function listenUserNotifs(){
   </div>
   <div class="adm-slide-body" id="admSlideBody"></div>
 </div>
+
+<!-- PIN MODAL -->
+<div class="pin-ovl" id="pinOvl">
+  <div class="pin-card">
+    <div class="pin-ico-wrap"><span class="material-icons-round mi">admin_panel_settings</span></div>
+    <div class="pin-title" id="pinTitle">Code PIN administrateur</div>
+    <div class="pin-sub" id="pinSub">Entrez votre code PIN</div>
+    <div class="pin-dots" id="pinDots"></div>
+    <div class="pin-err" id="pinErr"></div>
+    <div class="pin-pad">
+      <button class="pin-key" onclick="pinPress('1')">1</button>
+      <button class="pin-key" onclick="pinPress('2')">2</button>
+      <button class="pin-key" onclick="pinPress('3')">3</button>
+      <button class="pin-key" onclick="pinPress('4')">4</button>
+      <button class="pin-key" onclick="pinPress('5')">5</button>
+      <button class="pin-key" onclick="pinPress('6')">6</button>
+      <button class="pin-key" onclick="pinPress('7')">7</button>
+      <button class="pin-key" onclick="pinPress('8')">8</button>
+      <button class="pin-key" onclick="pinPress('9')">9</button>
+      <button class="pin-key action" onclick="pinClear()"><span class="material-icons-round mi">backspace</span></button>
+      <button class="pin-key" onclick="pinPress('0')">0</button>
+      <button class="pin-key confirm" onclick="pinSubmit()"><span class="material-icons-round mi">check</span></button>
+    </div>
+    <div class="pin-link" id="pinForgot" onclick="pinForgot()" data-t="forgotPin">PIN oublié ?</div>
+    <button class="pin-cancel" onclick="pinCancel()">Annuler</button>
+  </div>
+</div>
+
 </body>
-  </html>
+                                                                                                                                                                                                                   </html>
